@@ -13,7 +13,7 @@ abstract class ChoreDivvyDatabase: RoomDatabase() {
         @Volatile
         private var INSTANCE: ChoreDivvyDatabase? = null
 
-        fun getInstance(context: Context): ChoreDivvyDatabase {
+        fun getDatabase(context: Context): ChoreDivvyDatabase {
             synchronized(this) {
                 var instance = INSTANCE
 

@@ -21,7 +21,7 @@ class UserFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
 
-        val dataSource = ChoreDivvyDatabase.getInstance(application).userDao
+        val dataSource = ChoreDivvyDatabase.getDatabase(application).userDao
         val viewModelFactory = UserViewModelFactory(dataSource, application)
 
         val userViewModel = ViewModelProviders.of(

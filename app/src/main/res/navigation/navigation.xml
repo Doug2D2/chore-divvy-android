@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/userFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
-        android:id="@+id/userFragment"
-        android:name="com.doug2d2.chore_divvy_android.user.UserFragment"
-        android:label="UserFragment" />
+        android:id="@+id/loginFragment"
+        android:name="com.doug2d2.chore_divvy_android.user.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>
