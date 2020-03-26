@@ -8,6 +8,7 @@
     <color name="colorAccentDark">#002984</color>
     <color name="colorPrimaryText">#000000</color>
     <color name="colorAccentText">#ffffff</color>
+    <color name="colorErrorText">#d32f2f</color>
 </resources>
 
 

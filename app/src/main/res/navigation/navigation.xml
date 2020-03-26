@@ -12,10 +12,26 @@
         <action
             android:id="@+id/action_loginFragment_to_choreListFragment"
             app:destination="@id/choreListFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
     </fragment>
     <fragment
         android:id="@+id/choreListFragment"
         android:name="com.doug2d2.chore_divvy_android.ChoreListFragment"
         android:label="fragment_chore_list"
         tools:layout="@layout/fragment_chore_list" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.doug2d2.chore_divvy_android.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.doug2d2.chore_divvy_android.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" />
 </navigation>
