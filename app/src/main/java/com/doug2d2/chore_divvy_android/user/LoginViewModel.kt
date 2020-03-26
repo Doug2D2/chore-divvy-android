@@ -11,6 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
+
+enum class LoginStatus { LOADING, SUCCESS, INVALID_CREDENTIALS, CONNECTION_ERROR, OTHER_ERROR }
 
 class LoginViewModel(application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
@@ -21,16 +24,25 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     val username = MutableLiveData<String>()
     val password = MutableLiveData<String>()
 
+    private val _loginStatus = MutableLiveData<LoginStatus>()
+    val loginStatus: LiveData<LoginStatus>
+        get() = _loginStatus
+
     fun onLogin() {
         Timber.i("Logging in, username: %s; password: %s", username.value, password.value)
 
-        // Navigate to new fragment
-
-
         if (username.value != null && password.value != null) {
             uiScope.launch {
-                Timber.i("Logging in")
-                userRepository.login(username.value.toString(), password.value.toString())
+                try {
+                    Timber.i("Logging in")
+                    _loginStatus.value = LoginStatus.LOADING
+
+                    userRepository.login(username.value.toString(), password.value.toString())
+
+                    _loginStatus.value = LoginStatus.SUCCESS
+                } catch (e: Exception) {
+                    _loginStatus.value = LoginStatus.CONNECTION_ERROR
+                }
             }
         } else {
             // Display message for user to enter username and password

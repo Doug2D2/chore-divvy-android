@@ -21,18 +21,27 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="145dp"
-            app:srcCompat="@drawable/logo"
-            android:contentDescription="@string/logo_description"/>
+            android:contentDescription="@string/logo_description"
+            app:srcCompat="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Testing Error Message"
+            android:textAlignment="center"
+            android:visibility="invisible"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:id="@+id/usernameEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autofillHints="username"
             android:ems="10"
             android:hint="@string/username_edit_hint"
-            android:autofillHints="username"
             android:inputType="textEmailAddress"
-            android:text="@={viewModel.username}"/>
+            android:text="@={viewModel.username}" />
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -42,14 +51,14 @@
             android:hint="@string/password_edit_hint"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:text="@={viewModel.password}"/>
+            android:text="@={viewModel.password}" />
 
         <Button
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login_button_text"
-            android:onClick="@{() -> viewModel.onLogin()}"/>
+            android:onClick="@{() -> viewModel.onLogin()}"
+            android:text="@string/login_button_text" />
 
     </LinearLayout>
 </layout>
