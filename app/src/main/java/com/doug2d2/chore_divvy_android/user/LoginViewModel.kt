@@ -39,7 +39,7 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     fun onLogin() {
         Timber.i("Logging in, username: %s; password: %s", username.value, password.value)
 
-        if (username.value != null && password.value != null) {
+        if (!username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
             uiScope.launch {
                 try {
                     Timber.i("Logging in")
