@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.doug2d2.chore_divvy_android.user.LoginViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/marginTopBottom"
+        android:gravity="center_horizontal|top"
+        android:orientation="vertical"
+        tools:context=".user.LoginFragment">
+
+        <!-- Current image is just a placeholder, will need a logo -->
+        <ImageView
+            android:id="@+id/logoImg"
+            android:layout_width="match_parent"
+            android:layout_height="145dp"
+            android:layout_marginBottom="@dimen/marginBetweenElements"
+            android:contentDescription="@string/logo_description"
+            app:srcCompat="@drawable/logo" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#00000000"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd" >
+
+            <EditText
+                android:id="@+id/usernameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                android:autofillHints="username"
+                android:ems="10"
+                android:hint="@string/username_edit_hint"
+                android:inputType="textEmailAddress"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@={viewModel.username}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#00000000"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd" >
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                android:ems="10"
+                android:hint="@string/password_edit_hint"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@={viewModel.password}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorErrorText"
+            android:textSize="@dimen/errorTextSize"
+            android:visibility="gone"
+            tools:text="Testing Error Message" />
+
+        <Button
+            android:id="@+id/forgotPasswordButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd"
+            android:onClick="@{() -> viewModel.onForgotPassword()}"
+            android:paddingStart="0dp"
+            android:text="@string/forgot_password_button_text"
+            android:textAlignment="textStart"
+            android:textColor="@color/colorAccent"
+            app:backgroundTint="#00000000" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/marginBetweenElements"
+            android:enabled="false"
+            android:text="@string/login_button_text"
+            android:onClick="@{() -> viewModel.onLogin()}" />
+
+        <Button
+            android:id="@+id/signUpButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd"
+            android:onClick="@{() -> viewModel.onSignUp()}"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="Don't have an account?  Sign up"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            app:backgroundTint="#00000000" />
+
+    </LinearLayout>
+</layout>
