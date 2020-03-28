@@ -98,7 +98,10 @@ class SignUpFragment : Fragment() {
                 SignUpStatus.SUCCESS -> {
                     binding.errorText.visibility = View.GONE
                     binding.signUpButton.isEnabled = true
-                    findNavController().navigate(R.id.action_signUpFragment_to_choreListFragment)
+
+                    if (findNavController().currentDestination?.id == R.id.signUpFragment) {
+                        findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToChoreListFragment())
+                    }
                 }
                 SignUpStatus.INVALID_USERNAME -> {
                     Timber.i("Invalid username")

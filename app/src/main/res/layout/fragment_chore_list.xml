@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chore.ChoreListFragment">
+    tools:context=".chore.ChoreListFragment" >
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

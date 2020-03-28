@@ -28,7 +28,11 @@
         android:id="@+id/forgotPasswordFragment"
         android:name="com.doug2d2.chore_divvy_android.user.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
-        tools:layout="@layout/fragment_forgot_password" />
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signUpFragment"
         android:name="com.doug2d2.chore_divvy_android.user.SignUpFragment"
