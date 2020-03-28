@@ -3,6 +3,7 @@
     <dimen name="marginStartEnd">25dp</dimen>
     <dimen name="marginTopBottom">30dp</dimen>
     <dimen name="marginBetweenElements">15dp</dimen>
+    <dimen name="largerMarginBetweenElements">25dp</dimen>
     <dimen name="errorTextSize">18sp</dimen>
     <dimen name="headingTextSize">24sp</dimen>
 </resources>
