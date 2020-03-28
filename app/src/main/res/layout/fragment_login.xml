@@ -19,7 +19,7 @@
 
         <!-- Current image is just a placeholder, will need a logo -->
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/logoImg"
             android:layout_width="match_parent"
             android:layout_height="145dp"
             android:layout_marginBottom="@dimen/marginBetweenElements"
@@ -85,9 +85,13 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/marginStartEnd"
             android:layout_marginEnd="@dimen/marginStartEnd"
+            android:onClick="@{() -> viewModel.onForgotPassword()}"
+            android:paddingStart="0dp"
             android:text="@string/forgot_password_button_text"
+            android:textAlignment="textStart"
             android:textColor="@color/colorAccent"
             app:backgroundTint="#00000000" />
 
@@ -97,8 +101,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/marginBetweenElements"
             android:enabled="false"
-            android:onClick="@{() -> viewModel.onLogin()}"
-            android:text="@string/login_button_text"/>
+            android:text="@string/login_button_text"
+            android:onClick="@{() -> viewModel.onLogin()}" />
 
         <Button
             android:id="@+id/signUpButton"
@@ -108,10 +112,11 @@
             android:layout_gravity="start|center_vertical"
             android:layout_marginStart="@dimen/marginStartEnd"
             android:layout_marginEnd="@dimen/marginStartEnd"
+            android:onClick="@{() -> viewModel.onSignUp()}"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="Don't have an account?  Sign up"
-            android:textAlignment="viewStart"
+            android:textAlignment="center"
             android:textColor="@color/colorAccent"
             app:backgroundTint="#00000000" />
 

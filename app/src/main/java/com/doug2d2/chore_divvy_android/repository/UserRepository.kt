@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
 import com.doug2d2.chore_divvy_android.network.LoginRequest
+import com.doug2d2.chore_divvy_android.network.SignUpRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -15,6 +16,13 @@ class UserRepository(private val database: ChoreDivvyDatabase) {
         withContext(Dispatchers.IO) {
             val req = LoginRequest(username, password)
             ChoreDivvyNetwork.choreDivvy.login(req).await()
+        }
+    }
+
+    suspend fun signUp(firstName: String, lastName: String, username: String, password: String) {
+        withContext(Dispatchers.IO) {
+            val req = SignUpRequest(firstName, lastName, username, password)
+            ChoreDivvyNetwork.choreDivvy.signUp(req).await()
         }
     }
 }

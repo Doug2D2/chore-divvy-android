@@ -14,16 +14,6 @@ import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.databinding.FragmentLoginBinding
 import timber.log.Timber
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +34,7 @@ class LoginFragment : Fragment() {
         binding.viewModel = loginViewModel
 
         loginViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
-            if (username != "" && loginViewModel.password.value != null && loginViewModel.password.value != "") {
+            if (!username.isNullOrBlank() && !loginViewModel.password.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
                 binding.loginButton.isEnabled = false
@@ -52,10 +42,36 @@ class LoginFragment : Fragment() {
         })
 
         loginViewModel.password.observe(viewLifecycleOwner, Observer<String> { password ->
-            if (password != "" && loginViewModel.username.value != null && loginViewModel.username.value != "") {
+            if (!password.isNullOrBlank() && !loginViewModel.username.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
                 binding.loginButton.isEnabled = false
+            }
+        })
+
+        // Call onLogin if Enter is pressed from the password edit text
+        binding.passwordEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        loginViewModel.onLogin()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
+
+        loginViewModel.navigateToSignUp.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
+            if (navigate) {
+                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            }
+        })
+
+        loginViewModel.navigateToForgotPassword.observe(viewLifecycleOwner, Observer { navigate ->
+            if (navigate) {
+                findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
             }
         })
 
@@ -67,9 +83,9 @@ class LoginFragment : Fragment() {
                     binding.loginButton.isEnabled = false
                 }
                 LoginStatus.SUCCESS -> {
-                    findNavController().navigate(R.id.action_loginFragment_to_choreListFragment)
                     binding.errorText.visibility = View.GONE
                     binding.loginButton.isEnabled = true
+                    findNavController().navigate(R.id.action_loginFragment_to_choreListFragment)
                 }
                 LoginStatus.INVALID_CREDENTIALS -> {
                     Timber.i("Incorrect username and/or password")
@@ -91,21 +107,6 @@ class LoginFragment : Fragment() {
                 }
             }
         })
-
-        // Call onLogin if Enter is pressed from the password edit text
-        binding.passwordEditText.setOnKeyListener { v, keyCode, event ->
-            if (event.action === KeyEvent.ACTION_DOWN) {
-                when (keyCode) {
-                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
-                        loginViewModel.onLogin()
-                        true
-                    }
-                    else -> false
-                }
-            }
-            false
-        }
-
 
         return binding.root
     }

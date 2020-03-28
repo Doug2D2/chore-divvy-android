@@ -28,6 +28,14 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     val loginStatus: LiveData<LoginStatus>
         get() = _loginStatus
 
+    private val _navigateToSignUp = MutableLiveData<Boolean>()
+    val navigateToSignUp: LiveData<Boolean>
+        get() = _navigateToSignUp
+
+    private val _navigateToForgotPassword = MutableLiveData<Boolean>()
+    val navigateToForgotPassword: LiveData<Boolean>
+        get() = _navigateToForgotPassword
+
     fun onLogin() {
         Timber.i("Logging in, username: %s; password: %s", username.value, password.value)
 
@@ -44,9 +52,14 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
                     _loginStatus.value = LoginStatus.CONNECTION_ERROR
                 }
             }
-        } else {
-            // Display message for user to enter username and password
         }
+    }
 
+    fun onSignUp() {
+        _navigateToSignUp.value = true
+    }
+
+    fun onForgotPassword() {
+        _navigateToForgotPassword.value = true
     }
 }

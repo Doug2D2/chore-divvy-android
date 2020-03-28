@@ -21,17 +21,24 @@
     </fragment>
     <fragment
         android:id="@+id/choreListFragment"
-        android:name="com.doug2d2.chore_divvy_android.ChoreListFragment"
+        android:name="com.doug2d2.chore_divvy_android.chore.ChoreListFragment"
         android:label="fragment_chore_list"
         tools:layout="@layout/fragment_chore_list" />
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.doug2d2.chore_divvy_android.ForgotPasswordFragment"
+        android:name="com.doug2d2.chore_divvy_android.user.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.doug2d2.chore_divvy_android.SignUpFragment"
+        android:name="com.doug2d2.chore_divvy_android.user.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" />
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_choreListFragment"
+            app:destination="@id/choreListFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 </navigation>

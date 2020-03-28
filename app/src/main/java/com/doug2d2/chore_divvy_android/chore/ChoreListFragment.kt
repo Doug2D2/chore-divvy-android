@@ -1,10 +1,11 @@
-package com.doug2d2.chore_divvy_android
+package com.doug2d2.chore_divvy_android.chore
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.doug2d2.chore_divvy_android.R
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

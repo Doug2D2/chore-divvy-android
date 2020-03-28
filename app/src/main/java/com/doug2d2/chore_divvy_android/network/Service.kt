@@ -10,6 +10,9 @@ import retrofit2.http.POST
 interface ChoreDivvyService {
     @POST("login")
     fun login(@Body body: LoginRequest): Deferred<LoginResponse>
+
+    @POST("signup")
+    fun signUp(@Body body: SignUpRequest): Deferred<SignUpResponse>
 }
 
 object ChoreDivvyNetwork {
@@ -25,3 +28,8 @@ object ChoreDivvyNetwork {
 data class LoginRequest(var username: String, var password: String)
 
 data class LoginResponse(var msg: String)
+
+data class SignUpRequest(var firstName: String, var lastName: String, var username: String,
+                         var password: String)
+
+data class SignUpResponse(var msg: String)
