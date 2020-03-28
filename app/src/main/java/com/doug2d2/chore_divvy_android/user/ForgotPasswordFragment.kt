@@ -5,7 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.databinding.FragmentForgotPasswordBinding
 
 class ForgotPasswordFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +20,24 @@ class ForgotPasswordFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_forgot_password, container, false)
+        // Get a reference to the binding object and inflate the fragment views.
+        val binding: FragmentForgotPasswordBinding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_forgot_password, container, false)
+
+        val application = requireNotNull(this.activity).application
+        val viewModelFactory = ForgotPasswordViewModelFactory(application)
+        val forgotPasswordViewModel = ViewModelProviders.of(
+            this, viewModelFactory).get(ForgotPasswordViewModel::class.java)
+        binding.viewModel = forgotPasswordViewModel
+
+        forgotPasswordViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
+            if (!username.isNullOrBlank()) {
+                binding.sendLinkButton.isEnabled = true
+            } else {
+                binding.sendLinkButton.isEnabled = false
+            }
+        })
+
+        return binding.root
     }
 }

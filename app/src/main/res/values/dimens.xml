@@ -4,4 +4,5 @@
     <dimen name="marginTopBottom">30dp</dimen>
     <dimen name="marginBetweenElements">15dp</dimen>
     <dimen name="errorTextSize">18sp</dimen>
+    <dimen name="headingTextSize">24sp</dimen>
 </resources>

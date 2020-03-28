@@ -13,6 +13,9 @@ interface ChoreDivvyService {
 
     @POST("signup")
     fun signUp(@Body body: SignUpRequest): Deferred<SignUpResponse>
+
+    @POST("forgotPassword")
+    fun forgotPassword(@Body body: ForgotPasswordRequest): Deferred<ForgotPasswordResponse>
 }
 
 object ChoreDivvyNetwork {
@@ -33,3 +36,7 @@ data class SignUpRequest(var firstName: String, var lastName: String, var userna
                          var password: String)
 
 data class SignUpResponse(var msg: String)
+
+data class ForgotPasswordRequest(var username: String)
+
+data class ForgotPasswordResponse(var msg: String)
