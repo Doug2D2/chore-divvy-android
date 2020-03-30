@@ -65,13 +65,17 @@ class LoginFragment : Fragment() {
 
         loginViewModel.navigateToSignUp.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
             if (navigate) {
-                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+                if (findNavController().currentDestination?.id == R.id.loginFragment) {
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
+                }
             }
         })
 
         loginViewModel.navigateToForgotPassword.observe(viewLifecycleOwner, Observer { navigate ->
             if (navigate) {
-                findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
+                if (findNavController().currentDestination?.id == R.id.loginFragment) {
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
+                }
             }
         })
 
@@ -85,7 +89,10 @@ class LoginFragment : Fragment() {
                 LoginStatus.SUCCESS -> {
                     binding.errorText.visibility = View.GONE
                     binding.loginButton.isEnabled = true
-                    findNavController().navigate(R.id.action_loginFragment_to_choreListFragment)
+
+                    if (findNavController().currentDestination?.id == R.id.loginFragment) {
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
+                    }
                 }
                 LoginStatus.INVALID_CREDENTIALS -> {
                     Timber.i("Incorrect username and/or password")
