@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
 
@@ -48,7 +49,14 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
                     userRepository.login(username.value.toString(), password.value.toString())
 
                     _loginStatus.value = LoginStatus.SUCCESS
+                } catch (e: HttpException) {
+                    when(e.code()) {
+                        401 -> _loginStatus.value = LoginStatus.INVALID_CREDENTIALS
+                        else -> _loginStatus.value = LoginStatus.OTHER_ERROR
+                    }
+                    Timber.i("HTTP response ${e.code()}")
                 } catch (e: Exception) {
+                    Timber.e(e)
                     _loginStatus.value = LoginStatus.CONNECTION_ERROR
                 }
             }
