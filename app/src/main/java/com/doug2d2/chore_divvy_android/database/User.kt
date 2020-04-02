@@ -19,5 +19,11 @@ data class User (
     var firstName: String = "",
 
     @ColumnInfo(name = "last_name")
-    var lastName: String = ""
+    var lastName: String = "",
+
+    @ColumnInfo(name = "createdAt")
+    var createdAt: String = "",
+
+    @ColumnInfo(name = "updatedAt")
+    var updatedAt: String = ""
 )

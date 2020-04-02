@@ -1,5 +1,6 @@
 package com.doug2d2.chore_divvy_android.network
 
+import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
@@ -9,7 +10,7 @@ import retrofit2.http.POST
 
 interface ChoreDivvyService {
     @POST("login")
-    fun login(@Body body: LoginRequest): Deferred<LoginResponse>
+    fun login(@Body body: LoginRequest): Deferred<User>
 
     @POST("signup")
     fun signUp(@Body body: SignUpRequest): Deferred<SignUpResponse>
@@ -20,7 +21,8 @@ interface ChoreDivvyService {
 
 object ChoreDivvyNetwork {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:3000/")
+        //.baseUrl("http://10.0.2.2:8080/")
+        .baseUrl("http://52.203.46.84:8080/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
