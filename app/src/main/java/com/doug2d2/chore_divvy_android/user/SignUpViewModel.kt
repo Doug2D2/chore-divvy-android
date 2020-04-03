@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import timber.log.Timber
 
 enum class SignUpStatus { LOADING, SUCCESS, INVALID_USERNAME, INVALID_PASSWORD, CONNECTION_ERROR, OTHER_ERROR }
@@ -44,6 +45,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                         username.value.toString(), password.value.toString())
 
                     _signUpStatus.value = SignUpStatus.SUCCESS
+                } catch (e: HttpException) {
+                    _signUpStatus.value = SignUpStatus.OTHER_ERROR
                 } catch (e: Exception) {
                     _signUpStatus.value = SignUpStatus.CONNECTION_ERROR
                 }

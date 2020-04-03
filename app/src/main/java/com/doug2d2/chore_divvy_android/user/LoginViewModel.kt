@@ -54,7 +54,6 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
                         401 -> _loginStatus.value = LoginStatus.INVALID_CREDENTIALS
                         else -> _loginStatus.value = LoginStatus.OTHER_ERROR
                     }
-                    Timber.i("HTTP response ${e.code()}")
                 } catch (e: Exception) {
                     Timber.e(e)
                     _loginStatus.value = LoginStatus.CONNECTION_ERROR

@@ -13,7 +13,7 @@ interface ChoreDivvyService {
     fun login(@Body body: LoginRequest): Deferred<User>
 
     @POST("signup")
-    fun signUp(@Body body: SignUpRequest): Deferred<SignUpResponse>
+    fun signUp(@Body body: SignUpRequest): Deferred<User>
 
     @POST("forgotPassword")
     fun forgotPassword(@Body body: ForgotPasswordRequest): Deferred<ForgotPasswordResponse>
@@ -22,7 +22,7 @@ interface ChoreDivvyService {
 object ChoreDivvyNetwork {
     private val retrofit = Retrofit.Builder()
         //.baseUrl("http://10.0.2.2:8080/")
-        .baseUrl("http://52.203.46.84:8080/")
+        .baseUrl("http://54.175.51.16:8080/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
@@ -32,12 +32,8 @@ object ChoreDivvyNetwork {
 
 data class LoginRequest(var username: String, var password: String)
 
-data class LoginResponse(var msg: String)
-
 data class SignUpRequest(var firstName: String, var lastName: String, var username: String,
                          var password: String)
-
-data class SignUpResponse(var msg: String)
 
 data class ForgotPasswordRequest(var username: String)
 
