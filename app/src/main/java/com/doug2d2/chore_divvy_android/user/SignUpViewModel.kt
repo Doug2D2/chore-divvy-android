@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
 
-enum class SignUpStatus { LOADING, SUCCESS, INVALID_USERNAME, INVALID_PASSWORD, CONNECTION_ERROR, OTHER_ERROR }
+enum class SignUpStatus { LOADING, SUCCESS, USERNAME_ALREADY_EXISTS, INVALID_PASSWORD, CONNECTION_ERROR, OTHER_ERROR }
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     private val viewModelJob = Job()
@@ -46,8 +46,12 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
 
                     _signUpStatus.value = SignUpStatus.SUCCESS
                 } catch (e: HttpException) {
-                    _signUpStatus.value = SignUpStatus.OTHER_ERROR
+                    when(e.code()) {
+                        401 -> _signUpStatus.value = SignUpStatus.USERNAME_ALREADY_EXISTS
+                        else -> _signUpStatus.value = SignUpStatus.OTHER_ERROR
+                    }
                 } catch (e: Exception) {
+                    Timber.i(e)
                     _signUpStatus.value = SignUpStatus.CONNECTION_ERROR
                 }
             }

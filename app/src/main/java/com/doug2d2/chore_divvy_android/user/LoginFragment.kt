@@ -102,13 +102,13 @@ class LoginFragment : Fragment() {
                 }
                 LoginStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
-                    binding.errorText.text = "Connection Error"
+                    binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = true
                 }
                 LoginStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
-                    binding.errorText.text = "Other Error"
+                    binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = true
                 }
