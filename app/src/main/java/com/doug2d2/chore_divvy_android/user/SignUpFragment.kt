@@ -103,9 +103,9 @@ class SignUpFragment : Fragment() {
                         findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToChoreListFragment())
                     }
                 }
-                SignUpStatus.INVALID_USERNAME -> {
-                    Timber.i("Invalid username")
-                    binding.errorText.text = "Invalid username"
+                SignUpStatus.USERNAME_ALREADY_EXISTS -> {
+                    Timber.i("Username already exists")
+                    binding.errorText.text = "Account ${signUpViewModel.username.value} already exists"
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
                 }
@@ -117,13 +117,13 @@ class SignUpFragment : Fragment() {
                 }
                 SignUpStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
-                    binding.errorText.text = "Connection Error"
+                    binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
                 }
                 SignUpStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
-                    binding.errorText.text = "Other Error"
+                    binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
                 }
