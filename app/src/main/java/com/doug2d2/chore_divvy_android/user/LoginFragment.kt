@@ -1,5 +1,7 @@
 package com.doug2d2.chore_divvy_android.user
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -32,6 +34,11 @@ class LoginFragment : Fragment() {
         val loginViewModel = ViewModelProviders.of(
             this, viewModelFactory).get(LoginViewModel::class.java)
         binding.viewModel = loginViewModel
+
+//        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+//        val editor = sharedPrefs.edit()
+//        editor.putBoolean("loggedIn", true)
+//        editor.apply()
 
         loginViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
             if (!username.isNullOrBlank() && !loginViewModel.password.value.isNullOrBlank()) {
@@ -114,6 +121,10 @@ class LoginFragment : Fragment() {
                 }
             }
         })
+
+//        if (sharedPrefs.getBoolean("loggedIn", false)) {
+//            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
+//        }
 
         return binding.root
     }

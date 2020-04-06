@@ -109,9 +109,15 @@ class SignUpFragment : Fragment() {
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
                 }
-                SignUpStatus.INVALID_PASSWORD -> {
-                    Timber.i("Invalid password")
-                    binding.errorText.text = "Invalid password"
+                SignUpStatus.USERNAME_INVALID_FORMAT -> {
+                    Timber.i("Username is not a valid email address")
+                    binding.errorText.text = "Email address invalid"
+                    binding.errorText.visibility = View.VISIBLE
+                    binding.signUpButton.isEnabled = true
+                }
+                SignUpStatus.PASSWORD_TOO_SHORT -> {
+                    Timber.i("Password too short")
+                    binding.errorText.text = "Password must be at least 8 characters."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
                 }

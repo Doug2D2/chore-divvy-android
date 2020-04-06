@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
 
-enum class SignUpStatus { LOADING, SUCCESS, USERNAME_ALREADY_EXISTS, INVALID_PASSWORD, CONNECTION_ERROR, OTHER_ERROR }
+enum class SignUpStatus { LOADING, SUCCESS, USERNAME_INVALID_FORMAT, USERNAME_ALREADY_EXISTS,
+    PASSWORD_TOO_SHORT, CONNECTION_ERROR, OTHER_ERROR }
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     private val viewModelJob = Job()
@@ -36,6 +37,19 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
 
         if (!firstName.value.isNullOrBlank() && !lastName.value.isNullOrBlank() &&
             !username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
+
+            // Username must be a valid email address
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username.value.toString()).matches()) {
+                _signUpStatus.value = SignUpStatus.USERNAME_INVALID_FORMAT
+                return
+            }
+
+            // Password must be 8 characters or more
+            if (password.value.toString().length < 8) {
+                _signUpStatus.value = SignUpStatus.PASSWORD_TOO_SHORT
+                return
+            }
+
             uiScope.launch {
                 try {
                     Timber.i("Signing up")
