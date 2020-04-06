@@ -35,10 +35,10 @@ class LoginFragment : Fragment() {
             this, viewModelFactory).get(LoginViewModel::class.java)
         binding.viewModel = loginViewModel
 
-//        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
-//        val editor = sharedPrefs.edit()
-//        editor.putBoolean("loggedIn", true)
-//        editor.apply()
+        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+        editor.putBoolean("loggedIn", true)
+        editor.apply()
 
         loginViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
             if (!username.isNullOrBlank() && !loginViewModel.password.value.isNullOrBlank()) {
