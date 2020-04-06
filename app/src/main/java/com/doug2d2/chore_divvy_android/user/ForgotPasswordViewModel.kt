@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
 
@@ -40,6 +41,11 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
                     userRepository.forgotPassword(username.value.toString())
 
                     _forgotPasswordStatus.value = ForgotPasswordStatus.SUCCESS
+                } catch (e: HttpException) {
+                    when(e.code()) {
+                        401 -> _forgotPasswordStatus.value = ForgotPasswordStatus.INVALID_USERNAME
+                        else -> _forgotPasswordStatus.value = ForgotPasswordStatus.OTHER_ERROR
+                    }
                 } catch (e: Exception) {
                     _forgotPasswordStatus.value = ForgotPasswordStatus.CONNECTION_ERROR
                 }
