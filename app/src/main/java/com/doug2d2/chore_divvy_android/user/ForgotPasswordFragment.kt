@@ -52,9 +52,15 @@ class ForgotPasswordFragment : Fragment() {
                     binding.sendLinkButton.isEnabled = true
                     Toast.makeText(this.requireContext(), "An email has been sent to ${forgotPasswordViewModel.username.value} with your new password.", Toast.LENGTH_LONG).show()
                 }
-                ForgotPasswordStatus.INVALID_USERNAME -> {
+                ForgotPasswordStatus.USERNAME_DOESNT_EXIST -> {
                     Timber.i("Unknown username ${forgotPasswordViewModel.username.value}")
                     binding.errorText.text = "${forgotPasswordViewModel.username.value} does not have an account."
+                    binding.errorText.visibility = View.VISIBLE
+                    binding.sendLinkButton.isEnabled = true
+                }
+                ForgotPasswordStatus.USERNAME_INVALID_FORMAT -> {
+                    Timber.i("Username is not a valid email address")
+                    binding.errorText.text = "Email address invalid"
                     binding.errorText.visibility = View.VISIBLE
                     binding.sendLinkButton.isEnabled = true
                 }
