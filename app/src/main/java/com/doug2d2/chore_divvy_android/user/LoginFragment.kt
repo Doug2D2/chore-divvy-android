@@ -122,9 +122,9 @@ class LoginFragment : Fragment() {
             }
         })
 
-//        if (sharedPrefs.getBoolean("loggedIn", false)) {
-//            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
-//        }
+        if (sharedPrefs.getBoolean("loggedIn", false)) {
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
+        }
 
         return binding.root
     }
