@@ -1,60 +1,50 @@
 package com.doug2d2.chore_divvy_android.chore
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
+import com.doug2d2.chore_divvy_android.databinding.FragmentLoginBinding
+import com.doug2d2.chore_divvy_android.user.LoginViewModel
+import com.doug2d2.chore_divvy_android.user.LoginViewModelFactory
+import timber.log.Timber
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ChoreListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ChoreListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chore_list, container, false)
-    }
+        // Get a reference to the binding object and inflate the fragment views.
+        val binding: FragmentChoreListBinding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_chore_list, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ChoreListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ChoreListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        val application = requireNotNull(this.activity).application
+        val viewModelFactory = ChoreListViewModelFactory(application)
+        val choreListViewModel = ViewModelProviders.of(
+            this, viewModelFactory).get(ChoreListViewModel::class.java)
+        binding.viewModel = choreListViewModel
+
+        val adapter = ChoreListAdapter(ChoreListClickListener { chore ->
+//            val destination = Uri.parse(chapter.website)
+//            startActivity(Intent(Intent.ACTION_VIEW, destination))
+            Timber.i("Clicked")
+        })
+
+        // Sets the adapter of the RecyclerView
+        binding.choreList.adapter = adapter
+
+        return binding.root
     }
 }

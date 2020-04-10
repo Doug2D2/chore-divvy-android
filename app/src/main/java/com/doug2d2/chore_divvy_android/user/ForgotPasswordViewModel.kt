@@ -15,7 +15,7 @@ import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
 
-enum class ForgotPasswordStatus { LOADING, SUCCESS, INVALID_USERNAME, CONNECTION_ERROR, OTHER_ERROR }
+enum class ForgotPasswordStatus { LOADING, SUCCESS, USERNAME_INVALID_FORMAT, USERNAME_DOESNT_EXIST, CONNECTION_ERROR, OTHER_ERROR }
 
 class ForgotPasswordViewModel(application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
@@ -33,6 +33,13 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
         Timber.i("Forgot password, username: %s", username.value)
 
         if (!username.value.isNullOrBlank()) {
+
+            // Username must be a valid email address
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(username.value.toString()).matches()) {
+                _forgotPasswordStatus.value = ForgotPasswordStatus.USERNAME_INVALID_FORMAT
+                return
+            }
+
             uiScope.launch {
                 try {
                     Timber.i("Forgot password")
@@ -43,7 +50,7 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
                     _forgotPasswordStatus.value = ForgotPasswordStatus.SUCCESS
                 } catch (e: HttpException) {
                     when(e.code()) {
-                        401 -> _forgotPasswordStatus.value = ForgotPasswordStatus.INVALID_USERNAME
+                        401 -> _forgotPasswordStatus.value = ForgotPasswordStatus.USERNAME_DOESNT_EXIST
                         else -> _forgotPasswordStatus.value = ForgotPasswordStatus.OTHER_ERROR
                     }
                 } catch (e: Exception) {
