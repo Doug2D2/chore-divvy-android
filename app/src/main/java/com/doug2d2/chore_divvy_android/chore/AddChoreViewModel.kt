@@ -99,12 +99,7 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         }
 
         // Enable Add Chore button if all required fields have a value
-        if (!choreName.value.isNullOrBlank() && selectedFreq.value != -1 &&
-            selectedCat.value != -1 && selectedDiff.value != -1) {
-            addChoreButtonEnabled.value = true
-        } else {
-            addChoreButtonEnabled.value = false
-        }
+        checkEnableAddChoreButton()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -121,6 +116,11 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         }
 
         // Enable Add Chore button if all required fields have a value
+        checkEnableAddChoreButton()
+    }
+
+    // Checks if all required fields have a value and enables addChore button if they do
+    fun checkEnableAddChoreButton() {
         if (!choreName.value.isNullOrBlank() && selectedFreq.value != -1 &&
             selectedCat.value != -1 && selectedDiff.value != -1) {
             addChoreButtonEnabled.value = true

@@ -72,12 +72,7 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
 
         addChoreViewModel.choreName.observe(viewLifecycleOwner, Observer<String> { name ->
             // Enable Add Chore button if all required fields have a value
-            if (!name.isNullOrBlank() && addChoreViewModel.selectedFreq.value != -1 &&
-                addChoreViewModel.selectedCat.value != -1 && addChoreViewModel.selectedDiff.value != -1) {
-                addChoreViewModel.addChoreButtonEnabled.value = true
-            } else {
-                addChoreViewModel.addChoreButtonEnabled.value = false
-            }
+            addChoreViewModel.checkEnableAddChoreButton()
         })
 
         binding.setLifecycleOwner(this)
