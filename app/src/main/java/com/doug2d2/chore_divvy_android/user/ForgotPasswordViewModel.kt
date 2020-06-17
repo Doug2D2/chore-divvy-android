@@ -49,8 +49,9 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
 
                     _forgotPasswordStatus.value = ForgotPasswordStatus.SUCCESS
                 } catch (e: HttpException) {
+                    Timber.i("HTTP ERROR: " + e.code())
                     when(e.code()) {
-                        401 -> _forgotPasswordStatus.value = ForgotPasswordStatus.USERNAME_DOESNT_EXIST
+                        400 -> _forgotPasswordStatus.value = ForgotPasswordStatus.USERNAME_DOESNT_EXIST
                         else -> _forgotPasswordStatus.value = ForgotPasswordStatus.OTHER_ERROR
                     }
                 } catch (e: Exception) {

@@ -23,7 +23,11 @@
         android:id="@+id/choreListFragment"
         android:name="com.doug2d2.chore_divvy_android.chore.ChoreListFragment"
         android:label="fragment_chore_list"
-        tools:layout="@layout/fragment_chore_list" />
+        tools:layout="@layout/fragment_chore_list" >
+        <action
+            android:id="@+id/action_choreListFragment_to_addChoreFragment"
+            app:destination="@id/addChoreFragment" />
+    </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.doug2d2.chore_divvy_android.user.ForgotPasswordFragment"
@@ -45,4 +49,8 @@
             android:id="@+id/action_signUpFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addChoreFragment"
+        android:name="com.doug2d2.chore_divvy_android.chore.AddChoreFragment"
+        android:label="AddChoreFragment" />
 </navigation>

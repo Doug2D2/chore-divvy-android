@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
+import kotlin.concurrent.thread
 
 enum class LoginStatus { LOADING, SUCCESS, INVALID_CREDENTIALS, CONNECTION_ERROR, OTHER_ERROR }
 
@@ -28,6 +29,8 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     private val _loginStatus = MutableLiveData<LoginStatus>()
     val loginStatus: LiveData<LoginStatus>
         get() = _loginStatus
+
+    var userID = -1
 
     private val _navigateToSignUp = MutableLiveData<Boolean>()
     val navigateToSignUp: LiveData<Boolean>
@@ -46,7 +49,8 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
                     Timber.i("Logging in")
                     _loginStatus.value = LoginStatus.LOADING
 
-                    userRepository.login(username.value.toString(), password.value.toString())
+                    val user = userRepository.login(username.value.toString(), password.value.toString())
+                    userID = user.id
 
                     _loginStatus.value = LoginStatus.SUCCESS
                 } catch (e: HttpException) {
@@ -66,7 +70,15 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
         _navigateToSignUp.value = true
     }
 
+    fun onNavigatedToSignUp() {
+        _navigateToSignUp.value = false
+    }
+
     fun onForgotPassword() {
         _navigateToForgotPassword.value = true
+    }
+
+    fun onNavigatedToForgotPassword() {
+        _navigateToForgotPassword.value = false
     }
 }

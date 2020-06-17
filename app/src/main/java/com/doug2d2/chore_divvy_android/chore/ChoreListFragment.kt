@@ -1,23 +1,26 @@
 package com.doug2d2.chore_divvy_android.chore
 
-import android.content.Intent
-import android.net.Uri
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
-import com.doug2d2.chore_divvy_android.databinding.FragmentLoginBinding
-import com.doug2d2.chore_divvy_android.user.LoginViewModel
-import com.doug2d2.chore_divvy_android.user.LoginViewModelFactory
+import com.doug2d2.chore_divvy_android.setCheckboxImage
+import kotlinx.android.synthetic.main.chore_item.view.*
 import timber.log.Timber
 
 class ChoreListFragment : Fragment() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -37,13 +40,27 @@ class ChoreListFragment : Fragment() {
         binding.viewModel = choreListViewModel
 
         val adapter = ChoreListAdapter(ChoreListClickListener { chore ->
-//            val destination = Uri.parse(chapter.website)
-//            startActivity(Intent(Intent.ACTION_VIEW, destination))
-            Timber.i("Clicked")
+            choreListViewModel.updateChoreStatus(chore)
+
+            // Get index of chore and update the checkbox
+            val idx = choreListViewModel.getChoreListItemIndex(chore)
+            if (idx > -1) {
+                binding.choreList.get(idx).layout.checkbox.setCheckboxImage(chore)
+            }
+        })
+
+        choreListViewModel.navigateToAddChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
+            if (navigate) {
+                val navController = findNavController()
+                navController.navigate(R.id.action_choreListFragment_to_addChoreFragment)
+                choreListViewModel.onNavigatedToAddChore()
+            }
         })
 
         // Sets the adapter of the RecyclerView
         binding.choreList.adapter = adapter
+
+        binding.setLifecycleOwner(this)
 
         return binding.root
     }

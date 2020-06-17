@@ -1,6 +1,7 @@
 package com.doug2d2.chore_divvy_android
 
 import android.view.View
+import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.chore.ChoreListAdapter
@@ -15,12 +16,10 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Chore>?) {
     }
 }
 
-/*
-@BindingAdapter("showOnlyWhenEmpty")
-fun View.showOnlyWhenEmpty(data: List<Chore>?) {
-    visibility = when {
-        data == null || data.isEmpty() -> View.VISIBLE
-        else -> View.GONE
-    }
+@BindingAdapter("checkboxImage")
+fun ImageView.setCheckboxImage(chore: Chore) {
+    setImageResource(when (chore.status) {
+        "Completed" -> R.drawable.baseline_check_box_black_18dp
+        else -> R.drawable.baseline_check_box_outline_blank_black_18dp
+    })
 }
-*/

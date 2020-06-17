@@ -1,5 +1,7 @@
 package com.doug2d2.chore_divvy_android.user
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -7,6 +9,8 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -37,10 +41,16 @@ class LoginFragment : Fragment() {
 
         val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
-        editor.putBoolean("loggedIn", true)
-        editor.apply()
+
+        // If already logged in navigate to chore list
+        if (sharedPrefs.getBoolean("loggedIn", false) &&
+            sharedPrefs.getInt("userID", -1) != -1)  {
+            Timber.i("User " +  sharedPrefs.getInt("userID", -1) + " is logged in")
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
+        }
 
         loginViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
+            binding.errorText.visibility = View.GONE
             if (!username.isNullOrBlank() && !loginViewModel.password.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
@@ -49,6 +59,7 @@ class LoginFragment : Fragment() {
         })
 
         loginViewModel.password.observe(viewLifecycleOwner, Observer<String> { password ->
+            binding.errorText.visibility = View.GONE
             if (!password.isNullOrBlank() && !loginViewModel.username.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
@@ -72,17 +83,15 @@ class LoginFragment : Fragment() {
 
         loginViewModel.navigateToSignUp.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
             if (navigate) {
-                if (findNavController().currentDestination?.id == R.id.loginFragment) {
-                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
-                }
+                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
+                loginViewModel.onNavigatedToSignUp()
             }
         })
 
         loginViewModel.navigateToForgotPassword.observe(viewLifecycleOwner, Observer { navigate ->
             if (navigate) {
-                if (findNavController().currentDestination?.id == R.id.loginFragment) {
-                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
-                }
+                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
+                loginViewModel.onNavigatedToForgotPassword()
             }
         })
 
@@ -92,11 +101,19 @@ class LoginFragment : Fragment() {
                     Timber.i("Loading...")
                     binding.errorText.visibility = View.GONE
                     binding.loginButton.isEnabled = false
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 LoginStatus.SUCCESS -> {
                     binding.errorText.visibility = View.GONE
                     binding.loginButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
 
+                    // Set shared prefs so user stays logged in
+                    editor.putBoolean("loggedIn", true)
+                    editor.putInt("userID", loginViewModel.userID)
+                    editor.apply()
+
+                    // Navigate to chore list
                     if (findNavController().currentDestination?.id == R.id.loginFragment) {
                         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
                     }
@@ -106,25 +123,24 @@ class LoginFragment : Fragment() {
                     binding.errorText.text = "Incorrect username and/or password"
                     binding.errorText.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 LoginStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 LoginStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         })
-
-        if (sharedPrefs.getBoolean("loggedIn", false)) {
-            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
-        }
 
         return binding.root
     }

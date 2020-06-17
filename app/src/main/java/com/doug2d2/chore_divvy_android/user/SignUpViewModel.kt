@@ -31,6 +31,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val signUpStatus: LiveData<SignUpStatus>
         get() = _signUpStatus
 
+    var userID = -1
+
     fun onSignUp() {
         Timber.i("Signing up, firstName: %s, lastName: %s username: %s; password: %s",
             firstName.value, lastName.value, username.value, password.value)
@@ -55,8 +57,9 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     Timber.i("Signing up")
                     _signUpStatus.value = SignUpStatus.LOADING
 
-                    userRepository.signUp(firstName.value.toString(), lastName.value.toString(),
+                    val user = userRepository.signUp(firstName.value.toString(), lastName.value.toString(),
                         username.value.toString(), password.value.toString())
+                    userID = user.id
 
                     _signUpStatus.value = SignUpStatus.SUCCESS
                 } catch (e: HttpException) {

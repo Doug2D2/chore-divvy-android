@@ -1,12 +1,14 @@
 package com.doug2d2.chore_divvy_android.network
 
+import com.doug2d2.chore_divvy_android.database.Category
+import com.doug2d2.chore_divvy_android.database.Chore
+import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ChoreDivvyService {
     @POST("login")
@@ -15,14 +17,26 @@ interface ChoreDivvyService {
     @POST("sign-up")
     fun signUp(@Body body: SignUpRequest): Deferred<User>
 
-    @POST("forgotPassword")
+    @PUT("forgot-password")
     fun forgotPassword(@Body body: ForgotPasswordRequest): Deferred<ForgotPasswordResponse>
+
+    @GET("get-chores")
+    fun getChores(): Deferred<List<Chore>>
+
+    @PUT("update-chore/{id}")
+    fun updateChore(@Path("id") id: Int, @Body body: Chore): Deferred<UpdateChoreResponse>
+
+    @GET("get-frequencies")
+    fun getFrequencies(): Deferred<List<Frequency>>
+
+    @GET("get-categories")
+    fun getCategories(): Deferred<List<Category>>
 }
 
 object ChoreDivvyNetwork {
     private val retrofit = Retrofit.Builder()
-        //.baseUrl("http://10.0.2.2:8080/")
-        .baseUrl("http://54.210.21.73:8080/")
+        //.baseUrl("http://10.0.2.2:8080/") //localhost
+        .baseUrl("http://54.237.127.150:8080/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
@@ -38,3 +52,5 @@ data class SignUpRequest(var firstName: String, var lastName: String, var userna
 data class ForgotPasswordRequest(var username: String)
 
 data class ForgotPasswordResponse(var msg: String)
+
+data class UpdateChoreResponse(var numChanged: List<Int>)

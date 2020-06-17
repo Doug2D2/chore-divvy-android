@@ -8,14 +8,21 @@ interface CategoryDao {
     @Insert
     fun insert(category: Category)
 
+    @Insert
+    @JvmSuppressWildcards
+    fun insertAll(categories: List<Category>)
+
     @Update
     fun update(category: Category)
 
     @Delete
     fun delete(category: Category)
 
+    @Query("DELETE FROM categories")
+    fun deleteAll()
+
     @Query("SELECT * FROM categories")
-    fun getAll(): LiveData<List<Category>>
+    fun getAll(): List<Category>
 
     @Query("SELECT * FROM categories WHERE id = :id")
     fun getById(id: Int): Category?

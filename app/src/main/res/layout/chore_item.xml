@@ -18,24 +18,56 @@ android:id="@+id/layout">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:onClick="@{() -> clickListener.onClick(chore)}"
     tools:context=".chore.ChoreListFragment">
+
+    <ImageView
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/chore_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/marginStartEnd"
+        android:layout_marginEnd="@dimen/marginStartEnd"
+        android:layout_marginTop="@dimen/marginBetweenElements"
+        android:contentDescription="@string/chore_item_check_box_image"
+        app:checkboxImage="@{chore}"
+        android:onClick="@{() -> clickListener.onClick(chore)}"
+        tools:srcCompat="@drawable/baseline_check_box_outline_blank_black_18dp" />
 
     <TextView
         android:id="@+id/chore_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/marginStartEnd"
-        android:layout_marginEnd="@dimen/marginStartEnd"
         android:gravity="center_vertical"
         android:text="@{chore.choreName}"
+        app:layout_constraintBottom_toTopOf="@id/chore_assignee"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/checkbox"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginTop="@dimen/marginBetweenElements"
+        android:layout_marginStart="@dimen/marginStartEnd"
+        android:layout_marginEnd="@dimen/marginStartEnd"
+        tools:text="CHORE" />
+
+    <TextView
+        android:id="@+id/chore_assignee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@{String.valueOf(chore.assigneeId)}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="CHORE" />
+        android:layout_marginStart="@dimen/marginStartEnd"
+        android:layout_marginEnd="@dimen/marginStartEnd"
+        tools:text="PERSON" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

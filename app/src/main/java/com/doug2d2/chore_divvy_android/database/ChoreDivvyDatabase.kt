@@ -5,9 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class, Category::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, Category::class, Chore::class, Frequency::class], version = 1, exportSchema = false)
 abstract class ChoreDivvyDatabase: RoomDatabase() {
+    abstract val categoryDao: CategoryDao
+    abstract val choreDao: ChoreDao
+    abstract val frequencyDao: FrequencyDao
     abstract val userDao: UserDao
+
 
     companion object {
         @Volatile

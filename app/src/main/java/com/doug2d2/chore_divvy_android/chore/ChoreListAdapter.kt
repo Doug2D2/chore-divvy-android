@@ -11,7 +11,7 @@ import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
 class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
     companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
         override fun areItemsTheSame(oldItem: Chore, newItem: Chore): Boolean {
-            return oldItem === newItem
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Chore, newItem: Chore): Boolean {

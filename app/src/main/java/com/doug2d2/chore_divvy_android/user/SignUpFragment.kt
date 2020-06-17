@@ -1,5 +1,7 @@
 package com.doug2d2.chore_divvy_android.user
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
@@ -34,7 +36,11 @@ class SignUpFragment : Fragment() {
             this, viewModelFactory).get(SignUpViewModel::class.java)
         binding.viewModel = signUpViewModel
 
+        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+
         signUpViewModel.firstName.observe(viewLifecycleOwner, Observer<String> { firstName ->
+            binding.errorText.visibility = View.GONE
             if (!firstName.isNullOrBlank() && !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -45,6 +51,7 @@ class SignUpFragment : Fragment() {
         })
 
         signUpViewModel.lastName.observe(viewLifecycleOwner, Observer<String> { lastName ->
+            binding.errorText.visibility = View.GONE
             if (!lastName.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -55,6 +62,7 @@ class SignUpFragment : Fragment() {
         })
 
         signUpViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
+            binding.errorText.visibility = View.GONE
             if (!username.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -65,6 +73,7 @@ class SignUpFragment : Fragment() {
         })
 
         signUpViewModel.password.observe(viewLifecycleOwner, Observer<String> { password ->
+            binding.errorText.visibility = View.GONE
             if (!password.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank()) {
@@ -94,44 +103,54 @@ class SignUpFragment : Fragment() {
                     Timber.i("Loading...")
                     binding.errorText.visibility = View.GONE
                     binding.signUpButton.isEnabled = false
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 SignUpStatus.SUCCESS -> {
                     binding.errorText.visibility = View.GONE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
 
-                    if (findNavController().currentDestination?.id == R.id.signUpFragment) {
-                        findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToChoreListFragment())
-                    }
+                    // Set shared prefs so user stays logged in
+                    editor.putBoolean("loggedIn", true)
+                    editor.putInt("userID", signUpViewModel.userID)
+                    editor.apply()
+
+                    findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToChoreListFragment())
                 }
                 SignUpStatus.USERNAME_ALREADY_EXISTS -> {
                     Timber.i("Username already exists")
                     binding.errorText.text = "Account ${signUpViewModel.username.value} already exists"
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 SignUpStatus.USERNAME_INVALID_FORMAT -> {
                     Timber.i("Username is not a valid email address")
                     binding.errorText.text = "Email address invalid"
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 SignUpStatus.PASSWORD_TOO_SHORT -> {
                     Timber.i("Password too short")
                     binding.errorText.text = "Password must be at least 8 characters."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 SignUpStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 SignUpStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.signUpButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         })

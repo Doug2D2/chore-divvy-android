@@ -33,6 +33,7 @@ class ForgotPasswordFragment : Fragment() {
         binding.viewModel = forgotPasswordViewModel
 
         forgotPasswordViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
+            binding.errorText.visibility = View.GONE
             if (!username.isNullOrBlank()) {
                 binding.sendLinkButton.isEnabled = true
             } else {
@@ -46,10 +47,12 @@ class ForgotPasswordFragment : Fragment() {
                     Timber.i("Loading...")
                     binding.errorText.visibility = View.GONE
                     binding.sendLinkButton.isEnabled = false
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 ForgotPasswordStatus.SUCCESS -> {
                     binding.errorText.visibility = View.GONE
                     binding.sendLinkButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                     Toast.makeText(this.requireContext(), "An email has been sent to ${forgotPasswordViewModel.username.value} with your new password.", Toast.LENGTH_LONG).show()
                 }
                 ForgotPasswordStatus.USERNAME_DOESNT_EXIST -> {
@@ -57,24 +60,28 @@ class ForgotPasswordFragment : Fragment() {
                     binding.errorText.text = "${forgotPasswordViewModel.username.value} does not have an account."
                     binding.errorText.visibility = View.VISIBLE
                     binding.sendLinkButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 ForgotPasswordStatus.USERNAME_INVALID_FORMAT -> {
                     Timber.i("Username is not a valid email address")
                     binding.errorText.text = "Email address invalid"
                     binding.errorText.visibility = View.VISIBLE
                     binding.sendLinkButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 ForgotPasswordStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.sendLinkButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
                 ForgotPasswordStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     binding.sendLinkButton.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         })

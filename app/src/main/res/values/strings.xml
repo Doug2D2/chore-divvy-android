@@ -10,4 +10,12 @@
     <string name="forgot_password_button_text">Forgot Password?</string>
     <string name="send_link_button_text">Send Link</string>
     <string name="forgot_password_text">Enter your email address and we will send you a link to reset your password.</string>
+    <string name="chore_item_check_box_image">Check box for chore status</string>
+    <string name="add_chore_button_text">Add chore</string>
+    <string name="choreName_edit_hint">Chore Name</string>
+    <string name="notes_edit_text_hint">Notes</string>
+    <string name="frequency_spinner_hint">Frequency</string>
+    <string name="category_spinner_hint">Category</string>
+    <string name="difficulty_spinner_hint">Difficulty</string>
+    <string name="addChore_button_text">Add Chore</string>
 </resources>
