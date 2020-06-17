@@ -5,17 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.SpinnerAdapter
+import android.widget.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.databinding.FragmentAddChoreBinding
+import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
+import com.doug2d2.chore_divvy_android.user.LoginStatus
 import fr.ganfra.materialspinner.MaterialSpinner
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -73,6 +73,40 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
         addChoreViewModel.choreName.observe(viewLifecycleOwner, Observer<String> { name ->
             // Enable Add Chore button if all required fields have a value
             addChoreViewModel.checkEnableAddChoreButton()
+        })
+
+        addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddChoreStatus> { addChoreStatus ->
+            when (addChoreStatus) {
+                AddChoreStatus.LOADING -> {
+                    Timber.i("Loading...")
+                    addChoreViewModel.addChoreButtonEnabled.value = false
+                    binding.errorText.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                AddChoreStatus.SUCCESS -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
+
+                    Toast.makeText(this.requireContext(), "Chore Added", Toast.LENGTH_SHORT).show()
+
+                    // Navigate to chore list
+                    findNavController().navigate(AddChoreFragmentDirections.actionAddChoreFragmentToChoreListFragment())
+                }
+                AddChoreStatus.CONNECTION_ERROR -> {
+                    Timber.i("Connection Error")
+                    binding.errorText.text = "Error connecting to our servers, please try again."
+                    binding.errorText.visibility = View.VISIBLE
+                    addChoreViewModel.addChoreButtonEnabled.value = true
+                    binding.progressBar.visibility = View.GONE
+                }
+                AddChoreStatus.OTHER_ERROR -> {
+                    Timber.i("Other Error")
+                    binding.errorText.text = "An unknown error has occurred, please try again."
+                    binding.errorText.visibility = View.VISIBLE
+                    addChoreViewModel.addChoreButtonEnabled.value = true
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
         })
 
         binding.setLifecycleOwner(this)

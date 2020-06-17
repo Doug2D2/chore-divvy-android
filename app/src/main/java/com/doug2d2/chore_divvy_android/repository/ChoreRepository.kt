@@ -3,15 +3,16 @@ package com.doug2d2.chore_divvy_android.repository
 import androidx.lifecycle.LiveData
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDao
+import com.doug2d2.chore_divvy_android.network.AddChoreRequest
 import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ChoreRepository(private val dataSource: ChoreDao) {
-    suspend fun addChore(chore: Chore) {
-        return withContext(Dispatchers.IO) {
-            dataSource.insert(chore)
+    suspend fun addChore(chore: AddChoreRequest) {
+        withContext(Dispatchers.IO) {
+            ChoreDivvyNetwork.choreDivvy.addChore(chore)
         }
     }
 

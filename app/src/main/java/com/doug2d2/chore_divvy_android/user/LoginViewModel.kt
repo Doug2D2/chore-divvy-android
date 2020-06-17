@@ -41,8 +41,6 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
         get() = _navigateToForgotPassword
 
     fun onLogin() {
-        Timber.i("Logging in, username: %s; password: %s", username.value, password.value)
-
         if (!username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
             uiScope.launch {
                 try {

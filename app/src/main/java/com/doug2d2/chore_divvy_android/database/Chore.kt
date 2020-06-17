@@ -22,7 +22,7 @@ data class Chore (
     @ColumnInfo(name = "date_complete")
     @field:Json(name = "date_complete")
     @Nullable
-    var dateComplete: String?,
+    var dateComplete: String? = "",
 
     @ColumnInfo(name = "frequency_id")
     @field:Json(name = "frequency_id")
@@ -34,7 +34,7 @@ data class Chore (
 
     @ColumnInfo(name = "assignee_id")
     @field:Json(name = "assignee_id")
-    var assigneeId: Int = 0,
+    var assigneeId: Int? = 0,
 
     @ColumnInfo(name = "difficulty")
     var difficulty: String = "",

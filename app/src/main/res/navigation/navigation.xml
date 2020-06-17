@@ -52,5 +52,9 @@
     <fragment
         android:id="@+id/addChoreFragment"
         android:name="com.doug2d2.chore_divvy_android.chore.AddChoreFragment"
-        android:label="AddChoreFragment" />
+        android:label="AddChoreFragment" >
+        <action
+            android:id="@+id/action_addChoreFragment_to_choreListFragment"
+            app:destination="@id/choreListFragment" />
+    </fragment>
 </navigation>

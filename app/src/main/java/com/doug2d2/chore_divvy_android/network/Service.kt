@@ -1,10 +1,14 @@
 package com.doug2d2.chore_divvy_android.network
 
+import androidx.annotation.Nullable
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.squareup.moshi.Json
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -22,6 +26,9 @@ interface ChoreDivvyService {
 
     @GET("get-chores")
     fun getChores(): Deferred<List<Chore>>
+
+    @POST("add-chore")
+    fun addChore(@Body body: AddChoreRequest): Deferred<Chore>
 
     @PUT("update-chore/{id}")
     fun updateChore(@Path("id") id: Int, @Body body: Chore): Deferred<UpdateChoreResponse>
@@ -54,3 +61,6 @@ data class ForgotPasswordRequest(var username: String)
 data class ForgotPasswordResponse(var msg: String)
 
 data class UpdateChoreResponse(var numChanged: List<Int>)
+
+data class AddChoreRequest (var choreName: String, var status: String, var frequencyId: Int,
+                            var categoryId: Int, var difficulty: String, var notes: String?)
