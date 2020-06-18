@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentSignUpBinding
 import timber.log.Timber
 import kotlin.math.sin
@@ -98,6 +99,8 @@ class SignUpFragment : Fragment() {
         }
 
         signUpViewModel.signUpStatus.observe(viewLifecycleOwner, Observer<SignUpStatus> { signUpStatus ->
+            Utils.hideKeyboard(activity)
+
             when (signUpStatus) {
                 SignUpStatus.LOADING -> {
                     Timber.i("Loading...")

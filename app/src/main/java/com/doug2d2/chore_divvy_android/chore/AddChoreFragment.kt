@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.databinding.FragmentAddChoreBinding
@@ -76,6 +77,8 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
         })
 
         addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddChoreStatus> { addChoreStatus ->
+            Utils.hideKeyboard(activity)
+
             when (addChoreStatus) {
                 AddChoreStatus.LOADING -> {
                     Timber.i("Loading...")

@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentForgotPasswordBinding
 import timber.log.Timber
 
@@ -42,6 +43,8 @@ class ForgotPasswordFragment : Fragment() {
         })
 
         forgotPasswordViewModel.forgotPasswordStatus.observe(viewLifecycleOwner, Observer<ForgotPasswordStatus> { forgotPasswordStatus ->
+            Utils.hideKeyboard(activity)
+
             when(forgotPasswordStatus) {
                 ForgotPasswordStatus.LOADING -> {
                     Timber.i("Loading...")

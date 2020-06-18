@@ -7,14 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.forEach
 import androidx.core.view.get
+import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
 import com.doug2d2.chore_divvy_android.setCheckboxImage
 import kotlinx.android.synthetic.main.chore_item.view.*
@@ -40,13 +44,26 @@ class ChoreListFragment : Fragment() {
         binding.viewModel = choreListViewModel
 
         val adapter = ChoreListAdapter(ChoreListClickListener { chore ->
+            Timber.i("checkbox click")
             choreListViewModel.updateChoreStatus(chore)
+            //binding.choreList.invalidate()
+            //binding.choreList.adapter?.notifyDataSetChanged()
+
+            //binding.choreList.scrollState()
+
+            // Neither of these seem to work
+
+            //binding.choreList.layout.checkbox.setCheckboxImage(chore)
 
             // Get index of chore and update the checkbox
-            val idx = choreListViewModel.getChoreListItemIndex(chore)
-            if (idx > -1) {
-                binding.choreList.get(idx).layout.checkbox.setCheckboxImage(chore)
-            }
+//            val idx = choreListViewModel.getChoreListItemIndex(chore)
+//            if (idx > -1) {
+//                binding.choreList.get(idx).layout.checkbox.setCheckboxImage(chore)
+//            }
+        })
+
+        choreListViewModel.choreList.observe(viewLifecycleOwner, Observer<List<Chore>> { choreList ->
+            adapter.notifyDataSetChanged()
         })
 
         choreListViewModel.navigateToAddChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
@@ -59,6 +76,7 @@ class ChoreListFragment : Fragment() {
 
         // Sets the adapter of the RecyclerView
         binding.choreList.adapter = adapter
+        adapter.notifyDataSetChanged()
 
         binding.setLifecycleOwner(this)
 

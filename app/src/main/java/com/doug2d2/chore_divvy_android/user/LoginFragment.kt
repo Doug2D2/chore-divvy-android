@@ -1,8 +1,7 @@
 package com.doug2d2.chore_divvy_android.user
 
-import android.app.Activity
-import android.app.Application
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,15 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentLoginBinding
 import timber.log.Timber
+
 
 class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +96,8 @@ class LoginFragment : Fragment() {
         })
 
         loginViewModel.loginStatus.observe(viewLifecycleOwner, Observer<LoginStatus> { loginStatus ->
+            Utils.hideKeyboard(activity)
+
             when (loginStatus) {
                 LoginStatus.LOADING -> {
                     Timber.i("Loading...")
