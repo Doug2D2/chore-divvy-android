@@ -20,7 +20,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<C
         }
     }
 
-    class ChoreListViewHolder(private var binding: ChoreItemBinding): RecyclerView.ViewHolder(binding.root) {972
+    class ChoreListViewHolder(private var binding: ChoreItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(listener: ChoreListClickListener, chore: Chore) {
             binding.chore = chore
             binding.clickListener = listener
