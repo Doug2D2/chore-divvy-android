@@ -18,22 +18,34 @@ android:id="@+id/layout">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/marginBetweenElements"
     tools:context=".chore.ChoreListFragment">
 
     <ImageView
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@id/chore_name"
+        android:layout_marginStart="@dimen/marginStartEnd"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/chore_item_check_box_image"
+        android:onClick="@{() -> clickListener.onClick(chore)}"
+        app:checkboxImage="@{chore}"
+        app:layout_constraintEnd_toStartOf="@id/chore_item"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/baseline_check_box_outline_blank_black_18dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/checkbox"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         android:layout_marginStart="@dimen/marginStartEnd"
         android:layout_marginEnd="@dimen/marginStartEnd"
-        android:layout_marginTop="@dimen/marginBetweenElements"
-        android:contentDescription="@string/chore_item_check_box_image"
-        app:checkboxImage="@{chore}"
-        android:onClick="@{() -> clickListener.onClick(chore)}"
-        tools:srcCompat="@drawable/baseline_check_box_outline_blank_black_18dp" />
+        android:orientation="vertical"
+        android:id="@+id/chore_item">
 
     <TextView
         android:id="@+id/chore_name"
@@ -41,15 +53,8 @@ android:id="@+id/layout">
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@{chore.choreName}"
-        app:layout_constraintBottom_toTopOf="@id/chore_assignee"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/checkbox"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
+        android:textSize="18sp"
         android:layout_marginTop="@dimen/marginBetweenElements"
-        android:layout_marginStart="@dimen/marginStartEnd"
-        android:layout_marginEnd="@dimen/marginStartEnd"
         tools:text="CHORE" />
 
     <TextView
@@ -57,16 +62,11 @@ android:id="@+id/layout">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
         android:text="@{String.valueOf(chore.assigneeId)}"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginStart="@dimen/marginStartEnd"
-        android:layout_marginEnd="@dimen/marginStartEnd"
         tools:text="PERSON" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

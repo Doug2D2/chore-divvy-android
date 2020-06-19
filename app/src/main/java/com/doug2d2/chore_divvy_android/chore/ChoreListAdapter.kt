@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
+import timber.log.Timber
 
 class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
     companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
@@ -20,13 +21,22 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<C
         }
     }
 
-    class ChoreListViewHolder(private var binding: ChoreItemBinding): RecyclerView.ViewHolder(binding.root) {
+    class ChoreListViewHolder(private var binding: ChoreItemBinding): RecyclerView.ViewHolder(binding.root), View.OnLongClickListener {
+        init {
+            binding.choreItem.setOnLongClickListener(this)
+        }
+
         fun bind(listener: ChoreListClickListener, chore: Chore) {
             binding.chore = chore
             binding.clickListener = listener
             // This is important, because it forces the data binding to execute immediately,
             // which allows the RecyclerView to make the correct view size measurements
             binding.executePendingBindings()
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            Timber.i("Long click")
+            return true
         }
 
         companion object {
