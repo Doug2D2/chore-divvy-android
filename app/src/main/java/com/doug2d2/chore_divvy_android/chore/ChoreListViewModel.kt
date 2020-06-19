@@ -66,7 +66,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
             try {
                 // update chore and get chores
                 choreRepository.updateChore(chore)
-                getChores()
+                // getChores()
             } catch (e: HttpException) {
                 Timber.i("updateChore HttpException: " + e.message)
                 flipStatus(chore)

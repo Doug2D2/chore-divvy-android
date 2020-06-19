@@ -46,24 +46,16 @@ class ChoreListFragment : Fragment() {
         val adapter = ChoreListAdapter(ChoreListClickListener { chore ->
             Timber.i("checkbox click")
             choreListViewModel.updateChoreStatus(chore)
-            //binding.choreList.invalidate()
-            //binding.choreList.adapter?.notifyDataSetChanged()
-
-            //binding.choreList.scrollState()
-
-            // Neither of these seem to work
-
-            //binding.choreList.layout.checkbox.setCheckboxImage(chore)
 
             // Get index of chore and update the checkbox
-//            val idx = choreListViewModel.getChoreListItemIndex(chore)
-//            if (idx > -1) {
-//                binding.choreList.get(idx).layout.checkbox.setCheckboxImage(chore)
-//            }
-        })
+            val idx = choreListViewModel.getChoreListItemIndex(chore)
+            if (idx > -1) {
+                // This works the best but crashes when you scroll down and click on an item
+                // that was previously out of view
+//                binding.choreList[idx].layout.checkbox.setCheckboxImage(chore)
 
-        choreListViewModel.choreList.observe(viewLifecycleOwner, Observer<List<Chore>> { choreList ->
-            adapter.notifyDataSetChanged()
+                 binding.choreList.adapter?.notifyItemChanged(idx)
+            }
         })
 
         choreListViewModel.navigateToAddChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
@@ -73,6 +65,10 @@ class ChoreListFragment : Fragment() {
                 choreListViewModel.onNavigatedToAddChore()
             }
         })
+
+//        choreListViewModel.choreList.observe(viewLifecycleOwner, Observer<List<Chore>> { choreList ->
+//            adapter.notifyDataSetChanged()
+//        })
 
         // Sets the adapter of the RecyclerView
         binding.choreList.adapter = adapter

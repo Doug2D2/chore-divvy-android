@@ -13,6 +13,7 @@ class ChoreRepository(private val dataSource: ChoreDao) {
     suspend fun addChore(chore: AddChoreRequest) {
         withContext(Dispatchers.IO) {
             ChoreDivvyNetwork.choreDivvy.addChore(chore)
+            refreshChores()
         }
     }
 
@@ -26,6 +27,7 @@ class ChoreRepository(private val dataSource: ChoreDao) {
     suspend fun updateChore(chore: Chore) {
         withContext(Dispatchers.IO) {
            ChoreDivvyNetwork.choreDivvy.updateChore(chore.id, chore)
+            refreshChores()
         }
     }
 
