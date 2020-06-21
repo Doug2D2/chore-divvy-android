@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_choreListFragment_to_addChoreFragment"
             app:destination="@id/addChoreFragment" />
+        <action
+            android:id="@+id/action_choreListFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"

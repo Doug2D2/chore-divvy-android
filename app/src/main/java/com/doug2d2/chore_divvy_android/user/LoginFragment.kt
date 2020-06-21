@@ -39,13 +39,8 @@ class LoginFragment : Fragment() {
             this, viewModelFactory).get(LoginViewModel::class.java)
         binding.viewModel = loginViewModel
 
-        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
-        val editor = sharedPrefs.edit()
-
         // If already logged in navigate to chore list
-        if (sharedPrefs.getBoolean("loggedIn", false) &&
-            sharedPrefs.getInt("userID", -1) != -1)  {
-            Timber.i("User " +  sharedPrefs.getInt("userID", -1) + " is logged in")
+        if (Utils.isLoggedIn(this.requireContext()))  {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
         }
 
@@ -110,15 +105,10 @@ class LoginFragment : Fragment() {
                     binding.loginButton.isEnabled = true
                     binding.progressBar.visibility = View.GONE
 
-                    // Set shared prefs so user stays logged in
-                    editor.putBoolean("loggedIn", true)
-                    editor.putInt("userID", loginViewModel.userID)
-                    editor.apply()
+                    Utils.login(this.requireContext(), loginViewModel.userID)
 
                     // Navigate to chore list
-                    if (findNavController().currentDestination?.id == R.id.loginFragment) {
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
-                    }
+                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
                 }
                 LoginStatus.INVALID_CREDENTIALS -> {
                     Timber.i("Incorrect username and/or password")

@@ -37,9 +37,6 @@ class SignUpFragment : Fragment() {
             this, viewModelFactory).get(SignUpViewModel::class.java)
         binding.viewModel = signUpViewModel
 
-        val sharedPrefs: SharedPreferences = this.requireContext().getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
-        val editor = sharedPrefs.edit()
-
         signUpViewModel.firstName.observe(viewLifecycleOwner, Observer<String> { firstName ->
             binding.errorText.visibility = View.GONE
             if (!firstName.isNullOrBlank() && !signUpViewModel.lastName.value.isNullOrBlank() &&
@@ -113,11 +110,9 @@ class SignUpFragment : Fragment() {
                     binding.signUpButton.isEnabled = true
                     binding.progressBar.visibility = View.GONE
 
-                    // Set shared prefs so user stays logged in
-                    editor.putBoolean("loggedIn", true)
-                    editor.putInt("userID", signUpViewModel.userID)
-                    editor.apply()
+                    Utils.login(this.requireContext(), signUpViewModel.userID)
 
+                    // Navigate to chore list
                     findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToChoreListFragment())
                 }
                 SignUpStatus.USERNAME_ALREADY_EXISTS -> {

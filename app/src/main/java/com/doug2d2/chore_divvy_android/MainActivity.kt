@@ -8,14 +8,18 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.doug2d2.chore_divvy_android.chore.ChoreListFragmentDirections
 import com.doug2d2.chore_divvy_android.databinding.ActivityMainBinding
+import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
 import com.google.android.material.navigation.NavigationView
 import timber.log.Timber
 
@@ -45,8 +49,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    // On main menu item clicked
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Timber.i("onNavigationItemSelected: " + item.itemId)
+        when (item.itemId) {
+            R.id.sign_out -> {
+                Utils.logout(this)
+
+                // Close menu
+                binding.drawerLayout.closeDrawer(Gravity.LEFT)
+
+                // Navigate to login
+                findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
+            }
+            else -> {
+                Toast.makeText(this, "Action not implemented yet", Toast.LENGTH_SHORT).show()
+            }
+        }
         return true
     }
 
