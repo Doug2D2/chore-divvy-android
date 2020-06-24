@@ -38,6 +38,9 @@ interface ChoreDivvyService {
 
     @GET("get-categories")
     fun getCategories(): Deferred<List<Category>>
+
+    @DELETE("delete-chore/{id}")
+    fun deleteChore(@Path("id") id: Int): Deferred<Int>
 }
 
 object ChoreDivvyNetwork {

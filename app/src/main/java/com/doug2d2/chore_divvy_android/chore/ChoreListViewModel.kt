@@ -1,18 +1,21 @@
 package com.doug2d2.chore_divvy_android.chore
 
+import android.app.AlertDialog
 import android.app.Application
+import android.content.DialogInterface
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
+import com.doug2d2.chore_divvy_android.user.LoginStatus
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
-import java.lang.Exception
 
-enum class ChoreListStatus { LOADING, SUCCESS, UNAUTHORIZED, CONNECTION_ERROR, OTHER_ERROR }
+enum class ChoreStatus { LOADING, SUCCESS, UNAUTHORIZED, CONNECTION_ERROR, OTHER_ERROR }
 
 class ChoreListViewModel(application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
@@ -21,9 +24,17 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val dataSource = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(dataSource)
 
-    private val _choreListStatus = MutableLiveData<ChoreListStatus>()
-    val choreListStatus: LiveData<ChoreListStatus>
+    private val _choreListStatus = MutableLiveData<ChoreStatus>()
+    val choreListStatus: LiveData<ChoreStatus>
         get() = _choreListStatus
+
+    private val _updateChoreStatus = MutableLiveData<ChoreStatus>()
+    val updateChoreStatus: LiveData<ChoreStatus>
+        get() = _updateChoreStatus
+
+    private val _deleteChoreStatus = MutableLiveData<ChoreStatus>()
+    val deleteChoreStatus: LiveData<ChoreStatus>
+        get() = _deleteChoreStatus
 
     private var _choreList = MutableLiveData<List<Chore>>()
     val choreList: LiveData<List<Chore>>
@@ -33,6 +44,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val navigateToAddChore: LiveData<Boolean>
         get() = _navigateToAddChore
 
+    lateinit var choreToDelete: Chore
+
     init {
         getChores()
     }
@@ -41,47 +54,97 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         uiScope.launch {
             try {
                 Timber.i("Getting chores")
-                _choreListStatus.value = ChoreListStatus.LOADING
+                _choreListStatus.value = ChoreStatus.LOADING
 
                 _choreList.value = choreRepository.getChores()
 
-                _choreListStatus.value = ChoreListStatus.SUCCESS
+                _choreListStatus.value = ChoreStatus.SUCCESS
             } catch (e: HttpException) {
                 when (e.code()) {
-                    401 -> _choreListStatus.value = ChoreListStatus.UNAUTHORIZED
-                    else -> _choreListStatus.value = ChoreListStatus.OTHER_ERROR
+                    401 -> _choreListStatus.value = ChoreStatus.UNAUTHORIZED
+                    else -> _choreListStatus.value = ChoreStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _choreListStatus.value = ChoreListStatus.CONNECTION_ERROR
+                _choreListStatus.value = ChoreStatus.CONNECTION_ERROR
             }
         }
     }
 
-    fun updateChoreStatus(chore: Chore) {
+    // updateChore allows a user to make a chore as completed or not completed
+    fun updateChore(chore: Chore) {
         // Change status
-        flipStatus(chore)
+        flipCompleted(chore)
 
-        GlobalScope.launch {
+        uiScope.launch {
             try {
-                // update chore and get chores
+                _updateChoreStatus.value = ChoreStatus.LOADING
+
                 choreRepository.updateChore(chore)
-                // getChores()
+
+                _updateChoreStatus.value = ChoreStatus.LOADING
             } catch (e: HttpException) {
                 Timber.i("updateChore HttpException: " + e.message)
-                flipStatus(chore)
+                flipCompleted(chore)
 
-                // TODO: display error?
+                when (e.code()) {
+                    401 -> _updateChoreStatus.value = ChoreStatus.UNAUTHORIZED
+                    else -> _updateChoreStatus.value = ChoreStatus.OTHER_ERROR
+                }
             } catch (e: Exception) {
                 Timber.i("updateChore Exception: " + e.message)
-                flipStatus(chore)
+                flipCompleted(chore)
 
-                // TODO: display error?
+                _updateChoreStatus.value = ChoreStatus.CONNECTION_ERROR
             }
         }
     }
 
-    fun flipStatus(chore: Chore) {
+    // deleteChore allows a user to delete a chore
+    fun deleteChore(chore: Chore) {
+        uiScope.launch {
+            try {
+                _deleteChoreStatus.value = ChoreStatus.LOADING
+                choreToDelete = chore
+                choreRepository.deleteChore(choreToDelete.id)
+                Timber.i("Chore deleted!")
+                _choreList.value = _choreList.value?.filter { item ->
+                    item.id != choreToDelete.id
+                }
+                _deleteChoreStatus.value = ChoreStatus.SUCCESS
+            } catch (e: HttpException) {
+                Timber.i("deleteChore HttpException: " + e.message)
+
+                when(e.code()) {
+                    401 -> _deleteChoreStatus.value = ChoreStatus.UNAUTHORIZED
+                    else -> _deleteChoreStatus.value = ChoreStatus.OTHER_ERROR
+                }
+                // TODO: display error?
+            } catch (e: Exception) {
+                Timber.i("deleteChore Exception: " + e.message)
+
+                _deleteChoreStatus.value = ChoreStatus.CONNECTION_ERROR
+                // TODO: display error?
+            }
+        }
+
+//        val ab: AlertDialog.Builder = AlertDialog.Builder(this.getApplication())
+//        val dialogClickListener =
+//            DialogInterface.OnClickListener { dialog, which ->
+//                when (which) {
+//                    DialogInterface.BUTTON_POSITIVE -> {
+//                        Timber.i("YES")
+//                    }
+//                    DialogInterface.BUTTON_NEGATIVE -> {
+//                        Timber.i("NO")
+//                    }
+//                }
+//            }
+//        ab.setMessage("Are you sure to delete?").setPositiveButton("Yes", dialogClickListener)
+//            .setNegativeButton("No", dialogClickListener).show()
+    }
+
+    fun flipCompleted(chore: Chore) {
         chore.status = when(chore.status) {
             "Completed" -> "In Progress"
             else -> "Completed"

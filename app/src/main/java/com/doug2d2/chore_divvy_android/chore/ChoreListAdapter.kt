@@ -1,16 +1,21 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
+import kotlinx.android.synthetic.main.chore_item.view.*
 import timber.log.Timber
 
-class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
+class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
     companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
         override fun areItemsTheSame(oldItem: Chore, newItem: Chore): Boolean {
             return oldItem.id == newItem.id
@@ -21,7 +26,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<C
         }
     }
 
-    class ChoreListViewHolder(private var binding: ChoreItemBinding): RecyclerView.ViewHolder(binding.root), View.OnLongClickListener {
+    class ChoreListViewHolder(private var binding: ChoreItemBinding, val choreListViewModel: ChoreListViewModel): RecyclerView.ViewHolder(binding.root), View.OnLongClickListener {
         init {
             binding.choreItem.setOnLongClickListener(this)
         }
@@ -35,21 +40,34 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener): ListAdapter<C
         }
 
         override fun onLongClick(v: View?): Boolean {
-            Timber.i("Long click")
+            var popupMenu: PopupMenu = PopupMenu(v?.context, v)
+            popupMenu.inflate(R.menu.chore_pop_up)
+            popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+                when(item?.itemId) {
+                    R.id.chore_edit -> Timber.i("Edit chore")
+                    R.id.chore_delete -> {
+                        choreListViewModel.deleteChore(binding.chore!!)
+                    }
+                }
+                true
+            }
+
+            popupMenu.show()
+
             return true
         }
 
         companion object {
-            fun from(parent: ViewGroup): ChoreListViewHolder {
+            fun from(parent: ViewGroup, choreListViewModel: ChoreListViewModel): ChoreListViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ChoreItemBinding.inflate(layoutInflater, parent, false)
-                return ChoreListViewHolder(binding)
+                return ChoreListViewHolder(binding, choreListViewModel)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoreListViewHolder {
-        return ChoreListViewHolder.from(parent)
+        return ChoreListViewHolder.from(parent,choreListViewModel)
     }
 
     /**
