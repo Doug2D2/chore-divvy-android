@@ -127,21 +127,6 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                 // TODO: display error?
             }
         }
-
-//        val ab: AlertDialog.Builder = AlertDialog.Builder(this.getApplication())
-//        val dialogClickListener =
-//            DialogInterface.OnClickListener { dialog, which ->
-//                when (which) {
-//                    DialogInterface.BUTTON_POSITIVE -> {
-//                        Timber.i("YES")
-//                    }
-//                    DialogInterface.BUTTON_NEGATIVE -> {
-//                        Timber.i("NO")
-//                    }
-//                }
-//            }
-//        ab.setMessage("Are you sure to delete?").setPositiveButton("Yes", dialogClickListener)
-//            .setNegativeButton("No", dialogClickListener).show()
     }
 
     fun flipCompleted(chore: Chore) {

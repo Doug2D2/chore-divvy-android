@@ -1,9 +1,9 @@
 package com.doug2d2.chore_divvy_android.chore
 
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.view.*
+import android.widget.Button
 import android.widget.PopupMenu
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ListAdapter
@@ -46,7 +46,22 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
                 when(item?.itemId) {
                     R.id.chore_edit -> Timber.i("Edit chore")
                     R.id.chore_delete -> {
-                        choreListViewModel.deleteChore(binding.chore!!)
+                        val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(v?.context, R.style.CustomAlertDialog))
+                        //val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(v?.context)
+                        lateinit var alert: AlertDialog
+                        val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    choreListViewModel.deleteChore(binding.chore!!)
+                                }
+                                DialogInterface.BUTTON_NEGATIVE -> {
+                                    alert.cancel()
+                                }
+                            }
+                        }
+
+                        alert = alertBuilder.setTitle("Delete chore?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show()
                     }
                 }
                 true
