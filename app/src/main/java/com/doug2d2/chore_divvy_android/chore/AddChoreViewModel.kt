@@ -30,13 +30,13 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val freqDao = getDatabase(application).frequencyDao
+    private val freqDao = getDatabase(application).frequencyDao
     private val freqRepository = FrequencyRepository(freqDao)
 
-    val catDao = getDatabase(application).categoryDao
+    private val catDao = getDatabase(application).categoryDao
     private val catRepository = CategoryRepository(catDao)
 
-    val choreDao = getDatabase(application).choreDao
+    private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
 
     private val _addChoreStatus = MutableLiveData<AddChoreStatus>()

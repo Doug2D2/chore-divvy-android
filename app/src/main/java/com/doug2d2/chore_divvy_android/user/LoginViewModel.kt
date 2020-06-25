@@ -40,6 +40,7 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     val navigateToForgotPassword: LiveData<Boolean>
         get() = _navigateToForgotPassword
 
+    // onLogin logs the user in by validating their username and password
     fun onLogin() {
         if (!username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
             uiScope.launch {
@@ -64,18 +65,22 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    // onSignup navigates to the sign up fragment
     fun onSignUp() {
         _navigateToSignUp.value = true
     }
 
+    // onNavigatedToSignUp is called after navigating to the sign up fragment
     fun onNavigatedToSignUp() {
         _navigateToSignUp.value = false
     }
 
+    // onForgotPassword navigates to the forgot password fragment
     fun onForgotPassword() {
         _navigateToForgotPassword.value = true
     }
 
+    // onNavigatedToForgotPassword is called after navigating to the forgot password fragment
     fun onNavigatedToForgotPassword() {
         _navigateToForgotPassword.value = false
     }

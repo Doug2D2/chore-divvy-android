@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ChoreRepository(private val dataSource: ChoreDao) {
+    // addChore calls API to add chore and updates local db with new data
     suspend fun addChore(chore: AddChoreRequest) {
         withContext(Dispatchers.IO) {
             ChoreDivvyNetwork.choreDivvy.addChore(chore)
@@ -17,6 +18,8 @@ class ChoreRepository(private val dataSource: ChoreDao) {
         }
     }
 
+    // getChores calls API to get chores, updates local db with new data,
+    // and gets chores from local db
     suspend fun getChores(): List<Chore> {
         return withContext(Dispatchers.IO) {
             refreshChores()
@@ -24,6 +27,8 @@ class ChoreRepository(private val dataSource: ChoreDao) {
         }
     }
 
+    // updateChore calls API to update the status of a chore and
+    // updates local db with new data
     suspend fun updateChore(chore: Chore) {
         withContext(Dispatchers.IO) {
             ChoreDivvyNetwork.choreDivvy.updateChore(chore.id, chore)
@@ -31,6 +36,7 @@ class ChoreRepository(private val dataSource: ChoreDao) {
         }
     }
 
+    // deleteChore calls API to delete a chore and updates local db with new data
     suspend fun deleteChore(choreId: Int) {
         withContext(Dispatchers.IO) {
             ChoreDivvyNetwork.choreDivvy.deleteChore(choreId)
@@ -38,7 +44,9 @@ class ChoreRepository(private val dataSource: ChoreDao) {
         }
     }
 
-    suspend fun refreshChores() {
+    // refreshChores calls API to get chores, deletes all chores in local db,
+    // and then inserts new data into local db
+    private suspend fun refreshChores() {
         withContext(Dispatchers.IO) {
             val chores = ChoreDivvyNetwork.choreDivvy.getChores().await()
             dataSource.deleteAll()

@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_choreListFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_choreListFragment_to_editChoreFragment"
+            app:destination="@id/editChoreFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
@@ -58,6 +61,15 @@
         android:label="AddChoreFragment" >
         <action
             android:id="@+id/action_addChoreFragment_to_choreListFragment"
+            app:destination="@id/choreListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editChoreFragment"
+        android:name="com.doug2d2.chore_divvy_android.chore.EditChoreFragment"
+        android:label="fragment_edit_chore"
+        tools:layout="@layout/fragment_edit_chore" >
+        <action
+            android:id="@+id/action_editChoreFragment_to_choreListFragment"
             app:destination="@id/choreListFragment" />
     </fragment>
 </navigation>

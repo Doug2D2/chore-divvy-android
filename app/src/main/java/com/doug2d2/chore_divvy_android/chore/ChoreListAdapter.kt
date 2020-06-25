@@ -39,27 +39,34 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
             binding.executePendingBindings()
         }
 
+        // onLongClick is called when a chore is long clicked
         override fun onLongClick(v: View?): Boolean {
+            // Create popup menu to show Edit and Delete chore options
             var popupMenu: PopupMenu = PopupMenu(v?.context, v)
             popupMenu.inflate(R.menu.chore_pop_up)
             popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
                 when(item?.itemId) {
-                    R.id.chore_edit -> Timber.i("Edit chore")
+                    R.id.chore_edit -> {
+                        choreListViewModel.onEditChore()
+                    }
                     R.id.chore_delete -> {
+                        // Create Alert Dialog to ask user if they are sure that they want to delete chore
                         val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(v?.context, R.style.CustomAlertDialog))
-                        //val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(v?.context)
                         lateinit var alert: AlertDialog
                         val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
+                                    // Yes, delete chore
                                     choreListViewModel.deleteChore(binding.chore!!)
                                 }
                                 DialogInterface.BUTTON_NEGATIVE -> {
+                                    // No, don't delete chore
                                     alert.cancel()
                                 }
                             }
                         }
 
+                        // Display Alert Dialog
                         alert = alertBuilder.setTitle("Delete chore?").setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show()
                     }

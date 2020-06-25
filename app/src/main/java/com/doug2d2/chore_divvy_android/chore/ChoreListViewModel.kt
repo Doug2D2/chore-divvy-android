@@ -24,9 +24,9 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val dataSource = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(dataSource)
 
-    private val _choreListStatus = MutableLiveData<ChoreStatus>()
-    val choreListStatus: LiveData<ChoreStatus>
-        get() = _choreListStatus
+    private val _getChoresStatus = MutableLiveData<ChoreStatus>()
+    val getChoresStatus: LiveData<ChoreStatus>
+        get() = _getChoresStatus
 
     private val _updateChoreStatus = MutableLiveData<ChoreStatus>()
     val updateChoreStatus: LiveData<ChoreStatus>
@@ -44,29 +44,36 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val navigateToAddChore: LiveData<Boolean>
         get() = _navigateToAddChore
 
+    private val _navigateToEditChore = MutableLiveData<Boolean>()
+    val navigateToEditChore: LiveData<Boolean>
+        get() = _navigateToEditChore
+
     lateinit var choreToDelete: Chore
+    lateinit var choreToUpdate: Chore
+    lateinit var choreToEdit: Chore
 
     init {
         getChores()
     }
 
+    // getChores gets all chores from the API and updates the local DB with them
     fun getChores() {
         uiScope.launch {
             try {
                 Timber.i("Getting chores")
-                _choreListStatus.value = ChoreStatus.LOADING
+                _getChoresStatus.value = ChoreStatus.LOADING
 
                 _choreList.value = choreRepository.getChores()
 
-                _choreListStatus.value = ChoreStatus.SUCCESS
+                _getChoresStatus.value = ChoreStatus.SUCCESS
             } catch (e: HttpException) {
                 when (e.code()) {
-                    401 -> _choreListStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _choreListStatus.value = ChoreStatus.OTHER_ERROR
+                    401 -> _getChoresStatus.value = ChoreStatus.UNAUTHORIZED
+                    else -> _getChoresStatus.value = ChoreStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _choreListStatus.value = ChoreStatus.CONNECTION_ERROR
+                _getChoresStatus.value = ChoreStatus.CONNECTION_ERROR
             }
         }
     }
@@ -80,9 +87,10 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
             try {
                 _updateChoreStatus.value = ChoreStatus.LOADING
 
+                choreToUpdate = chore
                 choreRepository.updateChore(chore)
 
-                _updateChoreStatus.value = ChoreStatus.LOADING
+                _updateChoreStatus.value = ChoreStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("updateChore HttpException: " + e.message)
                 flipCompleted(chore)
@@ -105,12 +113,14 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         uiScope.launch {
             try {
                 _deleteChoreStatus.value = ChoreStatus.LOADING
+
                 choreToDelete = chore
                 choreRepository.deleteChore(choreToDelete.id)
-                Timber.i("Chore deleted!")
+                // Remove deleted chore from _choreList
                 _choreList.value = _choreList.value?.filter { item ->
                     item.id != choreToDelete.id
                 }
+
                 _deleteChoreStatus.value = ChoreStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("deleteChore HttpException: " + e.message)
@@ -119,16 +129,16 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                     401 -> _deleteChoreStatus.value = ChoreStatus.UNAUTHORIZED
                     else -> _deleteChoreStatus.value = ChoreStatus.OTHER_ERROR
                 }
-                // TODO: display error?
             } catch (e: Exception) {
                 Timber.i("deleteChore Exception: " + e.message)
 
                 _deleteChoreStatus.value = ChoreStatus.CONNECTION_ERROR
-                // TODO: display error?
             }
         }
     }
 
+    // flipCompleted flips the chore status from Completed to In Progress
+    // and vise versa
     fun flipCompleted(chore: Chore) {
         chore.status = when(chore.status) {
             "Completed" -> "In Progress"
@@ -136,6 +146,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         }
     }
 
+    // getChoreListItemIndex gets the index of the chore in the choreList
     fun getChoreListItemIndex(chore: Chore): Int {
         var index = -1
         choreList.value?.mapIndexed { i, c ->
@@ -147,11 +158,23 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         return index
     }
 
+    // onAddChore navigates to the add chore fragment
     fun onAddChore() {
         _navigateToAddChore.value = true
     }
 
+    // onNavigatedToAddChore is called after navigating to the add chore fragment
     fun onNavigatedToAddChore() {
         _navigateToAddChore.value = false
+    }
+
+    // onEditChore navigates to the add chore fragment
+    fun onEditChore() {
+        _navigateToEditChore.value = true
+    }
+
+    // onNavigatedToEditChore is called after navigating to the add chore fragment
+    fun onNavigatedToEditChore() {
+        _navigateToEditChore.value = false
     }
 }
