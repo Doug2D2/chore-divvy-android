@@ -1,10 +1,13 @@
 package com.doug2d2.chore_divvy_android.database
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
+import java.io.Serializable
 import java.sql.Date
 
 @Entity(tableName = "chores")
@@ -48,4 +51,4 @@ data class Chore (
 
     @ColumnInfo(name = "updatedAt")
     var updatedAt: String = ""
-)
+) : Serializable

@@ -3,23 +3,19 @@ package com.doug2d2.chore_divvy_android.chore
 import android.app.Application
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Category
-import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.network.AddChoreRequest
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
+import com.doug2d2.chore_divvy_android.repository.DifficultyRepository
 import com.doug2d2.chore_divvy_android.repository.FrequencyRepository
-import fr.ganfra.materialspinner.MaterialSpinner
 import kotlinx.coroutines.*
-import kotlinx.coroutines.selects.select
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
@@ -35,6 +31,8 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
 
     private val catDao = getDatabase(application).categoryDao
     private val catRepository = CategoryRepository(catDao)
+
+    private val diffRepository = DifficultyRepository()
 
     private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
@@ -56,12 +54,14 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
 
     init {
         addChoreButtonEnabled.value = false
+
         getFrequencies()
         getCategories()
         getDifficulties()
     }
 
-    fun getFrequencies() {
+    // getFrequencies gets frequencies to populate frequency spinner
+    private fun getFrequencies() {
         uiScope.launch {
             try {
                 freqs.value = freqRepository.getFrequencies()
@@ -73,7 +73,8 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getCategories() {
+    // getCategories gets categories to populate category spinner
+    private fun getCategories() {
         uiScope.launch {
             try {
                 cats.value = catRepository.getCategories()
@@ -86,10 +87,12 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun getDifficulties() {
-        diffs.value = listOf<String>("Easy", "Medium", "Hard")
+    // getDifficulties gets difficulties to populate difficulty spinner
+    private fun getDifficulties() {
+        diffs.value = diffRepository.getDifficulties()
     }
 
+    // onAddChore is called when the Add button is clicked
     fun onAddChore() {
         if (!choreName.value.isNullOrBlank() && selectedFreq.value != -1 &&
             selectedCat.value != -1 && !selectedDiff.value.isNullOrBlank()) {
@@ -122,6 +125,7 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
+    // onItemSelected is called when an item is selected from any spinner
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         when (parent?.id) {
             R.id.frequencyDropDown -> {
@@ -145,6 +149,7 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         checkEnableAddChoreButton()
     }
 
+    // onNothingSelected sets default values for spinners
     override fun onNothingSelected(parent: AdapterView<*>?) {
         when (parent?.id) {
             R.id.frequencyDropDown -> {

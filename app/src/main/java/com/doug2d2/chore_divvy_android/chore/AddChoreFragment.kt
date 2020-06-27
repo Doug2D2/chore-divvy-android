@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
+class AddChoreFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -44,6 +44,7 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
 
         // Frequency drop down
         addChoreViewModel.freqs.observe(viewLifecycleOwner, Observer<List<Frequency>> {freqs ->
+            // Set frequency names as values in frequency spinner
             val freqSpinner: MaterialSpinner = binding.frequencyDropDown
             val freqNames = freqs.map { f -> f.frequencyName }
             val freqAdapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, freqNames)
@@ -54,6 +55,7 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
 
         // Category drop down
         addChoreViewModel.cats.observe(viewLifecycleOwner, Observer<List<Category>> { cats ->
+            // Set category names as values in category spinner
             val catSpinner: MaterialSpinner = binding.categoryDropDown
             val catNames = cats.map { c -> c.categoryName }
             val catAdapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, catNames)
@@ -71,11 +73,13 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
             diffSpinner.onItemSelectedListener = addChoreViewModel
         })
 
+        // Observe choreName
         addChoreViewModel.choreName.observe(viewLifecycleOwner, Observer<String> { name ->
             // Enable Add Chore button if all required fields have a value
             addChoreViewModel.checkEnableAddChoreButton()
         })
 
+        // Observe addChoreStatus
         addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddChoreStatus> { addChoreStatus ->
             Utils.hideKeyboard(activity)
 
@@ -116,15 +120,4 @@ class AddChoreFragment : Fragment()/*, AdapterView.OnItemSelectedListener*/ {
 
         return binding.root
     }
-
-//    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//
-//        Timber.i("Item Click: " + (parent?.id == R.id.frequencyDropDown))
-//        // position is List index
-//    }
-//
-//    override fun onNothingSelected(parent: AdapterView<*>?) {
-//        Timber.i("Nothing Selected")
-//    }
-
 }

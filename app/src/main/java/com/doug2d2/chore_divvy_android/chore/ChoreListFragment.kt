@@ -1,31 +1,21 @@
 package com.doug2d2.chore_divvy_android.chore
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.forEach
-import androidx.core.view.get
-import androidx.core.view.size
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
-import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
-import com.doug2d2.chore_divvy_android.setCheckboxImage
-import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
-import com.doug2d2.chore_divvy_android.user.LoginStatus
-import kotlinx.android.synthetic.main.chore_item.view.*
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import timber.log.Timber
 
 class ChoreListFragment : Fragment() {
@@ -64,8 +54,13 @@ class ChoreListFragment : Fragment() {
         // Observe changes to navigating to edit chore fragment
         choreListViewModel.navigateToEditChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
             if (navigate) {
+                val moshi: Moshi = Moshi.Builder().build()
+                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val choreJson = adapter.toJson(choreListViewModel.choreToEdit)
+
                 val navController = findNavController()
-                navController.navigate(R.id.action_choreListFragment_to_editChoreFragment)
+                val bundle = bundleOf("choreToEdit" to choreJson)
+                navController.navigate(R.id.action_choreListFragment_to_editChoreFragment, bundle)
                 choreListViewModel.onNavigatedToEditChore()
             }
         })

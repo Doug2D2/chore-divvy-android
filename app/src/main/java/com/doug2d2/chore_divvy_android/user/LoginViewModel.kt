@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
-import kotlin.concurrent.thread
 
 enum class LoginStatus { LOADING, SUCCESS, INVALID_CREDENTIALS, CONNECTION_ERROR, OTHER_ERROR }
 
@@ -40,8 +39,9 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
     val navigateToForgotPassword: LiveData<Boolean>
         get() = _navigateToForgotPassword
 
-    // onLogin logs the user in by validating their username and password
+    // onLogin is called when the user clicks the Log in button
     fun onLogin() {
+        // username and password must have a value
         if (!username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
             uiScope.launch {
                 try {

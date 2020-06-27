@@ -138,7 +138,7 @@
                 android:onClick="@{() -> viewModel.onSignUp()}"
                 android:paddingLeft="0dp"
                 android:paddingRight="0dp"
-                android:text="Don't have an account?  Sign up"
+                android:text="@string/sign_up_link_text"
                 android:textAlignment="center"
                 android:textColor="@color/colorAccent"
                 app:backgroundTint="#00000000" />

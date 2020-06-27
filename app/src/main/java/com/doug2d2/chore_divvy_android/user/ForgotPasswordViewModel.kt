@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
@@ -29,9 +28,9 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
     val forgotPasswordStatus: LiveData<ForgotPasswordStatus>
         get() = _forgotPasswordStatus
 
+    // onForgotPassword is called when the user clicks the send link button
     fun onForgotPassword() {
-        Timber.i("Forgot password, username: %s", username.value)
-
+        // username must have a value
         if (!username.value.isNullOrBlank()) {
 
             // Username must be a valid email address

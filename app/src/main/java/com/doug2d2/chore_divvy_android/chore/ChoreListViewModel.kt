@@ -1,16 +1,12 @@
 package com.doug2d2.chore_divvy_android.chore
 
-import android.app.AlertDialog
 import android.app.Application
-import android.content.DialogInterface
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
-import com.doug2d2.chore_divvy_android.user.LoginStatus
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
@@ -57,7 +53,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // getChores gets all chores from the API and updates the local DB with them
-    fun getChores() {
+    private fun getChores() {
         uiScope.launch {
             try {
                 Timber.i("Getting chores")
@@ -78,7 +74,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         }
     }
 
-    // updateChore allows a user to make a chore as completed or not completed
+    // updateChore allows a user to mark a chore as completed or not completed
     fun updateChore(chore: Chore) {
         // Change status
         flipCompleted(chore)
@@ -139,7 +135,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
     // flipCompleted flips the chore status from Completed to In Progress
     // and vise versa
-    fun flipCompleted(chore: Chore) {
+    private fun flipCompleted(chore: Chore) {
         chore.status = when(chore.status) {
             "Completed" -> "In Progress"
             else -> "Completed"
@@ -169,7 +165,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // onEditChore navigates to the add chore fragment
-    fun onEditChore() {
+    fun onEditChore(chore: Chore) {
+        choreToEdit = chore
         _navigateToEditChore.value = true
     }
 

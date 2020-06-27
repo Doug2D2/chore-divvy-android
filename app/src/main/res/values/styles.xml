@@ -2,12 +2,12 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Delete confirmation pop up theme -->
     <style name="CustomAlertDialog" parent="ThemeOverlay.AppCompat.Dialog">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_marginEnd">5dp</item>

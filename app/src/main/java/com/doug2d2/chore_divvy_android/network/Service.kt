@@ -1,19 +1,16 @@
 package com.doug2d2.chore_divvy_android.network
 
-import androidx.annotation.Nullable
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.squareup.moshi.Json
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 
+// Contains all API routes for Chore Divvy
 interface ChoreDivvyService {
     @POST("login")
     fun login(@Body body: LoginRequest): Deferred<User>
@@ -43,6 +40,7 @@ interface ChoreDivvyService {
     fun deleteChore(@Path("id") id: Int): Deferred<Int>
 }
 
+// Sets up retrofit API client
 object ChoreDivvyNetwork {
     private val retrofit = Retrofit.Builder()
         //.baseUrl("http://10.0.2.2:8080/") //localhost

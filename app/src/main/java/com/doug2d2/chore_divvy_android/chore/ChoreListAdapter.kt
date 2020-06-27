@@ -3,17 +3,13 @@ package com.doug2d2.chore_divvy_android.chore
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.view.*
-import android.widget.Button
 import android.widget.PopupMenu
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
-import kotlinx.android.synthetic.main.chore_item.view.*
-import timber.log.Timber
 
 class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
     companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
@@ -47,7 +43,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
             popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
                 when(item?.itemId) {
                     R.id.chore_edit -> {
-                        choreListViewModel.onEditChore()
+                        choreListViewModel.onEditChore(binding.chore!!)
                     }
                     R.id.chore_delete -> {
                         // Create Alert Dialog to ask user if they are sure that they want to delete chore

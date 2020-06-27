@@ -1,7 +1,5 @@
 package com.doug2d2.chore_divvy_android.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.User
 import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
@@ -10,10 +8,9 @@ import com.doug2d2.chore_divvy_android.network.LoginRequest
 import com.doug2d2.chore_divvy_android.network.SignUpRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-import java.lang.Exception
 
 class UserRepository(private val database: ChoreDivvyDatabase) {
+    // login calls API to log user in
     suspend fun login(username: String, password: String): User {
         return withContext(Dispatchers.IO) {
             val req = LoginRequest(username, password)
@@ -21,6 +18,7 @@ class UserRepository(private val database: ChoreDivvyDatabase) {
         }
     }
 
+    // signUp calls API to create new user
     suspend fun signUp(firstName: String, lastName: String, username: String, password: String): User {
         return withContext(Dispatchers.IO) {
             val req = SignUpRequest(firstName, lastName, username, password)
@@ -28,6 +26,7 @@ class UserRepository(private val database: ChoreDivvyDatabase) {
         }
     }
 
+    // forgotPassword calls API to send user a new password
     suspend fun forgotPassword(username: String) {
         withContext(Dispatchers.IO) {
             val req = ForgotPasswordRequest(username)

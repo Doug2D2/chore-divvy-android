@@ -33,10 +33,9 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
 
     var userID = -1
 
+    // onSignUp is called when the user clicks the Sign Up button
     fun onSignUp() {
-        Timber.i("Signing up, firstName: %s, lastName: %s username: %s; password: %s",
-            firstName.value, lastName.value, username.value, password.value)
-
+        // firstName, lastName, username and password must have a value
         if (!firstName.value.isNullOrBlank() && !lastName.value.isNullOrBlank() &&
             !username.value.isNullOrBlank() && !password.value.isNullOrBlank()) {
 

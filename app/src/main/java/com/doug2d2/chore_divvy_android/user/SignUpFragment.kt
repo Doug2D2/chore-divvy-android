@@ -1,7 +1,5 @@
 package com.doug2d2.chore_divvy_android.user
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
@@ -16,7 +14,6 @@ import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentSignUpBinding
 import timber.log.Timber
-import kotlin.math.sin
 
 class SignUpFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,8 +34,11 @@ class SignUpFragment : Fragment() {
             this, viewModelFactory).get(SignUpViewModel::class.java)
         binding.viewModel = signUpViewModel
 
+        // Observe changes to firstName
         signUpViewModel.firstName.observe(viewLifecycleOwner, Observer<String> { firstName ->
             binding.errorText.visibility = View.GONE
+
+            // Enable sign up button if all required fields have a value
             if (!firstName.isNullOrBlank() && !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -48,8 +48,11 @@ class SignUpFragment : Fragment() {
             }
         })
 
+        // Observe changes to lastName
         signUpViewModel.lastName.observe(viewLifecycleOwner, Observer<String> { lastName ->
             binding.errorText.visibility = View.GONE
+
+            // Enable sign up button if all required fields have a value
             if (!lastName.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -59,8 +62,11 @@ class SignUpFragment : Fragment() {
             }
         })
 
+        // Observe changes to username
         signUpViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
             binding.errorText.visibility = View.GONE
+
+            // Enable sign up button if all required fields have a value
             if (!username.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.password.value.isNullOrBlank()) {
@@ -70,8 +76,11 @@ class SignUpFragment : Fragment() {
             }
         })
 
+        // Observe changes to password
         signUpViewModel.password.observe(viewLifecycleOwner, Observer<String> { password ->
             binding.errorText.visibility = View.GONE
+
+            // Enable sign up button if all required fields have a value
             if (!password.isNullOrBlank() && !signUpViewModel.firstName.value.isNullOrBlank() &&
                 !signUpViewModel.lastName.value.isNullOrBlank() &&
                 !signUpViewModel.username.value.isNullOrBlank()) {
@@ -95,6 +104,7 @@ class SignUpFragment : Fragment() {
             false
         }
 
+        // Observe changes to signUpStatus
         signUpViewModel.signUpStatus.observe(viewLifecycleOwner, Observer<SignUpStatus> { signUpStatus ->
             Utils.hideKeyboard(activity)
 

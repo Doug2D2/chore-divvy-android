@@ -33,8 +33,11 @@ class ForgotPasswordFragment : Fragment() {
             this, viewModelFactory).get(ForgotPasswordViewModel::class.java)
         binding.viewModel = forgotPasswordViewModel
 
+        // Observe changes to username
         forgotPasswordViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
             binding.errorText.visibility = View.GONE
+
+            // Enable send link button if all required fields have a value
             if (!username.isNullOrBlank()) {
                 binding.sendLinkButton.isEnabled = true
             } else {
@@ -42,6 +45,7 @@ class ForgotPasswordFragment : Fragment() {
             }
         })
 
+        // Observe changes to forgotPasswordStatus
         forgotPasswordViewModel.forgotPasswordStatus.observe(viewLifecycleOwner, Observer<ForgotPasswordStatus> { forgotPasswordStatus ->
             Utils.hideKeyboard(activity)
 

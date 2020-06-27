@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class CategoryRepository(private val dataSource: CategoryDao) {
+    // getCategories calls API to get categories, updates local db with new data,
+    // and gets categories from local db
     suspend fun getCategories(): List<Category> {
         return withContext(Dispatchers.IO){
             refreshCategories()
@@ -14,7 +16,9 @@ class CategoryRepository(private val dataSource: CategoryDao) {
         }
     }
 
-    suspend fun refreshCategories() {
+    // refreshCategories calls API to get categories, deletes all categories in local db,
+    // and then inserts new data into local db
+    private suspend fun refreshCategories() {
         withContext(Dispatchers.IO) {
             val categories = ChoreDivvyNetwork.choreDivvy.getCategories().await()
             dataSource.deleteAll()

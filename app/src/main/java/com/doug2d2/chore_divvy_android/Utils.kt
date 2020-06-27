@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.fragment.findNavController
-import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
-import timber.log.Timber
 
+// Utils contains common functions used by multiple fragments
 object Utils {
+    // hideKeyboard hides the on screen keyboard
     fun hideKeyboard(activity: FragmentActivity?) {
-        // Hide keyboard
         val v = activity!!.window.currentFocus
         if (v != null) {
             val imm =
@@ -19,6 +17,7 @@ object Utils {
         }
     }
 
+    // login uses Shared Prefs to hold userID and sets loggedIn to true
     fun login(ctx: Context, userId: Int) {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -28,6 +27,7 @@ object Utils {
         editor.apply()
     }
 
+    // logout removes loggedIn and userID from Shared Prefs
     fun logout(ctx: Context) {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
@@ -37,6 +37,7 @@ object Utils {
         editor.apply()
     }
 
+    // isLoggedIn returns true if a user is logged in, false if not
     fun isLoggedIn(ctx: Context): Boolean {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()

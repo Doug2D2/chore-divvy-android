@@ -1,25 +1,18 @@
 package com.doug2d2.chore_divvy_android
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.doug2d2.chore_divvy_android.chore.ChoreListFragmentDirections
 import com.doug2d2.chore_divvy_android.databinding.ActivityMainBinding
-import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
 import com.google.android.material.navigation.NavigationView
 import timber.log.Timber
 
@@ -35,6 +28,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
 
+    // onSupportNavigateUp is called when the menu or back icon is clicked
+    // If on choreListFragment the menu is displayed, otherwise the app goes
+    // back to the previous fragment
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
 
@@ -49,7 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    // On main menu item clicked
+    // onNavigationItemSelected is called when a main menu item is clicked
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out -> {
@@ -68,6 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    // setupNavigation sets the tool bar title and icon based on the current destination
     private fun setupNavigation() {
         val navController = findNavController(R.id.nav_host_fragment)
 

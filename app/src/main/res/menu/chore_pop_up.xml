@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/chore_edit"
-        android:title="Edit" />
+        android:title="@string/edit_menu_item_text" />
     <item
         android:id="@+id/chore_delete"
-        android:title="Delete" />
+        android:title="@string/delete_menu_item_text" />
 
 </menu>

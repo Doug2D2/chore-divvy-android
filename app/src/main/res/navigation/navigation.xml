@@ -71,5 +71,8 @@
         <action
             android:id="@+id/action_editChoreFragment_to_choreListFragment"
             app:destination="@id/choreListFragment" />
+        <argument
+            android:name="choreToEdit"
+            app:argType="com.doug2d2.chore_divvy_android.database.Chore" />
     </fragment>
 </navigation>

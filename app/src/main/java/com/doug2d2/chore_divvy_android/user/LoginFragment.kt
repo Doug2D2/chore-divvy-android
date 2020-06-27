@@ -1,14 +1,10 @@
 package com.doug2d2.chore_divvy_android.user
 
-import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -44,8 +40,11 @@ class LoginFragment : Fragment() {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToChoreListFragment())
         }
 
+        // Observe changes to username
         loginViewModel.username.observe(viewLifecycleOwner, Observer<String> { username ->
             binding.errorText.visibility = View.GONE
+
+            // Enable log in button if all required fields have a value
             if (!username.isNullOrBlank() && !loginViewModel.password.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
@@ -53,8 +52,11 @@ class LoginFragment : Fragment() {
             }
         })
 
+        // Observe changes to password
         loginViewModel.password.observe(viewLifecycleOwner, Observer<String> { password ->
             binding.errorText.visibility = View.GONE
+
+            // Enable log in button if all required fields have a value
             if (!password.isNullOrBlank() && !loginViewModel.username.value.isNullOrBlank()) {
                 binding.loginButton.isEnabled = true
             } else {
@@ -76,6 +78,7 @@ class LoginFragment : Fragment() {
             false
         }
 
+        // Navigate to sign up fragment
         loginViewModel.navigateToSignUp.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
             if (navigate) {
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
@@ -83,6 +86,7 @@ class LoginFragment : Fragment() {
             }
         })
 
+        // Navigate to forgot password fragment
         loginViewModel.navigateToForgotPassword.observe(viewLifecycleOwner, Observer { navigate ->
             if (navigate) {
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
@@ -90,6 +94,7 @@ class LoginFragment : Fragment() {
             }
         })
 
+        // Observe changes to loginStatus
         loginViewModel.loginStatus.observe(viewLifecycleOwner, Observer<LoginStatus> { loginStatus ->
             Utils.hideKeyboard(activity)
 
@@ -105,6 +110,7 @@ class LoginFragment : Fragment() {
                     binding.loginButton.isEnabled = true
                     binding.progressBar.visibility = View.GONE
 
+                    // Keeps user logged in on device
                     Utils.login(this.requireContext(), loginViewModel.userID)
 
                     // Navigate to chore list
