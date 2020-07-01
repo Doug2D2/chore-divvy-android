@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_choreListFragment_to_editChoreFragment"
             app:destination="@id/editChoreFragment" />
+        <action
+            android:id="@+id/action_choreListFragment_to_choreDetailFragment"
+            app:destination="@id/choreDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
@@ -74,5 +77,17 @@
         <argument
             android:name="choreToEdit"
             app:argType="com.doug2d2.chore_divvy_android.database.Chore" />
+    </fragment>
+    <fragment
+        android:id="@+id/choreDetailFragment"
+        android:name="com.doug2d2.chore_divvy_android.chore.ChoreDetailFragment"
+        android:label="fragment_chore_detail"
+        tools:layout="@layout/fragment_chore_detail" >
+        <action
+            android:id="@+id/action_choreDetailFragment_to_choreListFragment"
+            app:destination="@id/choreListFragment" />
+        <action
+            android:id="@+id/action_choreDetailFragment_to_editChoreFragment"
+            app:destination="@id/editChoreFragment" />
     </fragment>
 </navigation>

@@ -65,6 +65,20 @@ class ChoreListFragment : Fragment() {
             }
         })
 
+        // Observe changes to navigating to chore detail fragment
+        choreListViewModel.navigateToDetailView.observe(viewLifecycleOwner, Observer { navigate ->
+            if (navigate) {
+                val moshi: Moshi = Moshi.Builder().build()
+                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val choreJson = adapter.toJson(choreListViewModel.choreDetailView)
+
+                val navController = findNavController()
+                val bundle = bundleOf("choreDetailView" to choreJson)
+                navController.navigate(R.id.action_choreListFragment_to_choreDetailFragment, bundle)
+                choreListViewModel.onNavigatedToDetailView()
+            }
+        })
+
         // Observe change to getting chores
         choreListViewModel.getChoresStatus.observe(viewLifecycleOwner, Observer { updateChoreStatus ->
             when (updateChoreStatus) {

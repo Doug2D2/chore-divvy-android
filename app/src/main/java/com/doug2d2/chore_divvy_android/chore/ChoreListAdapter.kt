@@ -4,12 +4,16 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.TimePicker
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
+import timber.log.Timber
 
 class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
     companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
@@ -22,9 +26,10 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
         }
     }
 
-    class ChoreListViewHolder(private var binding: ChoreItemBinding, val choreListViewModel: ChoreListViewModel): RecyclerView.ViewHolder(binding.root), View.OnLongClickListener {
+    class ChoreListViewHolder(private var binding: ChoreItemBinding, val choreListViewModel: ChoreListViewModel): RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
         init {
             binding.choreItem.setOnLongClickListener(this)
+            binding.choreItem.setOnClickListener(this)
         }
 
         fun bind(listener: ChoreListClickListener, chore: Chore) {
@@ -33,6 +38,11 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
             // This is important, because it forces the data binding to execute immediately,
             // which allows the RecyclerView to make the correct view size measurements
             binding.executePendingBindings()
+        }
+
+        // onClick is called when a chore is clicked
+        override fun onClick(v: View?) {
+            choreListViewModel.onDetailView(binding.chore!!)
         }
 
         // onLongClick is called when a chore is long clicked
@@ -47,7 +57,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
                     }
                     R.id.chore_delete -> {
                         // Create Alert Dialog to ask user if they are sure that they want to delete chore
-                        val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(v?.context, R.style.CustomAlertDialog))
+                        val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(v!!.context, R.style.CustomAlertDialog))
                         lateinit var alert: AlertDialog
                         val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
                             when (which) {
@@ -64,7 +74,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
 
                         // Display Alert Dialog
                         alert = alertBuilder.setTitle("Delete chore?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show()
+                            .setNegativeButton("No", dialogClickListener).show()
                     }
                 }
                 true

@@ -44,9 +44,14 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val navigateToEditChore: LiveData<Boolean>
         get() = _navigateToEditChore
 
+    private val _navigateToDetailView = MutableLiveData<Boolean>()
+    val navigateToDetailView: LiveData<Boolean>
+        get() = _navigateToDetailView
+
     lateinit var choreToDelete: Chore
     lateinit var choreToUpdate: Chore
     lateinit var choreToEdit: Chore
+    lateinit var choreDetailView: Chore
 
     init {
         getChores()
@@ -173,5 +178,16 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     // onNavigatedToEditChore is called after navigating to the add chore fragment
     fun onNavigatedToEditChore() {
         _navigateToEditChore.value = false
+    }
+
+    // onDetailView navigates to the chore detail fragment
+    fun onDetailView(chore: Chore) {
+        choreDetailView = chore
+        _navigateToDetailView.value = true
+    }
+
+    // onNavigatedToDetailView is called after navigating to the chore detail fragment
+    fun onNavigatedToDetailView() {
+        _navigateToDetailView.value = false
     }
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.doug2d2.chore_divvy_android.chore.ChoreDetailViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/marginTopBottom"
+        android:layout_marginStart="@dimen/marginStartEnd"
+        android:layout_marginEnd="@dimen/marginStartEnd"
+        tools:context=".chore.ChoreDetailFragment" >
+
+        <TextView
+            android:id="@+id/chore_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/choreName_detail_text"
+            tools:text="Chore Name" />
+
+        <TextView
+            android:id="@+id/frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/chore_name"
+            android:text="@string/frequency_detail_text"
+            tools:text="Frequency" />
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/frequency"
+            android:text="@string/category_detail_text"
+            tools:text="Category" />
+
+        <TextView
+            android:id="@+id/difficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/category"
+            android:text="@string/difficulty_detail_text"
+            tools:text="Difficulty" />
+
+        <TextView
+            android:id="@+id/notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/difficulty"
+            android:text="@string/notes_detail_text"
+            tools:text="Notes" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                android:layout_marginEnd="@dimen/marginBetweenElements"
+                android:text="@string/delete_button_text"
+                android:backgroundTint="@color/colorAccentDark"
+                android:layout_centerInParent="true"
+                android:onClick="@{() -> viewModel.onDelete()}"/>
+
+            <Button
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                android:text="@string/edit_button_text"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_centerInParent="true"
+                android:onClick="@{() -> viewModel.onEdit()}"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

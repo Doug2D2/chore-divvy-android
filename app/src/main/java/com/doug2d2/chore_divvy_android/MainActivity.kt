@@ -101,6 +101,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     toolBar.title = "Edit Chore"
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
+                R.id.choreDetailFragment -> {
+                    // TODO: Change toolbar title
+                    toolBar.title = "Chore Detail"
+                    toolBar.setDisplayHomeAsUpEnabled(true)
+                }
                 else -> {
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
