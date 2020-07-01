@@ -5,6 +5,7 @@ import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDao
 import com.doug2d2.chore_divvy_android.network.AddChoreRequest
 import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
+import com.doug2d2.chore_divvy_android.network.UpdateChoreRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -30,8 +31,15 @@ class ChoreRepository(private val dataSource: ChoreDao) {
     // updateChore calls API to update the status of a chore and
     // updates local db with new data
     suspend fun updateChore(chore: Chore) {
+        val choreToUpdate = UpdateChoreRequest(id = chore.id,
+            choreName = chore.choreName, status = chore.status,
+            dateComplete = chore.dateComplete, frequencyId = chore.frequencyId,
+            categoryId = chore.categoryId, assigneeId = chore.assigneeId,
+            difficulty = chore.difficulty, notes = chore.notes,
+            createdAt = chore.createdAt, updatedAt = chore.updatedAt)
+
         withContext(Dispatchers.IO) {
-            ChoreDivvyNetwork.choreDivvy.updateChore(chore.id, chore)
+            ChoreDivvyNetwork.choreDivvy.updateChore(chore.id, choreToUpdate)
             refreshChores()
         }
     }

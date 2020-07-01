@@ -1,5 +1,6 @@
 package com.doug2d2.chore_divvy_android.network
 
+import androidx.room.ColumnInfo
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
@@ -28,7 +29,7 @@ interface ChoreDivvyService {
     fun addChore(@Body body: AddChoreRequest): Deferred<Chore>
 
     @PUT("update-chore/{id}")
-    fun updateChore(@Path("id") id: Int, @Body body: Chore): Deferred<UpdateChoreResponse>
+    fun updateChore(@Path("id") id: Int, @Body body: UpdateChoreRequest): Deferred<UpdateChoreResponse>
 
     @GET("get-frequencies")
     fun getFrequencies(): Deferred<List<Frequency>>
@@ -65,3 +66,8 @@ data class UpdateChoreResponse(var numChanged: List<Int>)
 
 data class AddChoreRequest (var choreName: String, var status: String, var frequencyId: Int,
                             var categoryId: Int, var difficulty: String, var notes: String?)
+
+data class UpdateChoreRequest (var id: Int, var choreName: String, var status: String,
+                               var dateComplete: String?, var frequencyId: Int, var categoryId: Int,
+                               var assigneeId: Int?, var difficulty: String, var notes: String?,
+                               var createdAt: String, var updatedAt: String)
