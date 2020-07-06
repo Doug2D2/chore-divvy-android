@@ -12,6 +12,8 @@ import com.doug2d2.chore_divvy_android.chore.ChoreListViewModel
 import com.doug2d2.chore_divvy_android.database.Chore
 import kotlinx.coroutines.withContext
 
+enum class AddStatus { LOADING, SUCCESS, CONNECTION_ERROR, OTHER_ERROR }
+
 // Utils contains common functions used by multiple fragments
 object Utils {
     // hideKeyboard hides the on screen keyboard

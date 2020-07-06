@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.doug2d2.chore_divvy_android.AddStatus
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Frequency
@@ -80,17 +81,17 @@ class AddChoreFragment : Fragment() {
         })
 
         // Observe addChoreStatus
-        addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddChoreStatus> { addChoreStatus ->
+        addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddStatus> { addChoreStatus ->
             Utils.hideKeyboard(activity)
 
             when (addChoreStatus) {
-                AddChoreStatus.LOADING -> {
+                AddStatus.LOADING -> {
                     Timber.i("Loading...")
                     addChoreViewModel.addChoreButtonEnabled.value = false
                     binding.errorText.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                AddChoreStatus.SUCCESS -> {
+                AddStatus.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
 
@@ -99,14 +100,14 @@ class AddChoreFragment : Fragment() {
                     // Navigate to chore list
                     findNavController().navigate(AddChoreFragmentDirections.actionAddChoreFragmentToChoreListFragment())
                 }
-                AddChoreStatus.CONNECTION_ERROR -> {
+                AddStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     addChoreViewModel.addChoreButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
-                AddChoreStatus.OTHER_ERROR -> {
+                AddStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE

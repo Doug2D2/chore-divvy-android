@@ -4,10 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.chore.ChoreStatus
 import com.doug2d2.chore_divvy_android.database.Category
-import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
+import com.doug2d2.chore_divvy_android.network.AddCategoryRequest
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +26,10 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     val categories: LiveData<List<Category>>
         get() = _categories
 
+    private val _addCategoryStatus = MutableLiveData<AddStatus>()
+    val addCategoryStatus: LiveData<AddStatus>
+        get() = _addCategoryStatus
+
     var navigationViewMenuItems: MutableMap<Int, NavViewMenuItem> = HashMap()
 
     val ctx = getApplication<Application>().applicationContext
@@ -35,6 +38,7 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         getCategories()
     }
 
+    // getCategories gets all categories from the API and updates the local DB with them
     fun getCategories() {
         uiScope.launch {
             try {
@@ -43,6 +47,32 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
                 Timber.i("getCategories Http Exception: " + e.message)
             } catch (e: Exception) {
                 Timber.i("getCategories Exception: " + e.message)
+            }
+        }
+    }
+
+    // onAddCategory is called when the Add Category menu item is clicked
+    fun onAddCategory() {
+        val userId = Utils.getUserId(ctx)
+        val categoryToAdd = AddCategoryRequest(
+            categoryName = "NEW",
+            userIds = listOf(userId)
+        )
+
+        // Add Category
+        uiScope.launch {
+            try {
+                _addCategoryStatus.value = AddStatus.LOADING
+
+                categoryRepository.addCategory(ctx, categoryToAdd)
+
+                _addCategoryStatus.value = AddStatus.SUCCESS
+            } catch (e: HttpException) {
+                Timber.i("addChore HttpException: " + e.message)
+                _addCategoryStatus.value = AddStatus.CONNECTION_ERROR
+            } catch (e: java.lang.Exception) {
+                Timber.i("addChore Exception: " + e.message)
+                _addCategoryStatus.value = AddStatus.OTHER_ERROR
             }
         }
     }

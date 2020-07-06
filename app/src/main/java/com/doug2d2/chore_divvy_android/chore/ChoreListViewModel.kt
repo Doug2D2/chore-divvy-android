@@ -63,7 +63,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // getChores gets all chores from the API and updates the local DB with them
-    fun getChores() {
+    private fun getChores() {
         uiScope.launch {
             try {
                 Timber.i("Getting chores")

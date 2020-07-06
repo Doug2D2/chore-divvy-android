@@ -1,11 +1,13 @@
 package com.doug2d2.chore_divvy_android.network
 
 import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.squareup.moshi.Json
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -39,6 +41,9 @@ interface ChoreDivvyService {
 
     @DELETE("delete-chore/{id}")
     fun deleteChore(@Path("id") id: Int): Deferred<Int>
+
+    @POST("add-category")
+    fun addCategory(@Body body: AddCategoryRequest): Deferred<Category>
 }
 
 // Sets up retrofit API client
@@ -71,3 +76,5 @@ data class UpdateChoreRequest (var id: Int, var choreName: String, var status: S
                                var dateComplete: String?, var frequencyId: Int, var categoryId: Int,
                                var assigneeId: Int?, var difficulty: String, var notes: String?,
                                var createdAt: String, var updatedAt: String)
+
+data class AddCategoryRequest (var categoryName: String, var userIds: List<Int>)

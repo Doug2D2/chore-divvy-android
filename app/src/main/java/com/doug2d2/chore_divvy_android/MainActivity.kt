@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
@@ -11,13 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.doug2d2.chore_divvy_android.chore.ChoreListFragment
-import com.doug2d2.chore_divvy_android.chore.ChoreListFragmentDirections
-import com.doug2d2.chore_divvy_android.chore.ChoreListViewModel
-import com.doug2d2.chore_divvy_android.chore.ChoreListViewModelFactory
+import com.doug2d2.chore_divvy_android.chore.*
 import com.doug2d2.chore_divvy_android.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
 import timber.log.Timber
@@ -38,38 +37,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupNavigation()
 
-        // Observe changes to categories and add items to menu
-        mainViewModel.categories.observe(binding.lifecycleOwner!!, Observer { categories ->
-            val selectedCategorySet = Utils.isSelectedCategorySet(this)
-
-            // Loop through all of user's categories and add a menu item for each one
-            // Also add them to navigationViewMenuItems map to keep track of view ids for
-            // click events
-            categories.forEachIndexed { idx, c ->
-                // Set first category as selected category if not set
-                if (!selectedCategorySet && idx == 0) {
-                    Utils.setSelectedCategory(this, c.id)
-                }
-
-                val viewId  = View.generateViewId()
-
-                mainViewModel.navigationViewMenuItems.put(viewId,
-                    NavViewMenuItem(categoryId = c.id, name = c.categoryName))
-
-                binding.navigationView.menu.add(1, viewId, idx, c.categoryName)
-            }
-        })
-
-        // Add sign out menu item and add it to the navigationViewMenuItems
-        // map to keep track of view ids for click events
-        val signOutViewId  = View.generateViewId()
-
-        mainViewModel.navigationViewMenuItems.put(signOutViewId,
-            NavViewMenuItem(categoryId = -1, name = "Sign out"))
-
-        binding.navigationView.menu.add(2, signOutViewId, mainViewModel.navigationViewMenuItems.size+1, "Sign out")
+        // Create menu with categories
+        createMenu()
 
         binding.navigationView.setNavigationItemSelectedListener(this)
+
+        // Observe changes to categories and re-create menu
+        mainViewModel.categories.observe(binding.lifecycleOwner!!, Observer { categories ->
+            createMenu()
+        })
+
+        // Observe changes to addCategoryStatus
+        mainViewModel.addCategoryStatus.observe(binding.lifecycleOwner!!, Observer<AddStatus> { addCategoryStatus ->
+            when (addCategoryStatus) {
+                AddStatus.SUCCESS -> {
+                    mainViewModel.getCategories()
+                }
+            }
+        })
     }
 
     // onSupportNavigateUp is called when the menu or back icon is clicked
@@ -99,6 +84,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 // Navigate to login
                 findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
+
+                // Close menu
+                binding.drawerLayout.closeDrawer(Gravity.LEFT)
+            }
+            -2 -> {
+                binding.viewModel?.onAddCategory()
             }
             else -> {
                 // if catId is not -1 and catId is not the current selected category
@@ -112,11 +103,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     // back to the chore list with the chores for the new category
                     findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
                 }
+
+                // Close menu
+                binding.drawerLayout.closeDrawer(Gravity.LEFT)
             }
         }
-
-        // Close menu
-        binding.drawerLayout.closeDrawer(Gravity.LEFT)
 
         return true
     }
@@ -168,5 +159,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
+    }
+
+    private fun createMenu() {
+        // Clear all menu items
+        binding.viewModel?.navigationViewMenuItems?.clear()
+        binding.navigationView.menu.clear()
+
+        // Loop through all of user's categories and add a menu item for each one
+        // Also add them to navigationViewMenuItems map to keep track of view ids for
+        // click events
+        binding.viewModel?.categories?.value?.forEachIndexed { idx, c ->
+            val selectedCategorySet = Utils.isSelectedCategorySet(this)
+
+            // Set first category as selected category if not set
+            if (!selectedCategorySet && idx == 0) {
+                Utils.setSelectedCategory(this, c.id)
+            }
+
+            val viewId  = View.generateViewId()
+
+            binding.viewModel?.navigationViewMenuItems?.put(viewId,
+                NavViewMenuItem(categoryId = c.id, name = c.categoryName))
+
+            binding.navigationView.menu.add(1, viewId, idx, c.categoryName)
+        }
+
+        // Add Add Category menu item and add it to the navigationViewMenuItems
+        // map to keep track of view ids for click events
+        val addCatViewId  = View.generateViewId()
+
+        binding?.viewModel?.navigationViewMenuItems?.put(addCatViewId,
+            NavViewMenuItem(categoryId = -2, name = "Add Category"))
+
+        binding.navigationView.menu.add(2, addCatViewId, 99, "Add Category")
+
+        // Add sign out menu item and add it to the navigationViewMenuItems
+        // map to keep track of view ids for click events
+        val signOutViewId  = View.generateViewId()
+
+        binding?.viewModel?.navigationViewMenuItems?.put(signOutViewId,
+            NavViewMenuItem(categoryId = -1, name = "Sign out"))
+
+        binding.navigationView.menu.add(3, signOutViewId, 100, "Sign out")
     }
 }

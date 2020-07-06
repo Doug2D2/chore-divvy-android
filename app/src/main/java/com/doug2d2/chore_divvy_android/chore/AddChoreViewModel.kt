@@ -6,6 +6,7 @@ import android.widget.AdapterView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.AddStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
@@ -19,8 +20,6 @@ import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
-
-enum class AddChoreStatus { LOADING, SUCCESS, CONNECTION_ERROR, OTHER_ERROR }
 
 class AddChoreViewModel(application: Application): AndroidViewModel(application), AdapterView.OnItemSelectedListener {
     private var viewModelJob = Job()
@@ -37,8 +36,8 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
 
-    private val _addChoreStatus = MutableLiveData<AddChoreStatus>()
-    val addChoreStatus: LiveData<AddChoreStatus>
+    private val _addChoreStatus = MutableLiveData<AddStatus>()
+    val addChoreStatus: LiveData<AddStatus>
         get() = _addChoreStatus
 
     val choreName = MutableLiveData<String>()
@@ -110,17 +109,17 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
             // Add Chore
             uiScope.launch {
                 try {
-                    _addChoreStatus.value = AddChoreStatus.LOADING
+                    _addChoreStatus.value = AddStatus.LOADING
 
                     choreRepository.addChore(ctx, choreToAdd)
 
-                    _addChoreStatus.value = AddChoreStatus.SUCCESS
+                    _addChoreStatus.value = AddStatus.SUCCESS
                 } catch (e: HttpException) {
                     Timber.i("addChore HttpException: " + e.message)
-                    _addChoreStatus.value = AddChoreStatus.CONNECTION_ERROR
+                    _addChoreStatus.value = AddStatus.CONNECTION_ERROR
                 } catch (e: Exception) {
                     Timber.i("addChore Exception: " + e.message)
-                    _addChoreStatus.value = AddChoreStatus.OTHER_ERROR
+                    _addChoreStatus.value = AddStatus.OTHER_ERROR
                 }
             }
         }
