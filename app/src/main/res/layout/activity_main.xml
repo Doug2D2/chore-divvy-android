@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.doug2d2.chore_divvy_android.MainViewModel" />
+    </data>
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -35,8 +41,7 @@
             android:id="@+id/navigation_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:menu="@menu/nav_view"/>
+            android:layout_gravity="start" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 

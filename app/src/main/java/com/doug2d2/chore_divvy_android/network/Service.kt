@@ -22,8 +22,8 @@ interface ChoreDivvyService {
     @PUT("forgot-password")
     fun forgotPassword(@Body body: ForgotPasswordRequest): Deferred<ForgotPasswordResponse>
 
-    @GET("get-chores")
-    fun getChores(): Deferred<List<Chore>>
+    @GET("get-chores-by-categoryId/{categoryId}")
+    fun getChoresByCategoryId(@Path("categoryId") categoryId: Int): Deferred<List<Chore>>
 
     @POST("add-chore")
     fun addChore(@Body body: AddChoreRequest): Deferred<Chore>
@@ -34,8 +34,8 @@ interface ChoreDivvyService {
     @GET("get-frequencies")
     fun getFrequencies(): Deferred<List<Frequency>>
 
-    @GET("get-categories")
-    fun getCategories(): Deferred<List<Category>>
+    @GET("get-categories-by-userId/{userId}")
+    fun getCategoriesByUserId(@Path("userId") userId: Int): Deferred<List<Category>>
 
     @DELETE("delete-chore/{id}")
     fun deleteChore(@Path("id") id: Int): Deferred<Int>
@@ -45,7 +45,7 @@ interface ChoreDivvyService {
 object ChoreDivvyNetwork {
     private val retrofit = Retrofit.Builder()
         //.baseUrl("http://10.0.2.2:8080/") //localhost
-        .baseUrl("http://54.237.127.150:8080/")
+        .baseUrl("http://54.208.32.213:8080/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()

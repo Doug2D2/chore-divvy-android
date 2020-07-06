@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
 import com.doug2d2.chore_divvy_android.chore.ChoreListViewModel
 import com.doug2d2.chore_divvy_android.database.Chore
+import kotlinx.coroutines.withContext
 
 // Utils contains common functions used by multiple fragments
 object Utils {
@@ -23,23 +24,23 @@ object Utils {
         }
     }
 
-    // login uses Shared Prefs to hold userID and sets loggedIn to true
+    // login uses Shared Prefs to hold userId and sets loggedIn to true
     fun login(ctx: Context, userId: Int) {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
 
         editor.putBoolean("loggedIn", true)
-        editor.putInt("userID", userId)
+        editor.putInt("userId", userId)
         editor.apply()
     }
 
-    // logout removes loggedIn and userID from Shared Prefs
+    // logout removes loggedIn and userId from Shared Prefs
     fun logout(ctx: Context) {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
 
         editor.remove("loggedIn")
-        editor.remove("userID")
+        editor.remove("userId")
         editor.apply()
     }
 
@@ -49,7 +50,41 @@ object Utils {
         val editor = sharedPrefs.edit()
 
         if (sharedPrefs.getBoolean("loggedIn", false) &&
-            sharedPrefs.getInt("userID", -1) != -1)  {
+            sharedPrefs.getInt("userId", -1) != -1)  {
+            return true
+        }
+
+        return false
+    }
+
+    // getUserId returns the userId of the logged in user
+    fun getUserId(ctx: Context): Int {
+        val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+
+        return sharedPrefs.getInt("userId", -1)
+    }
+
+    // setSelectedCategory sets the category id
+    fun setSelectedCategory(ctx: Context, categoryId: Int) {
+        val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+
+        editor.putInt("categoryId", categoryId)
+        editor.apply()
+    }
+
+    // getSelectedCategory returns the selected category id
+    fun getSelectedCategory(ctx: Context): Int {
+        val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+
+        return sharedPrefs.getInt("categoryId", -1)
+    }
+
+    // isSelectedCategorySet returns true if selectedCategory is set, false if not
+    fun isSelectedCategorySet(ctx: Context): Boolean {
+        val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
+
+        if (sharedPrefs.getInt("selectedCategory", -1) != -1) {
             return true
         }
 

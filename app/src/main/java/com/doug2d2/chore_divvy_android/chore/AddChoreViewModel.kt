@@ -52,6 +52,8 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     var cats = MutableLiveData<List<Category>>()
     var diffs = MutableLiveData<List<String>>()
 
+    val ctx = getApplication<Application>().applicationContext
+
     init {
         addChoreButtonEnabled.value = false
 
@@ -66,9 +68,9 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
             try {
                 freqs.value = freqRepository.getFrequencies()
             } catch (e: HttpException) {
-                Timber.i("Http Exception: " + e.message())
+                Timber.i("getFrequencies Http Exception: " + e.message)
             } catch (e: Exception) {
-                Timber.i("Exception: " + e.message)
+                Timber.i("getFrequencies Exception: " + e.message)
             }
         }
     }
@@ -77,12 +79,11 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     private fun getCategories() {
         uiScope.launch {
             try {
-                cats.value = catRepository.getCategories()
-                Timber.i("ViewModel: " + cats)
+                cats.value = catRepository.getCategories(ctx)
             } catch (e: HttpException) {
-                Timber.i("Http Exception: " + e.message())
+                Timber.i("getCategories Http Exception: " + e.message)
             } catch (e: Exception) {
-                Timber.i("Exception: " + e.message)
+                Timber.i("getCategories Exception: " + e.message)
             }
         }
     }
@@ -111,7 +112,7 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
                 try {
                     _addChoreStatus.value = AddChoreStatus.LOADING
 
-                    choreRepository.addChore(choreToAdd)
+                    choreRepository.addChore(ctx, choreToAdd)
 
                     _addChoreStatus.value = AddChoreStatus.SUCCESS
                 } catch (e: HttpException) {

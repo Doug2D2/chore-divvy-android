@@ -3,6 +3,7 @@ package com.doug2d2.chore_divvy_android.chore
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
+import com.google.android.material.navigation.NavigationView
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import timber.log.Timber
@@ -81,6 +83,7 @@ class ChoreListFragment : Fragment() {
 
         // Observe change to getting chores
         choreListViewModel.getChoresStatus.observe(viewLifecycleOwner, Observer { updateChoreStatus ->
+            Timber.i("Chore Status")
             when (updateChoreStatus) {
                 ChoreStatus.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE

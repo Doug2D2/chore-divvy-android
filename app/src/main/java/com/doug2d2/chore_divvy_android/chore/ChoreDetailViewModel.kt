@@ -36,6 +36,8 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
     val deleteChore: LiveData<Boolean>
         get() = _deleteChore
 
+    val ctx = getApplication<Application>().applicationContext
+
     fun onDelete() {
         _deleteChore.value = true
     }
@@ -59,7 +61,7 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
             try {
                 _deleteChoreStatus.value = ChoreStatus.LOADING
 
-                choreRepository.deleteChore(chore.id)
+                choreRepository.deleteChore(ctx, chore.id)
 
                 _deleteChoreStatus.value = ChoreStatus.SUCCESS
             } catch (e: HttpException) {

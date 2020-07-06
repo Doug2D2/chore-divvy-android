@@ -52,6 +52,8 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
     var cats = MutableLiveData<List<Category>>()
     var diffs = MutableLiveData<List<String>>()
 
+    val ctx = getApplication<Application>().applicationContext
+
     init {
         saveButtonEnabled.value = true
 
@@ -77,7 +79,7 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
     private fun getCategories() {
         uiScope.launch {
             try {
-                cats.value = catRepository.getCategories()
+                cats.value = catRepository.getCategories(ctx)
                 Timber.i("ViewModel: " + cats)
             } catch (e: HttpException) {
                 Timber.i("Http Exception: " + e.message())
@@ -144,7 +146,7 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
                 try {
                     _editChoreStatus.value = EditChoreStatus.LOADING
 
-                    choreRepository.updateChore(choreToEdit.value!!)
+                    choreRepository.updateChore(ctx, choreToEdit.value!!)
 
                     _editChoreStatus.value = EditChoreStatus.SUCCESS
                 } catch (e: HttpException) {
