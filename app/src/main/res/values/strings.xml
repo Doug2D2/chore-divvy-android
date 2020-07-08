@@ -11,7 +11,6 @@
     <string name="send_link_button_text">Send Link</string>
     <string name="forgot_password_text">Enter your email address and we will send you a link to reset your password.</string>
     <string name="chore_item_check_box_image">Check box for chore status</string>
-    <string name="add_chore_button_text">Add chore</string>
     <string name="choreName_edit_hint">Chore Name</string>
     <string name="notes_edit_text_hint">Notes</string>
     <string name="frequency_spinner_hint">Frequency</string>
@@ -30,4 +29,8 @@
     <string name="category_detail_text">&lt;b>Category:&lt;/b> %1$d</string>
     <string name="difficulty_detail_text">&lt;b>Difficulty:&lt;/b> %1$s</string>
     <string name="notes_detail_text">&lt;b>Notes:&lt;/b> %1$s</string>
+    <string name="categoryName_edit_hint">Category Name</string>
+    <string name="addCategory_button_text">Add category</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -71,7 +71,7 @@
             android:layout_margin="16dp"
             app:backgroundTint="@color/colorAccent"
             app:tint="@android:color/white"
-            android:contentDescription="@string/add_chore_button_text"
+            android:contentDescription="@string/addChore_button_text"
             android:src="@drawable/baseline_add_white_18dp"
             android:onClick="@{() -> viewModel.onAddChore()}"
             app:layout_constraintBottom_toBottomOf="parent"

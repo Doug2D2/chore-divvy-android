@@ -85,16 +85,6 @@
                 android:layout_centerInParent="true"
                 android:onClick="@{() -> viewModel.onDelete()}"/>
 
-            <Button
-                android:id="@+id/editButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/marginBetweenElements"
-                android:text="@string/edit_button_text"
-                android:backgroundTint="@color/colorPrimary"
-                android:layout_centerInParent="true"
-                android:onClick="@{() -> viewModel.onEdit()}"/>
-
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,10 +28,6 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
     val deleteChoreStatus: LiveData<ChoreStatus>
         get() = _deleteChoreStatus
 
-    private val _navigateToEditChore = MutableLiveData<Boolean>()
-    val navigateToEditChore: LiveData<Boolean>
-        get() = _navigateToEditChore
-
     private val _deleteChore = MutableLiveData<Boolean>()
     val deleteChore: LiveData<Boolean>
         get() = _deleteChore
@@ -44,15 +40,6 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
 
     fun onDeleteCompleted() {
         _deleteChore.value = false
-    }
-
-    fun onEdit() {
-        _navigateToEditChore.value = true
-    }
-
-    // onNavigatedToEditChore is called after navigating to the add chore fragment
-    fun onNavigatedToEditChore() {
-        _navigateToEditChore.value = false
     }
 
     // deleteChore allows a user to delete a chore

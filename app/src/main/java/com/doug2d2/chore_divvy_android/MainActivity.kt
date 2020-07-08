@@ -2,6 +2,7 @@ package com.doug2d2.chore_divvy_android
 
 import android.os.Bundle
 import android.view.Gravity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -84,12 +85,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 // Navigate to login
                 findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
-
-                // Close menu
-                binding.drawerLayout.closeDrawer(Gravity.LEFT)
             }
             -2 -> {
-                binding.viewModel?.onAddCategory()
+                // Navigate to add category
+                findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToAddCategoryFragment())
             }
             else -> {
                 // if catId is not -1 and catId is not the current selected category
@@ -103,11 +102,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     // back to the chore list with the chores for the new category
                     findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
                 }
-
-                // Close menu
-                binding.drawerLayout.closeDrawer(Gravity.LEFT)
             }
         }
+
+        // Close menu
+        binding.drawerLayout.closeDrawer(Gravity.LEFT)
 
         return true
     }
@@ -138,7 +137,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
                 R.id.choreListFragment -> {
-                    toolBar.title = "Chores"
+                    val selectedCatId = Utils.getSelectedCategory(this)
+                    toolBar.title = binding?.viewModel?.getCategoryNameById(selectedCatId)
                     toolBar.setHomeAsUpIndicator(R.drawable.baseline_menu_white_18dp)
                 }
                 R.id.addChoreFragment -> {
@@ -152,6 +152,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.choreDetailFragment -> {
                     // TODO: Change toolbar title
                     toolBar.title = "Chore Detail"
+                    toolBar.setDisplayHomeAsUpEnabled(true)
+                }
+                R.id.addCategoryFragment -> {
+                    toolBar.title = "Add Category"
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
                 else -> {
@@ -174,6 +178,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // Set first category as selected category if not set
             if (!selectedCategorySet && idx == 0) {
+                Timber.i("setting")
                 Utils.setSelectedCategory(this, c.id)
             }
 
@@ -202,5 +207,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             NavViewMenuItem(categoryId = -1, name = "Sign out"))
 
         binding.navigationView.menu.add(3, signOutViewId, 100, "Sign out")
+
+        // Set toolBar title
+        val toolBar = supportActionBar
+        val selectedCatId = Utils.getSelectedCategory(this)
+        toolBar?.title = binding?.viewModel?.getCategoryNameById(selectedCatId)
     }
 }

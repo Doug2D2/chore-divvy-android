@@ -5,11 +5,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_LEGACY
-import android.view.ContextThemeWrapper
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
@@ -23,8 +20,11 @@ import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreDetailBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import timber.log.Timber
 
 class ChoreDetailFragment : Fragment() {
+    lateinit var binding: FragmentChoreDetailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -33,7 +33,7 @@ class ChoreDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: FragmentChoreDetailBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_chore_detail, container, false)
 
         val application = requireNotNull(this.activity).application
@@ -59,20 +59,6 @@ class ChoreDetailFragment : Fragment() {
         binding.category.text = catText
         binding.difficulty.text = diffText
         binding.notes.text = notesText
-
-        // Observe changes to navigating to edit chore fragment
-        choreDetailViewModel.navigateToEditChore.observe(viewLifecycleOwner, Observer { navigate ->
-            if (navigate) {
-                val moshi: Moshi = Moshi.Builder().build()
-                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
-                val choreJson = adapter.toJson(choreDetailViewModel.choreDetailView.value)
-
-                val navController = findNavController()
-                val bundle = bundleOf("choreToEdit" to choreJson)
-                navController.navigate(R.id.action_choreDetailFragment_to_editChoreFragment, bundle)
-                choreDetailViewModel.onNavigatedToEditChore()
-            }
-        })
 
         // Observe changes to deleteChore (after Delete button is clicked)
         choreDetailViewModel.deleteChore.observe(viewLifecycleOwner, Observer { delete ->
@@ -121,6 +107,33 @@ class ChoreDetailFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.chore_detail, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Timber.i("Detail onOptionsItemSelected")
+        when(item.itemId) {
+            R.id.action_edit -> {
+                val moshi: Moshi = Moshi.Builder().build()
+                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val choreJson = adapter.toJson(binding?.viewModel?.choreDetailView?.value)
+
+                val navController = findNavController()
+                val bundle = bundleOf("choreToEdit" to choreJson)
+                navController.navigate(R.id.action_choreDetailFragment_to_editChoreFragment, bundle)
+
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
     }
 }

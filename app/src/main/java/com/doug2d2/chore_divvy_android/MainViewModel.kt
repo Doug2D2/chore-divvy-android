@@ -51,30 +51,13 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         }
     }
 
-    // onAddCategory is called when the Add Category menu item is clicked
-    fun onAddCategory() {
-        val userId = Utils.getUserId(ctx)
-        val categoryToAdd = AddCategoryRequest(
-            categoryName = "NEW",
-            userIds = listOf(userId)
-        )
-
-        // Add Category
-        uiScope.launch {
-            try {
-                _addCategoryStatus.value = AddStatus.LOADING
-
-                categoryRepository.addCategory(ctx, categoryToAdd)
-
-                _addCategoryStatus.value = AddStatus.SUCCESS
-            } catch (e: HttpException) {
-                Timber.i("addChore HttpException: " + e.message)
-                _addCategoryStatus.value = AddStatus.CONNECTION_ERROR
-            } catch (e: java.lang.Exception) {
-                Timber.i("addChore Exception: " + e.message)
-                _addCategoryStatus.value = AddStatus.OTHER_ERROR
-            }
+    fun getCategoryNameById(categoryId: Int): String {
+        Timber.i("getCategoryNameById " + _categories.value)
+        val cats = _categories.value?.filter { cat ->
+            cat.id == categoryId
         }
+
+        return cats?.get(0)?.categoryName ?: ""
     }
 }
 

@@ -86,7 +86,7 @@ object Utils {
     fun isSelectedCategorySet(ctx: Context): Boolean {
         val sharedPrefs: SharedPreferences = ctx.getSharedPreferences("chore-divvy", Context.MODE_PRIVATE)
 
-        if (sharedPrefs.getInt("selectedCategory", -1) != -1) {
+        if (sharedPrefs.getInt("categoryId", -1) != -1) {
             return true
         }
 
