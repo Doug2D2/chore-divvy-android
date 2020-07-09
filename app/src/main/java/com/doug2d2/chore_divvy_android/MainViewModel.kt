@@ -51,13 +51,24 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         }
     }
 
+    // getCategoryNameById gets the name of a category by its id
     fun getCategoryNameById(categoryId: Int): String {
-        Timber.i("getCategoryNameById " + _categories.value)
         val cats = _categories.value?.filter { cat ->
             cat.id == categoryId
         }
 
         return cats?.get(0)?.categoryName ?: ""
+    }
+
+    // getViewIdByCategoryId gets the view id associated with the category id
+    fun getViewIdByCategoryId(categoryId: Int): Int {
+        for ((k, v) in navigationViewMenuItems) {
+            if (v.categoryId == categoryId) {
+                return k
+            }
+        }
+
+        return -99
     }
 }
 

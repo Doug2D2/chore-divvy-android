@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return true
             }
             else -> {
+                Utils.hideKeyboard(this)
                 return navigateUp(findNavController(R.id.nav_host_fragment), binding.drawerLayout)
             }
         }
@@ -138,8 +139,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.choreListFragment -> {
                     val selectedCatId = Utils.getSelectedCategory(this)
+
+                    // Set title to be selected category
                     toolBar.title = binding?.viewModel?.getCategoryNameById(selectedCatId)
                     toolBar.setHomeAsUpIndicator(R.drawable.baseline_menu_white_18dp)
+
+                    // Update menu to highlight selected category
+                    val viewId = binding?.viewModel?.getViewIdByCategoryId(selectedCatId)
+                    binding?.navigationView?.menu?.findItem(viewId!!)?.setChecked(true)
                 }
                 R.id.addChoreFragment -> {
                     toolBar.title = "Add Chore"
@@ -173,9 +180,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Loop through all of user's categories and add a menu item for each one
         // Also add them to navigationViewMenuItems map to keep track of view ids for
         // click events
-        binding.viewModel?.categories?.value?.forEachIndexed { idx, c ->
-            val selectedCategorySet = Utils.isSelectedCategorySet(this)
-
+        var idx = 0
+        val selectedCategorySet = Utils.isSelectedCategorySet(this)
+        val selectedCategoryId = Utils.getSelectedCategory(this)
+        binding.viewModel?.categories?.value?.forEach { c ->
             // Set first category as selected category if not set
             if (!selectedCategorySet && idx == 0) {
                 Timber.i("setting")
@@ -187,7 +195,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.viewModel?.navigationViewMenuItems?.put(viewId,
                 NavViewMenuItem(categoryId = c.id, name = c.categoryName))
 
-            binding.navigationView.menu.add(1, viewId, idx, c.categoryName)
+            val m = binding.navigationView.menu.add(1, viewId, idx, c.categoryName)
+
+            if (selectedCategoryId == c.id) {
+                Timber.i("TRUE")
+                m.setChecked(true)
+            } else {
+                m.setChecked(false)
+            }
+
+            idx++
         }
 
         // Add Add Category menu item and add it to the navigationViewMenuItems
@@ -197,7 +214,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding?.viewModel?.navigationViewMenuItems?.put(addCatViewId,
             NavViewMenuItem(categoryId = -2, name = "Add Category"))
 
-        binding.navigationView.menu.add(2, addCatViewId, 99, "Add Category")
+        binding.navigationView.menu.add(2, addCatViewId, idx, "Add Category").
+        setIcon(R.drawable.baseline_add_white_18dp)
+
+        idx++
 
         // Add sign out menu item and add it to the navigationViewMenuItems
         // map to keep track of view ids for click events
@@ -206,7 +226,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding?.viewModel?.navigationViewMenuItems?.put(signOutViewId,
             NavViewMenuItem(categoryId = -1, name = "Sign out"))
 
-        binding.navigationView.menu.add(3, signOutViewId, 100, "Sign out")
+        binding.navigationView.menu.add(3, signOutViewId, idx, "Sign out")
 
         // Set toolBar title
         val toolBar = supportActionBar
