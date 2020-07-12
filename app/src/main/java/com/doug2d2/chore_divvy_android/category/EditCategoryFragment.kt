@@ -1,12 +1,12 @@
 package com.doug2d2.chore_divvy_android.category
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -14,10 +14,14 @@ import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
-import com.doug2d2.chore_divvy_android.databinding.FragmentAddCategoryBinding
+import com.doug2d2.chore_divvy_android.chore.EditChoreFragmentDirections
+import com.doug2d2.chore_divvy_android.chore.EditChoreViewModel
+import com.doug2d2.chore_divvy_android.chore.EditChoreViewModelFactory
+import com.doug2d2.chore_divvy_android.databinding.FragmentEditCategoryBinding
+import com.doug2d2.chore_divvy_android.databinding.FragmentEditChoreBinding
 import timber.log.Timber
 
-class AddCategoryFragment : Fragment() {
+class EditCategoryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -26,33 +30,23 @@ class AddCategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: FragmentAddCategoryBinding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_add_category, container, false)
+        val binding: FragmentEditCategoryBinding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_edit_category, container, false)
 
         val application = requireNotNull(this.activity).application
-        val viewModelFactory = AddCategoryViewModelFactory(application)
-        val addCategoryViewModel = ViewModelProviders.of(
-            this, viewModelFactory).get(AddCategoryViewModel::class.java)
-        binding.viewModel = addCategoryViewModel
+        val viewModelFactory = EditCategoryViewModelFactory(application)
+        val editCategoryViewModel = ViewModelProviders.of(
+            this, viewModelFactory).get(EditCategoryViewModel::class.java)
+        binding.viewModel = editCategoryViewModel
 
-        // Observe categoryName
-        addCategoryViewModel.categoryName.observe(viewLifecycleOwner, Observer<String> { name ->
-            // Enable Add Category button if all required fields have a value
-            if (!addCategoryViewModel.categoryName.value.isNullOrBlank()) {
-                addCategoryViewModel.addCategoryButtonEnabled.value = true
-            } else {
-                addCategoryViewModel.addCategoryButtonEnabled.value = false
-            }
-        })
-
-        // Observe addCategoryStatus
-        addCategoryViewModel.apiCategoryStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { addCategoryStatus ->
+        // Observe editCategoryStatus
+        editCategoryViewModel.editCategoryStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { editCategoryStatus ->
             Utils.hideKeyboard(activity)
 
-            when (addCategoryStatus) {
+            when (editCategoryStatus) {
                 ApiStatus.LOADING -> {
                     Timber.i("Loading...")
-                    addCategoryViewModel.addCategoryButtonEnabled.value = false
+                    editCategoryViewModel.saveButtonEnabled.value = false
                     binding.errorText.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
@@ -60,30 +54,23 @@ class AddCategoryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
 
-                    Toast.makeText(this.requireContext(), "Category Added", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this.requireContext(), "Category Updated", Toast.LENGTH_SHORT).show()
 
-                    // Get all categories and navigate to chore list
-                    (activity as MainActivity?)?.binding?.viewModel?.getCategories()
-                    findNavController().navigate(AddCategoryFragmentDirections.actionAddCategoryFragmentToChoreListFragment())
+                    // Navigate to chore list
+                    findNavController().navigate(EditCategoryFragmentDirections.actionEditCategoryFragmentToChoreListFragment())
                 }
                 ApiStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
-
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
-
-                    addCategoryViewModel.addCategoryButtonEnabled.value = true
-
+                    editCategoryViewModel.saveButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
                 ApiStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
-
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE
-
-                    addCategoryViewModel.addCategoryButtonEnabled.value = true
-
+                    editCategoryViewModel.saveButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
             }

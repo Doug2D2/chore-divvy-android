@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.chore.ChoreStatus
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
-import com.doug2d2.chore_divvy_android.network.AddCategoryRequest
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,9 +26,13 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     val categories: LiveData<List<Category>>
         get() = _categories
 
-    private val _addCategoryStatus = MutableLiveData<AddStatus>()
-    val addCategoryStatus: LiveData<AddStatus>
+    private val _addCategoryStatus = MutableLiveData<ApiStatus>()
+    val apiCategoryStatus: LiveData<ApiStatus>
         get() = _addCategoryStatus
+
+    private val _deleteCategoryStatus = MutableLiveData<ChoreStatus>()
+    val deleteCategoryStatus: LiveData<ChoreStatus>
+        get() = _deleteCategoryStatus
 
     var navigationViewMenuItems: MutableMap<Int, NavViewMenuItem> = HashMap()
 
@@ -51,13 +55,39 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         }
     }
 
+    // deleteCategory allows a user to delete the current category
+    fun deleteCategory() {
+        val catId = Utils.getSelectedCategory(ctx)
+
+        uiScope.launch {
+            try {
+                _deleteCategoryStatus.value = ChoreStatus.LOADING
+
+                categoryRepository.deleteCategory(ctx, catId)
+
+                _deleteCategoryStatus.value = ChoreStatus.SUCCESS
+            } catch (e: HttpException) {
+                Timber.i("deleteCategory HttpException: " + e.message)
+
+                when(e.code()) {
+                    401 -> _deleteCategoryStatus.value = ChoreStatus.UNAUTHORIZED
+                    else -> _deleteCategoryStatus.value = ChoreStatus.OTHER_ERROR
+                }
+            } catch (e: Exception) {
+                Timber.i("deleteCategory Exception: " + e.message)
+
+                _deleteCategoryStatus.value = ChoreStatus.CONNECTION_ERROR
+            }
+        }
+    }
+
     // getCategoryNameById gets the name of a category by its id
     fun getCategoryNameById(categoryId: Int): String {
         val cats = _categories.value?.filter { cat ->
             cat.id == categoryId
         }
 
-        return cats?.get(0)?.categoryName ?: ""
+        return cats?.getOrNull(0)?.categoryName ?: ""
     }
 
     // getViewIdByCategoryId gets the view id associated with the category id

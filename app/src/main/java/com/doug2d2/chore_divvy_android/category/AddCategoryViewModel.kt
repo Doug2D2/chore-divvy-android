@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.AddStatus
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.network.AddCategoryRequest
@@ -23,8 +23,8 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
     private val catDao = ChoreDivvyDatabase.getDatabase(application).categoryDao
     private val catRepository = CategoryRepository(catDao)
 
-    private val _addCategoryStatus = MutableLiveData<AddStatus>()
-    val addCategoryStatus: LiveData<AddStatus>
+    private val _addCategoryStatus = MutableLiveData<ApiStatus>()
+    val apiCategoryStatus: LiveData<ApiStatus>
         get() = _addCategoryStatus
 
     val categoryName = MutableLiveData<String>()
@@ -47,17 +47,17 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
         // Add Category
         uiScope.launch {
             try {
-                _addCategoryStatus.value = AddStatus.LOADING
+                _addCategoryStatus.value = ApiStatus.LOADING
 
                 catRepository.addCategory(ctx, categoryToAdd)
 
-                _addCategoryStatus.value = AddStatus.SUCCESS
+                _addCategoryStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("addChore HttpException: " + e.message)
-                _addCategoryStatus.value = AddStatus.CONNECTION_ERROR
+                _addCategoryStatus.value = ApiStatus.CONNECTION_ERROR
             } catch (e: java.lang.Exception) {
                 Timber.i("addChore Exception: " + e.message)
-                _addCategoryStatus.value = AddStatus.OTHER_ERROR
+                _addCategoryStatus.value = ApiStatus.OTHER_ERROR
             }
         }
     }

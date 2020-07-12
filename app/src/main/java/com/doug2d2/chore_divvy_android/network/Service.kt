@@ -31,7 +31,7 @@ interface ChoreDivvyService {
     fun addChore(@Body body: AddChoreRequest): Deferred<Chore>
 
     @PUT("update-chore/{id}")
-    fun updateChore(@Path("id") id: Int, @Body body: UpdateChoreRequest): Deferred<UpdateChoreResponse>
+    fun updateChore(@Path("id") id: Int, @Body body: UpdateChoreRequest): Deferred<List<Int>>
 
     @GET("get-frequencies")
     fun getFrequencies(): Deferred<List<Frequency>>
@@ -44,6 +44,12 @@ interface ChoreDivvyService {
 
     @POST("add-category")
     fun addCategory(@Body body: AddCategoryRequest): Deferred<Category>
+
+    @PUT("update-category/{id}")
+    fun updateCategory(@Path("id") id: Int, @Body body: UpdateCategoryRequest): Deferred<List<Int>>
+
+    @DELETE("delete-category/{id}")
+    fun deleteCategory(@Path("id") id: Int): Deferred<Int>
 }
 
 // Sets up retrofit API client
@@ -67,8 +73,6 @@ data class ForgotPasswordRequest(var username: String)
 
 data class ForgotPasswordResponse(var msg: String)
 
-data class UpdateChoreResponse(var numChanged: List<Int>)
-
 data class AddChoreRequest (var choreName: String, var status: String, var frequencyId: Int,
                             var categoryId: Int, var difficulty: String, var notes: String?)
 
@@ -78,3 +82,6 @@ data class UpdateChoreRequest (var id: Int, var choreName: String, var status: S
                                var createdAt: String, var updatedAt: String)
 
 data class AddCategoryRequest (var categoryName: String, var userIds: List<Int>)
+
+data class UpdateCategoryRequest (var id: Int, var categoryName: String, var userId: List<Int>,
+                               var createdAt: String, var updatedAt: String)

@@ -1,21 +1,20 @@
 package com.doug2d2.chore_divvy_android.chore
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.*
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
-import com.google.android.material.navigation.NavigationView
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import timber.log.Timber
@@ -23,6 +22,17 @@ import timber.log.Timber
 class ChoreListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (Utils.getRefresh(context!!)) {
+            val navController = findNavController()
+            navController.navigate(R.id.action_choreListFragment_to_loginFragment)
+
+            Utils.setRefresh(context!!, false)
+        }
     }
 
     override fun onCreateView(
@@ -164,6 +174,49 @@ class ChoreListFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        //setHasOptionsMenu(true)
+
         return binding.root
     }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when(item.itemId) {
+//            R.id.category_edit -> {
+//                findNavController().navigate(R.id.action_choreListFragment_to_editCategoryFragment)
+//
+//                return true
+//            }
+//            R.id.category_delete -> {
+//                // Create Alert Dialog to ask user if they are sure that they want to delete category
+//                val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(this.requireView().context, R.style.CustomAlertDialog))
+//                lateinit var alert: AlertDialog
+//                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+//                    when (which) {
+//                        DialogInterface.BUTTON_POSITIVE -> {
+//                            val application = requireNotNull(this.activity).application
+//                            val viewModelFactory = ChoreListViewModelFactory(application)
+//                            val choreListViewModel = ViewModelProviders.of(
+//                                this, viewModelFactory).get(ChoreListViewModel::class.java)
+//
+//                            // Yes, delete category
+//                            choreListViewModel.deleteCategory()
+//                        }
+//                        DialogInterface.BUTTON_NEGATIVE -> {
+//                            // No, don't delete category
+//                            alert.cancel()
+//                        }
+//                    }
+//                }
+//
+//                // Display Alert Dialog
+//                alert = alertBuilder.setTitle("Delete category?").setPositiveButton("Yes", dialogClickListener)
+//                    .setNegativeButton("No", dialogClickListener).show()
+//
+//                return true
+//            }
+//            else -> {
+//                return super.onOptionsItemSelected(item)
+//            }
+//        }
+//    }
 }

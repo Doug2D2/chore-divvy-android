@@ -6,8 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
+import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
+import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.*
@@ -125,6 +128,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
                 choreToDelete = chore
                 choreRepository.deleteChore(ctx, choreToDelete.id)
+
                 // Remove deleted chore from _choreList
                 _choreList.value = _choreList.value?.filter { item ->
                     item.id != choreToDelete.id

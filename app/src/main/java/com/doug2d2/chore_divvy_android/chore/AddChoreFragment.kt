@@ -11,16 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.doug2d2.chore_divvy_android.AddStatus
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.databinding.FragmentAddChoreBinding
-import com.doug2d2.chore_divvy_android.user.LoginFragmentDirections
-import com.doug2d2.chore_divvy_android.user.LoginStatus
 import fr.ganfra.materialspinner.MaterialSpinner
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -81,17 +77,17 @@ class AddChoreFragment : Fragment() {
         })
 
         // Observe addChoreStatus
-        addChoreViewModel.addChoreStatus.observe(viewLifecycleOwner, Observer<AddStatus> { addChoreStatus ->
+        addChoreViewModel.apiChoreStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { addChoreStatus ->
             Utils.hideKeyboard(activity)
 
             when (addChoreStatus) {
-                AddStatus.LOADING -> {
+                ApiStatus.LOADING -> {
                     Timber.i("Loading...")
                     addChoreViewModel.addChoreButtonEnabled.value = false
                     binding.errorText.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                AddStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
 
@@ -100,14 +96,14 @@ class AddChoreFragment : Fragment() {
                     // Navigate to chore list
                     findNavController().navigate(AddChoreFragmentDirections.actionAddChoreFragmentToChoreListFragment())
                 }
-                AddStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     addChoreViewModel.addChoreButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
-                AddStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE

@@ -6,6 +6,7 @@ import android.widget.AdapterView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
@@ -23,8 +24,6 @@ import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
 
-enum class EditChoreStatus { LOADING, SUCCESS, CONNECTION_ERROR, OTHER_ERROR }
-
 class EditChoreViewModel(application: Application): AndroidViewModel(application), AdapterView.OnItemSelectedListener {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -40,8 +39,8 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
     private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
 
-    private val _editChoreStatus = MutableLiveData<EditChoreStatus>()
-    val editChoreStatus: LiveData<EditChoreStatus>
+    private val _editChoreStatus = MutableLiveData<ApiStatus>()
+    val editChoreStatus: LiveData<ApiStatus>
         get() = _editChoreStatus
 
     val choreToEdit = MutableLiveData<Chore>()
@@ -68,9 +67,9 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
             try {
                 freqs.value = freqRepository.getFrequencies()
             } catch (e: HttpException) {
-                Timber.i("Http Exception: " + e.message())
+                Timber.i("getFrequencies Http Exception: " + e.message())
             } catch (e: Exception) {
-                Timber.i("Exception: " + e.message)
+                Timber.i("getFrequencies Exception: " + e.message)
             }
         }
     }
@@ -80,11 +79,10 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
         uiScope.launch {
             try {
                 cats.value = catRepository.getCategories(ctx)
-                Timber.i("ViewModel: " + cats)
             } catch (e: HttpException) {
-                Timber.i("Http Exception: " + e.message())
+                Timber.i("getCategories Http Exception: " + e.message())
             } catch (e: Exception) {
-                Timber.i("Exception: " + e.message)
+                Timber.i("getCategories Exception: " + e.message)
             }
         }
     }
@@ -144,17 +142,17 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
             // Update Chore
             uiScope.launch {
                 try {
-                    _editChoreStatus.value = EditChoreStatus.LOADING
+                    _editChoreStatus.value = ApiStatus.LOADING
 
                     choreRepository.updateChore(ctx, choreToEdit.value!!)
 
-                    _editChoreStatus.value = EditChoreStatus.SUCCESS
+                    _editChoreStatus.value = ApiStatus.SUCCESS
                 } catch (e: HttpException) {
                     Timber.i("editChore HttpException: " + e.message)
-                    _editChoreStatus.value = EditChoreStatus.CONNECTION_ERROR
+                    _editChoreStatus.value = ApiStatus.CONNECTION_ERROR
                 } catch (e: Exception) {
                     Timber.i("editChore Exception: " + e.message)
-                    _editChoreStatus.value = EditChoreStatus.OTHER_ERROR
+                    _editChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             }
         }

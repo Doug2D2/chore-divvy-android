@@ -1,14 +1,13 @@
 package com.doug2d2.chore_divvy_android
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavDestination
@@ -49,13 +48,93 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         // Observe changes to addCategoryStatus
-        mainViewModel.addCategoryStatus.observe(binding.lifecycleOwner!!, Observer<AddStatus> { addCategoryStatus ->
+        mainViewModel.apiCategoryStatus.observe(binding.lifecycleOwner!!, Observer<ApiStatus> { addCategoryStatus ->
             when (addCategoryStatus) {
-                AddStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     mainViewModel.getCategories()
                 }
             }
         })
+
+        // Observe change to deleting a category
+        mainViewModel.deleteCategoryStatus.observe(binding.lifecycleOwner!!, Observer { deleteCategoryStatus ->
+            when (deleteCategoryStatus) {
+                ChoreStatus.SUCCESS -> {
+                    // Remove selected category
+                    Utils.setSelectedCategory(this, -1)
+
+                    // Get categories
+                    mainViewModel.getCategories()
+
+                    // Re-create menu
+                    createMenu()
+
+                    // This will cause the chore list fragment to get chores for the newly selected
+                    // category
+                    Utils.setRefresh(applicationContext, true)
+
+                    // Get chores for new category by navigating from chore list to log in
+                    // Since user is still logged in, navigating to log in will take the user
+                    // back to the chore list with the chores for the new category
+                    findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
+                }
+                ChoreStatus.UNAUTHORIZED -> {
+                    Toast.makeText(this, "You are not authorized to delete this category", Toast.LENGTH_LONG).show()
+                }
+                ChoreStatus.CONNECTION_ERROR -> {
+                    Toast.makeText(this, "Error connecting to our servers, please try again", Toast.LENGTH_LONG).show()
+                }
+                ChoreStatus.OTHER_ERROR -> {
+                    Toast.makeText(this, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.category_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.category_edit -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_choreListFragment_to_editCategoryFragment)
+
+                return true
+            }
+            R.id.category_delete -> {
+                // Create Alert Dialog to ask user if they are sure that they want to delete category
+                val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialog))
+                lateinit var alert: AlertDialog
+                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                    when (which) {
+                        DialogInterface.BUTTON_POSITIVE -> {
+                            val application = requireNotNull(this).application
+                            val viewModelFactory = MainViewModelFactory(application)
+                            val mainViewModel = ViewModelProviders.of(
+                                this, viewModelFactory).get(MainViewModel::class.java)
+
+                            // Yes, delete category
+                            mainViewModel.deleteCategory()
+                        }
+                        DialogInterface.BUTTON_NEGATIVE -> {
+                            // No, don't delete category
+                            alert.cancel()
+                        }
+                    }
+                }
+
+                // Display Alert Dialog
+                alert = alertBuilder.setTitle("Delete category?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show()
+
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     // onSupportNavigateUp is called when the menu or back icon is clicked
@@ -138,6 +217,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
                 R.id.choreListFragment -> {
+                    binding?.viewModel?.getCategories()
+
                     val selectedCatId = Utils.getSelectedCategory(this)
 
                     // Set title to be selected category
@@ -165,6 +246,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     toolBar.title = "Add Category"
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
+                R.id.editCategoryFragment -> {
+                    toolBar.title = "Edit Category"
+                    toolBar.setDisplayHomeAsUpEnabled(true)
+                }
                 else -> {
                     toolBar.setDisplayHomeAsUpEnabled(true)
                 }
@@ -172,7 +257,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun createMenu() {
+    fun createMenu() {
         // Clear all menu items
         binding.viewModel?.navigationViewMenuItems?.clear()
         binding.navigationView.menu.clear()

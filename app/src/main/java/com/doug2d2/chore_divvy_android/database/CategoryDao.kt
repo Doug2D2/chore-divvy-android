@@ -25,5 +25,5 @@ interface CategoryDao {
     fun getAll(): List<Category>
 
     @Query("SELECT * FROM categories WHERE id = :id")
-    fun getById(id: Int): Category?
+    fun getById(id: Int): Category
 }

@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
@@ -104,17 +105,17 @@ class EditChoreFragment : Fragment() {
         })
 
         // Observe editChoreStatus
-        editChoreViewModel.editChoreStatus.observe(viewLifecycleOwner, Observer<EditChoreStatus> { editChoreStatus ->
+        editChoreViewModel.editChoreStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { editChoreStatus ->
             Utils.hideKeyboard(activity)
 
             when (editChoreStatus) {
-                EditChoreStatus.LOADING -> {
+                ApiStatus.LOADING -> {
                     Timber.i("Loading...")
                     editChoreViewModel.saveButtonEnabled.value = false
                     binding.errorText.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                EditChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
 
@@ -123,14 +124,14 @@ class EditChoreFragment : Fragment() {
                     // Navigate to chore list
                     findNavController().navigate(EditChoreFragmentDirections.actionEditChoreFragmentToChoreListFragment())
                 }
-                EditChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Timber.i("Connection Error")
                     binding.errorText.text = "Error connecting to our servers, please try again."
                     binding.errorText.visibility = View.VISIBLE
                     editChoreViewModel.saveButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
-                EditChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
                     binding.errorText.visibility = View.VISIBLE

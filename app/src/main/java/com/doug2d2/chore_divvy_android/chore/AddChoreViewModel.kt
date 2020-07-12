@@ -6,7 +6,7 @@ import android.widget.AdapterView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.AddStatus
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
@@ -36,8 +36,8 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
 
-    private val _addChoreStatus = MutableLiveData<AddStatus>()
-    val addChoreStatus: LiveData<AddStatus>
+    private val _addChoreStatus = MutableLiveData<ApiStatus>()
+    val apiChoreStatus: LiveData<ApiStatus>
         get() = _addChoreStatus
 
     val choreName = MutableLiveData<String>()
@@ -109,17 +109,17 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
             // Add Chore
             uiScope.launch {
                 try {
-                    _addChoreStatus.value = AddStatus.LOADING
+                    _addChoreStatus.value = ApiStatus.LOADING
 
                     choreRepository.addChore(ctx, choreToAdd)
 
-                    _addChoreStatus.value = AddStatus.SUCCESS
+                    _addChoreStatus.value = ApiStatus.SUCCESS
                 } catch (e: HttpException) {
                     Timber.i("addChore HttpException: " + e.message)
-                    _addChoreStatus.value = AddStatus.CONNECTION_ERROR
+                    _addChoreStatus.value = ApiStatus.CONNECTION_ERROR
                 } catch (e: Exception) {
                     Timber.i("addChore Exception: " + e.message)
-                    _addChoreStatus.value = AddStatus.OTHER_ERROR
+                    _addChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             }
         }
