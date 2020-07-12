@@ -15,10 +15,11 @@ import timber.log.Timber
 
 class CategoryRepository(private val dataSource: CategoryDao) {
     // addCategory calls API to add category and updates local db with new data
-    suspend fun addCategory(ctx: Context, category: AddCategoryRequest) {
-        withContext(Dispatchers.IO) {
-            ChoreDivvyNetwork.choreDivvy.addCategory(category)
+    suspend fun addCategory(ctx: Context, category: AddCategoryRequest): Int {
+        return withContext(Dispatchers.IO) {
+            val newCat = ChoreDivvyNetwork.choreDivvy.addCategory(category)
             refreshCategories(ctx)
+            newCat.getCompleted().id
         }
     }
 

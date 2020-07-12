@@ -60,6 +60,11 @@ class AddCategoryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
 
+                    // If there is a valid category id, set that as the selected category
+                    if (addCategoryViewModel.newCategoryId != -1) {
+                        Utils.setSelectedCategory(this.requireContext(), addCategoryViewModel.newCategoryId)
+                    }
+                    
                     Toast.makeText(this.requireContext(), "Category Added", Toast.LENGTH_SHORT).show()
 
                     // Get all categories and navigate to chore list

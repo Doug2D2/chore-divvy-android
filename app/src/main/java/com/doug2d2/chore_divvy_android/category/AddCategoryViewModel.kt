@@ -29,6 +29,7 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
 
     val categoryName = MutableLiveData<String>()
     val addCategoryButtonEnabled = MutableLiveData<Boolean>()
+    var newCategoryId = -1
 
     val ctx = getApplication<Application>().applicationContext
 
@@ -49,7 +50,7 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
             try {
                 _addCategoryStatus.value = ApiStatus.LOADING
 
-                catRepository.addCategory(ctx, categoryToAdd)
+                newCategoryId = catRepository.addCategory(ctx, categoryToAdd)
 
                 _addCategoryStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
