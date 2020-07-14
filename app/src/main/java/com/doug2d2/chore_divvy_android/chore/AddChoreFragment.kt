@@ -2,9 +2,7 @@ package com.doug2d2.chore_divvy_android.chore
 
 import com.doug2d2.chore_divvy_android.R
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -115,6 +113,13 @@ class AddChoreFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

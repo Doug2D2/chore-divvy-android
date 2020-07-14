@@ -95,25 +95,25 @@ class ChoreListFragment : Fragment() {
         choreListViewModel.getChoresStatus.observe(viewLifecycleOwner, Observer { updateChoreStatus ->
             Timber.i("Chore Status")
             when (updateChoreStatus) {
-                ChoreStatus.LOADING -> {
+                ApiStatus.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.errorText.visibility = View.GONE
                 }
-                ChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
                 }
-                ChoreStatus.UNAUTHORIZED -> {
+                ApiStatus.UNAUTHORIZED -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.VISIBLE
                     binding.errorText.text = "You are not authorized to get these chores"
                 }
-                ChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.VISIBLE
                     binding.errorText.text = "Error connecting to our servers, please try again"
                 }
-                ChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.VISIBLE
                     binding.errorText.text = "An unknown error has occurred, please try again"
@@ -124,7 +124,7 @@ class ChoreListFragment : Fragment() {
         // Observe change to updating a chore
         choreListViewModel.updateChoreStatus.observe(viewLifecycleOwner, Observer { updateChoreStatus ->
             when (updateChoreStatus) {
-                ChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     Timber.i("Chore updated")
 
                     // Get index of chore and update the checkbox
@@ -133,13 +133,13 @@ class ChoreListFragment : Fragment() {
                         binding.choreList.adapter?.notifyItemChanged(idx)
                     }
                 }
-                ChoreStatus.UNAUTHORIZED -> {
+                ApiStatus.UNAUTHORIZED -> {
                     Toast.makeText(this.activity, "You are not authorized to update this chore", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Toast.makeText(this.activity, "Error connecting to our servers, please try again", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Toast.makeText(this.activity, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
                 }
             }
@@ -148,7 +148,7 @@ class ChoreListFragment : Fragment() {
         // Observe change to deleting a chore
         choreListViewModel.deleteChoreStatus.observe(viewLifecycleOwner, Observer { deleteChoreStatus ->
             when (deleteChoreStatus) {
-                ChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     // Find index of chore being deleted and notify adapter
                     val idx = choreListViewModel.getChoreListItemIndex(choreListViewModel.choreToDelete)
                     if (idx > -1) {
@@ -156,13 +156,13 @@ class ChoreListFragment : Fragment() {
                         binding.choreList.adapter?.notifyDataSetChanged()
                     }
                 }
-                ChoreStatus.UNAUTHORIZED -> {
+                ApiStatus.UNAUTHORIZED -> {
                     Toast.makeText(this.activity, "You are not authorized to delete this chore", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Toast.makeText(this.activity, "Error connecting to our servers, please try again", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Toast.makeText(this.activity, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
                 }
             }
@@ -174,49 +174,6 @@ class ChoreListFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
-        //setHasOptionsMenu(true)
-
         return binding.root
     }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when(item.itemId) {
-//            R.id.category_edit -> {
-//                findNavController().navigate(R.id.action_choreListFragment_to_editCategoryFragment)
-//
-//                return true
-//            }
-//            R.id.category_delete -> {
-//                // Create Alert Dialog to ask user if they are sure that they want to delete category
-//                val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(this.requireView().context, R.style.CustomAlertDialog))
-//                lateinit var alert: AlertDialog
-//                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
-//                    when (which) {
-//                        DialogInterface.BUTTON_POSITIVE -> {
-//                            val application = requireNotNull(this.activity).application
-//                            val viewModelFactory = ChoreListViewModelFactory(application)
-//                            val choreListViewModel = ViewModelProviders.of(
-//                                this, viewModelFactory).get(ChoreListViewModel::class.java)
-//
-//                            // Yes, delete category
-//                            choreListViewModel.deleteCategory()
-//                        }
-//                        DialogInterface.BUTTON_NEGATIVE -> {
-//                            // No, don't delete category
-//                            alert.cancel()
-//                        }
-//                    }
-//                }
-//
-//                // Display Alert Dialog
-//                alert = alertBuilder.setTitle("Delete category?").setPositiveButton("Yes", dialogClickListener)
-//                    .setNegativeButton("No", dialogClickListener).show()
-//
-//                return true
-//            }
-//            else -> {
-//                return super.onOptionsItemSelected(item)
-//            }
-//        }
-//    }
 }

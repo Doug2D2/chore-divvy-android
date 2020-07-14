@@ -1,10 +1,8 @@
 package com.doug2d2.chore_divvy_android.category
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -76,8 +74,24 @@ class EditCategoryFragment : Fragment() {
             }
         })
 
+        // Observe categoryName to enable/disable save button
+        editCategoryViewModel.categoryName.observe(viewLifecycleOwner, Observer<String> {
+            if (!editCategoryViewModel.categoryName.value.isNullOrBlank()) {
+                editCategoryViewModel.saveButtonEnabled.value = true
+            } else {
+                editCategoryViewModel.saveButtonEnabled.value = false
+            }
+        })
+
         binding.setLifecycleOwner(this)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

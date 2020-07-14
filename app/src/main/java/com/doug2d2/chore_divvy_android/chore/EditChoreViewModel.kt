@@ -44,6 +44,7 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
         get() = _editChoreStatus
 
     val choreToEdit = MutableLiveData<Chore>()
+    val choreName = MutableLiveData<String>()
 
     val saveButtonEnabled = MutableLiveData<Boolean>()
 
@@ -111,9 +112,6 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
                 }
             }
         }
-
-        // Enable Add Chore button if all required fields have a value
-        // checkEnableAddChoreButton()
     }
 
     // onNothingSelected sets default values for spinners
@@ -129,13 +127,13 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
                 choreToEdit.value?.difficulty = ""
             }
         }
-
-        // Enable Add Chore button if all required fields have a value
-        // checkEnableAddChoreButton()
     }
 
     // onSave is called when the Save button is clicked
     fun onSave() {
+        // chore name edit text value is stored in choreName
+        choreToEdit.value?.choreName = choreName.value!!
+
         if (!choreToEdit.value?.choreName.isNullOrBlank() && choreToEdit.value?.frequencyId != -1 &&
             choreToEdit.value?.categoryId != -1 && !choreToEdit.value?.difficulty.isNullOrBlank()) {
 

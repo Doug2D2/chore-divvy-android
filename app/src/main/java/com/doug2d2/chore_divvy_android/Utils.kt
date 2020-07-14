@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
 
-enum class ApiStatus { LOADING, SUCCESS, CONNECTION_ERROR, OTHER_ERROR }
+enum class ApiStatus { LOADING, SUCCESS, UNAUTHORIZED, CONNECTION_ERROR, OTHER_ERROR }
 
 // Utils contains common functions used by multiple fragments
 object Utils {

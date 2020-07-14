@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.Utils
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
@@ -24,8 +24,8 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
 
     val choreDetailView = MutableLiveData<Chore>()
 
-    private val _deleteChoreStatus = MutableLiveData<ChoreStatus>()
-    val deleteChoreStatus: LiveData<ChoreStatus>
+    private val _deleteChoreStatus = MutableLiveData<ApiStatus>()
+    val deleteChoreStatus: LiveData<ApiStatus>
         get() = _deleteChoreStatus
 
     private val _deleteChore = MutableLiveData<Boolean>()
@@ -46,22 +46,22 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
     fun deleteChore(chore: Chore) {
         uiScope.launch {
             try {
-                _deleteChoreStatus.value = ChoreStatus.LOADING
+                _deleteChoreStatus.value = ApiStatus.LOADING
 
                 choreRepository.deleteChore(ctx, chore.id)
 
-                _deleteChoreStatus.value = ChoreStatus.SUCCESS
+                _deleteChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("deleteChore HttpException: " + e.message)
 
                 when(e.code()) {
-                    401 -> _deleteChoreStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _deleteChoreStatus.value = ChoreStatus.OTHER_ERROR
+                    401 -> _deleteChoreStatus.value = ApiStatus.UNAUTHORIZED
+                    else -> _deleteChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.i("deleteChore Exception: " + e.message)
 
-                _deleteChoreStatus.value = ChoreStatus.CONNECTION_ERROR
+                _deleteChoreStatus.value = ApiStatus.CONNECTION_ERROR
             }
         }
     }

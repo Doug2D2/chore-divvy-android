@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Observe change to deleting a category
         mainViewModel.deleteCategoryStatus.observe(binding.lifecycleOwner!!, Observer { deleteCategoryStatus ->
             when (deleteCategoryStatus) {
-                ChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     // Remove selected category
                     Utils.setSelectedCategory(this, -1)
 
@@ -78,13 +78,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     // back to the chore list with the chores for the new category
                     findNavController(R.id.nav_host_fragment).navigate(ChoreListFragmentDirections.actionChoreListFragmentToLoginFragment())
                 }
-                ChoreStatus.UNAUTHORIZED -> {
+                ApiStatus.UNAUTHORIZED -> {
                     Toast.makeText(this, "You are not authorized to delete this category", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Toast.makeText(this, "Error connecting to our servers, please try again", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Toast.makeText(this, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
                 }
             }
@@ -202,7 +202,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navController.addOnDestinationChangedListener { _, destination: NavDestination, _ ->
             val toolBar = supportActionBar ?: return@addOnDestinationChangedListener
 
-            Timber.i("OnDestinationChangedListener")
             when(destination.id) {
                 R.id.loginFragment -> {
                     toolBar.title = "Chore Divvy"
@@ -267,12 +266,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // click events
         var idx = 0
         val selectedCategorySet = Utils.isSelectedCategorySet(this)
-        val selectedCategoryId = Utils.getSelectedCategory(this)
+        var selectedCategoryId = Utils.getSelectedCategory(this)
         binding.viewModel?.categories?.value?.forEach { c ->
             // Set first category as selected category if not set
             if (!selectedCategorySet && idx == 0) {
-                Timber.i("setting")
                 Utils.setSelectedCategory(this, c.id)
+                selectedCategoryId = Utils.getSelectedCategory(this)
             }
 
             val viewId  = View.generateViewId()

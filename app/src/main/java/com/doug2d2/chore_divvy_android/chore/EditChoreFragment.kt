@@ -1,10 +1,8 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -45,6 +43,7 @@ class EditChoreFragment : Fragment() {
         val moshi: Moshi = Moshi.Builder().build()
         val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
         editChoreViewModel.choreToEdit.value = adapter.fromJson(arguments?.getSerializable("choreToEdit").toString())
+        editChoreViewModel.choreName.value = editChoreViewModel.choreToEdit.value?.choreName
 
         // Frequency drop down
         editChoreViewModel.freqs.observe(viewLifecycleOwner, Observer<List<Frequency>> { freqs ->
@@ -59,7 +58,6 @@ class EditChoreFragment : Fragment() {
             // Set current value
             for ((idx, f) in freqs.withIndex()) {
                 if (f.id == editChoreViewModel.choreToEdit.value?.frequencyId) {
-                    Timber.i("SELECTION " + idx + " F " + f)
                     freqSpinner.setSelection(idx + 1)
                     break
                 }
@@ -141,8 +139,24 @@ class EditChoreFragment : Fragment() {
             }
         })
 
+        // Observe choreName to enable/disable save button
+        editChoreViewModel.choreName.observe(viewLifecycleOwner, Observer<String> {
+            if (!editChoreViewModel.choreName.value.isNullOrBlank()) {
+                editChoreViewModel.saveButtonEnabled.value = true
+            } else {
+                editChoreViewModel.saveButtonEnabled.value = false
+            }
+        })
+
         binding.setLifecycleOwner(this)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

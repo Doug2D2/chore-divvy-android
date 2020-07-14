@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
@@ -17,8 +18,6 @@ import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
 
-enum class ChoreStatus { LOADING, SUCCESS, UNAUTHORIZED, CONNECTION_ERROR, OTHER_ERROR }
-
 class ChoreListViewModel(application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -26,16 +25,19 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val dataSource = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(dataSource)
 
-    private val _getChoresStatus = MutableLiveData<ChoreStatus>()
-    val getChoresStatus: LiveData<ChoreStatus>
+    val catDataSource = ChoreDivvyDatabase.getDatabase(application).categoryDao
+    private val catRepository = CategoryRepository(catDataSource)
+
+    private val _getChoresStatus = MutableLiveData<ApiStatus>()
+    val getChoresStatus: LiveData<ApiStatus>
         get() = _getChoresStatus
 
-    private val _updateChoreStatus = MutableLiveData<ChoreStatus>()
-    val updateChoreStatus: LiveData<ChoreStatus>
+    private val _updateChoreStatus = MutableLiveData<ApiStatus>()
+    val updateChoreStatus: LiveData<ApiStatus>
         get() = _updateChoreStatus
 
-    private val _deleteChoreStatus = MutableLiveData<ChoreStatus>()
-    val deleteChoreStatus: LiveData<ChoreStatus>
+    private val _deleteChoreStatus = MutableLiveData<ApiStatus>()
+    val deleteChoreStatus: LiveData<ApiStatus>
         get() = _deleteChoreStatus
 
     private var _choreList = MutableLiveData<List<Chore>>()
@@ -59,6 +61,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     lateinit var choreToEdit: Chore
     lateinit var choreDetailView: Chore
 
+    var shouldGetCategory = true
+
     val ctx = getApplication<Application>().applicationContext
 
     init {
@@ -67,25 +71,53 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
     // getChores gets all chores from the API and updates the local DB with them
     private fun getChores() {
+        if (!Utils.isSelectedCategorySet(ctx) && shouldGetCategory) {
+            setDefaultSelectedCategory()
+            shouldGetCategory = false
+        } else {
+            uiScope.launch {
+                try {
+                    Timber.i("Getting chores")
+                    _getChoresStatus.value = ApiStatus.LOADING
+
+                    _choreList.value = choreRepository.getChores(ctx)
+
+                    _getChoresStatus.value = ApiStatus.SUCCESS
+                } catch (e: HttpException) {
+                    Timber.i("getChores Http Exception: " + e.message)
+
+                    when (e.code()) {
+                        401 -> _getChoresStatus.value = ApiStatus.UNAUTHORIZED
+                        else -> _getChoresStatus.value = ApiStatus.OTHER_ERROR
+                    }
+                } catch (e: Exception) {
+                    Timber.i("getChores Exception: " + e.message)
+
+                    _getChoresStatus.value = ApiStatus.CONNECTION_ERROR
+                }
+            }
+        }
+    }
+
+    // setDefaultSelectedCategory gets all categories from the API and updates the local DB with them
+    // then sets the selected category to the first category returned
+    private fun setDefaultSelectedCategory() {
         uiScope.launch {
             try {
-                Timber.i("Getting chores")
-                _getChoresStatus.value = ChoreStatus.LOADING
+                // Get categories
+                val cats = catRepository.getCategories(ctx)
 
-                _choreList.value = choreRepository.getChores(ctx)
+                // Set selected category
+                if (cats.isNotEmpty()) {
+                    Utils.setSelectedCategory(ctx, cats[0].id)
 
-                _getChoresStatus.value = ChoreStatus.SUCCESS
-            } catch (e: HttpException) {
-                Timber.i("getChores Http Exception: " + e.message)
-
-                when (e.code()) {
-                    401 -> _getChoresStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _getChoresStatus.value = ChoreStatus.OTHER_ERROR
+                    // Get chores with selected category set
+                    getChores()
                 }
+            } catch (e: HttpException) {
+                Timber.i("getCategories Http Exception: " + e.message)
             } catch (e: Exception) {
-                Timber.i("getChores Exception: " + e.message)
-
-                _getChoresStatus.value = ChoreStatus.CONNECTION_ERROR
+                Timber.i("getCategories Exception: " + e.message)
             }
         }
     }
@@ -97,25 +129,25 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
         uiScope.launch {
             try {
-                _updateChoreStatus.value = ChoreStatus.LOADING
+                _updateChoreStatus.value = ApiStatus.LOADING
 
                 choreToUpdate = chore
                 choreRepository.updateChore(ctx, chore)
 
-                _updateChoreStatus.value = ChoreStatus.SUCCESS
+                _updateChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("updateChore HttpException: " + e.message)
                 flipCompleted(chore)
 
                 when (e.code()) {
-                    401 -> _updateChoreStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _updateChoreStatus.value = ChoreStatus.OTHER_ERROR
+                    401 -> _updateChoreStatus.value = ApiStatus.UNAUTHORIZED
+                    else -> _updateChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.i("updateChore Exception: " + e.message)
                 flipCompleted(chore)
 
-                _updateChoreStatus.value = ChoreStatus.CONNECTION_ERROR
+                _updateChoreStatus.value = ApiStatus.CONNECTION_ERROR
             }
         }
     }
@@ -124,7 +156,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     fun deleteChore(chore: Chore) {
         uiScope.launch {
             try {
-                _deleteChoreStatus.value = ChoreStatus.LOADING
+                _deleteChoreStatus.value = ApiStatus.LOADING
 
                 choreToDelete = chore
                 choreRepository.deleteChore(ctx, choreToDelete.id)
@@ -134,18 +166,18 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                     item.id != choreToDelete.id
                 }
 
-                _deleteChoreStatus.value = ChoreStatus.SUCCESS
+                _deleteChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("deleteChore HttpException: " + e.message)
 
                 when(e.code()) {
-                    401 -> _deleteChoreStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _deleteChoreStatus.value = ChoreStatus.OTHER_ERROR
+                    401 -> _deleteChoreStatus.value = ApiStatus.UNAUTHORIZED
+                    else -> _deleteChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.i("deleteChore Exception: " + e.message)
 
-                _deleteChoreStatus.value = ChoreStatus.CONNECTION_ERROR
+                _deleteChoreStatus.value = ApiStatus.CONNECTION_ERROR
             }
         }
     }

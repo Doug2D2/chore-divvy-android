@@ -29,6 +29,7 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
         get() = _editCategoryStatus
 
     val categoryToEdit = MutableLiveData<Category>()
+    val categoryName = MutableLiveData<String>()
 
     val saveButtonEnabled = MutableLiveData<Boolean>()
 
@@ -47,6 +48,7 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
         uiScope.launch {
             try {
                 categoryToEdit.value = catRepository.getCategoryById(catId)
+                categoryName.value = categoryToEdit.value?.categoryName
             } catch (e: HttpException) {
                 Timber.i("getCategoryById HttpException: " + e.message)
             } catch (e: Exception) {
@@ -57,6 +59,9 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
 
     // onSave is called when the Save button is clicked
     fun onSave() {
+        // category name edit text value is stored in categoryName
+        categoryToEdit.value?.categoryName = categoryName.value!!
+
         if (!categoryToEdit.value?.categoryName.isNullOrBlank()) {
             // Update Chore
             uiScope.launch {

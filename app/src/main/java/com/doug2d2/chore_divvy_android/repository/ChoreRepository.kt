@@ -1,7 +1,6 @@
 package com.doug2d2.chore_divvy_android.repository
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDao
@@ -10,8 +9,6 @@ import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
 import com.doug2d2.chore_divvy_android.network.UpdateChoreRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-import kotlin.coroutines.coroutineContext
 
 class ChoreRepository(private val dataSource: ChoreDao) {
     // addChore calls API to add chore and updates local db with new data

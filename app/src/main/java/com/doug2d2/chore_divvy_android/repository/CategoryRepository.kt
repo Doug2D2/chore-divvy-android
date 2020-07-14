@@ -66,7 +66,6 @@ class CategoryRepository(private val dataSource: CategoryDao) {
 
         withContext(Dispatchers.IO) {
             val categories = ChoreDivvyNetwork.choreDivvy.getCategoriesByUserId(userId).await()
-            Timber.i("refreshCategories: " + categories)
             dataSource.deleteAll()
             dataSource.insertAll(categories)
         }

@@ -39,7 +39,7 @@
                     android:inputType="textCapWords"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp"
-                    android:text="@={viewModel.choreToEdit.choreName}" />
+                    android:text="@={viewModel.choreName}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

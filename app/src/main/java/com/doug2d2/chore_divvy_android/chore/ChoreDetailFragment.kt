@@ -9,16 +9,15 @@ import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreDetailBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import timber.log.Timber
 
 class ChoreDetailFragment : Fragment() {
     lateinit var binding: FragmentChoreDetailBinding
@@ -86,18 +85,18 @@ class ChoreDetailFragment : Fragment() {
         // Observe change to deleting a chore (After actually deleting chore through API)
         choreDetailViewModel.deleteChoreStatus.observe(viewLifecycleOwner, Observer { deleteChoreStatus ->
             when (deleteChoreStatus) {
-                ChoreStatus.SUCCESS -> {
+                ApiStatus.SUCCESS -> {
                     val navController = findNavController()
                     navController.navigate(R.id.action_choreDetailFragment_to_choreListFragment)
                     choreDetailViewModel.onDeleteCompleted()
                 }
-                ChoreStatus.UNAUTHORIZED -> {
+                ApiStatus.UNAUTHORIZED -> {
                     Toast.makeText(this.activity, "You are not authorized to delete this chore", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.CONNECTION_ERROR -> {
+                ApiStatus.CONNECTION_ERROR -> {
                     Toast.makeText(this.activity, "Error connecting to our servers, please try again", Toast.LENGTH_LONG).show()
                 }
-                ChoreStatus.OTHER_ERROR -> {
+                ApiStatus.OTHER_ERROR -> {
                     Toast.makeText(this.activity, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
                 }
             }
@@ -111,6 +110,7 @@ class ChoreDetailFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
         inflater.inflate(R.menu.chore_detail, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }

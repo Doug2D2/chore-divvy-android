@@ -1,9 +1,7 @@
 package com.doug2d2.chore_divvy_android.category
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -64,7 +62,7 @@ class AddCategoryFragment : Fragment() {
                     if (addCategoryViewModel.newCategoryId != -1) {
                         Utils.setSelectedCategory(this.requireContext(), addCategoryViewModel.newCategoryId)
                     }
-                    
+
                     Toast.makeText(this.requireContext(), "Category Added", Toast.LENGTH_SHORT).show()
 
                     // Get all categories and navigate to chore list
@@ -96,6 +94,13 @@ class AddCategoryFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        setHasOptionsMenu(true)
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

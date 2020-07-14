@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.doug2d2.chore_divvy_android.chore.ChoreStatus
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
@@ -30,8 +29,8 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     val apiCategoryStatus: LiveData<ApiStatus>
         get() = _addCategoryStatus
 
-    private val _deleteCategoryStatus = MutableLiveData<ChoreStatus>()
-    val deleteCategoryStatus: LiveData<ChoreStatus>
+    private val _deleteCategoryStatus = MutableLiveData<ApiStatus>()
+    val deleteCategoryStatus: LiveData<ApiStatus>
         get() = _deleteCategoryStatus
 
     var navigationViewMenuItems: MutableMap<Int, NavViewMenuItem> = HashMap()
@@ -61,22 +60,22 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
 
         uiScope.launch {
             try {
-                _deleteCategoryStatus.value = ChoreStatus.LOADING
+                _deleteCategoryStatus.value = ApiStatus.LOADING
 
                 categoryRepository.deleteCategory(ctx, catId)
 
-                _deleteCategoryStatus.value = ChoreStatus.SUCCESS
+                _deleteCategoryStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
                 Timber.i("deleteCategory HttpException: " + e.message)
 
                 when(e.code()) {
-                    401 -> _deleteCategoryStatus.value = ChoreStatus.UNAUTHORIZED
-                    else -> _deleteCategoryStatus.value = ChoreStatus.OTHER_ERROR
+                    401 -> _deleteCategoryStatus.value = ApiStatus.UNAUTHORIZED
+                    else -> _deleteCategoryStatus.value = ApiStatus.OTHER_ERROR
                 }
             } catch (e: Exception) {
                 Timber.i("deleteCategory Exception: " + e.message)
 
-                _deleteCategoryStatus.value = ChoreStatus.CONNECTION_ERROR
+                _deleteCategoryStatus.value = ApiStatus.CONNECTION_ERROR
             }
         }
     }
