@@ -1,6 +1,7 @@
 package com.doug2d2.chore_divvy_android.user
 
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,20 @@ class ForgotPasswordFragment : Fragment() {
                 binding.sendLinkButton.isEnabled = false
             }
         })
+
+        // Call onForgotPassword if Enter is pressed from the username edit text
+        binding.usernameEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        forgotPasswordViewModel.onForgotPassword()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
 
         // Observe changes to forgotPasswordStatus
         forgotPasswordViewModel.forgotPasswordStatus.observe(viewLifecycleOwner, Observer<ForgotPasswordStatus> { forgotPasswordStatus ->

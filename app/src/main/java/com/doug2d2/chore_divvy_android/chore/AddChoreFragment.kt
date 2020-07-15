@@ -74,6 +74,20 @@ class AddChoreFragment : Fragment() {
             addChoreViewModel.checkEnableAddChoreButton()
         })
 
+        // Call onAddChore if Enter is pressed from the notes edit text
+        binding.notesEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        addChoreViewModel.onAddChore()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
+
         // Observe addChoreStatus
         addChoreViewModel.apiChoreStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { addChoreStatus ->
             Utils.hideKeyboard(activity)

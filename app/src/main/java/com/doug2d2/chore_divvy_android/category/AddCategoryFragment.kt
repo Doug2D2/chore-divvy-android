@@ -43,6 +43,20 @@ class AddCategoryFragment : Fragment() {
             }
         })
 
+        // Call onAddCategory if Enter is pressed from the categoryName edit text
+        binding.categoryNameEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        addCategoryViewModel.onAddCategory()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
+
         // Observe addCategoryStatus
         addCategoryViewModel.apiCategoryStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { addCategoryStatus ->
             Utils.hideKeyboard(activity)

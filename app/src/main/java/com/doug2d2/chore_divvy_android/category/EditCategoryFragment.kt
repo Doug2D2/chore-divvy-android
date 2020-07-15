@@ -83,6 +83,20 @@ class EditCategoryFragment : Fragment() {
             }
         })
 
+        // Call onSave if Enter is pressed from the categoryName edit text
+        binding.categoryNameEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        editCategoryViewModel.onSave()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
+
         binding.setLifecycleOwner(this)
 
         setHasOptionsMenu(true)

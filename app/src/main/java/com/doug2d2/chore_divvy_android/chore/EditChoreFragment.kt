@@ -148,6 +148,20 @@ class EditChoreFragment : Fragment() {
             }
         })
 
+        // Call onSave if Enter is pressed from the notes edit text
+        binding.notesEditText.setOnKeyListener { v, keyCode, event ->
+            if (event.action === KeyEvent.ACTION_DOWN) {
+                when (keyCode) {
+                    KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                        editChoreViewModel.onSave()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            false
+        }
+
         binding.setLifecycleOwner(this)
 
         setHasOptionsMenu(true)
