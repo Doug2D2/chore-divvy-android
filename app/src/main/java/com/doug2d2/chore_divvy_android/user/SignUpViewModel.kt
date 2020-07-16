@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val userRepository = UserRepository(getDatabase(application))
+    private val userDao = ChoreDivvyDatabase.getDatabase(application).userDao
+    private val userRepository = UserRepository(userDao)
 
     val firstName = MutableLiveData<String>()
     val lastName = MutableLiveData<String>()

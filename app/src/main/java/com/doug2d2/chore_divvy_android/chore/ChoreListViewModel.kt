@@ -1,19 +1,21 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.app.Application
-import android.content.Context
+import androidx.annotation.Nullable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.ApiStatus
-import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
-import kotlinx.android.synthetic.main.activity_main.view.*
+import com.squareup.moshi.Json
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
@@ -40,8 +42,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val deleteChoreStatus: LiveData<ApiStatus>
         get() = _deleteChoreStatus
 
-    private var _choreList = MutableLiveData<List<Chore>>()
-    val choreList: LiveData<List<Chore>>
+    private var _choreList = MutableLiveData<List<FullChore>>()
+    val choreList: LiveData<List<FullChore>>
         get() = _choreList
 
     private val _navigateToAddChore = MutableLiveData<Boolean>()
@@ -56,10 +58,10 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val navigateToDetailView: LiveData<Boolean>
         get() = _navigateToDetailView
 
-    lateinit var choreToDelete: Chore
-    lateinit var choreToUpdate: Chore
-    lateinit var choreToEdit: Chore
-    lateinit var choreDetailView: Chore
+    lateinit var choreToDelete: FullChore
+    lateinit var choreToUpdate: FullChore
+    lateinit var choreToEdit: FullChore
+    lateinit var choreDetailView: FullChore
 
     var shouldGetCategory = true
 
@@ -123,7 +125,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // updateChore allows a user to mark a chore as completed or not completed
-    fun updateChore(chore: Chore) {
+    fun updateChore(chore: FullChore) {
         // Change status
         flipCompleted(chore)
 
@@ -132,7 +134,15 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                 _updateChoreStatus.value = ApiStatus.LOADING
 
                 choreToUpdate = chore
-                choreRepository.updateChore(ctx, chore)
+
+                // Create Chore object to update database with
+                val c = Chore(id = chore.id, choreName = chore.choreName,
+                    status = chore.status, dateComplete = chore.dateComplete,
+                    frequencyId = chore.frequencyId, categoryId = chore.categoryId,
+                    assigneeId = chore.assigneeId, difficulty = chore.difficulty,
+                    notes = chore.notes, createdAt = chore.createdAt,
+                    updatedAt = chore.updatedAt)
+                choreRepository.updateChore(ctx, c)
 
                 _updateChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
@@ -153,7 +163,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // deleteChore allows a user to delete a chore
-    fun deleteChore(chore: Chore) {
+    fun deleteChore(chore: FullChore) {
         uiScope.launch {
             try {
                 _deleteChoreStatus.value = ApiStatus.LOADING
@@ -184,7 +194,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
     // flipCompleted flips the chore status from Completed to In Progress
     // and vise versa
-    private fun flipCompleted(chore: Chore) {
+    private fun flipCompleted(chore: FullChore) {
         chore.status = when(chore.status) {
             "Completed" -> "In Progress"
             else -> "Completed"
@@ -192,7 +202,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // getChoreListItemIndex gets the index of the chore in the choreList
-    fun getChoreListItemIndex(chore: Chore): Int {
+    fun getChoreListItemIndex(chore: FullChore): Int {
         var index = -1
         choreList.value?.mapIndexed { i, c ->
             if (chore.id == c.id) {
@@ -214,7 +224,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // onEditChore navigates to the add chore fragment
-    fun onEditChore(chore: Chore) {
+    fun onEditChore(chore: FullChore) {
         choreToEdit = chore
         _navigateToEditChore.value = true
     }
@@ -225,7 +235,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // onDetailView navigates to the chore detail fragment
-    fun onDetailView(chore: Chore) {
+    fun onDetailView(chore: FullChore) {
         choreDetailView = chore
         _navigateToDetailView.value = true
     }

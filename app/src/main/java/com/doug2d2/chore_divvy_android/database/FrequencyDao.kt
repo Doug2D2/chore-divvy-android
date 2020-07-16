@@ -17,12 +17,12 @@ interface FrequencyDao {
     @Delete
     fun delete(frequency: Frequency)
 
-    @Query("DELETE FROM frequency")
+    @Query("DELETE FROM frequencies")
     fun deleteAll()
 
-    @Query("SELECT * FROM frequency")
+    @Query("SELECT * FROM frequencies")
     fun getAll(): List<Frequency>
 
-    @Query("SELECT * FROM frequency WHERE id = :id")
+    @Query("SELECT * FROM frequencies WHERE id = :id")
     fun getById(id: Int): Frequency?
 }

@@ -4,7 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
+import com.doug2d2.chore_divvy_android.repository.FrequencyRepository
 import com.doug2d2.chore_divvy_android.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +22,8 @@ class ForgotPasswordViewModel(application: Application): AndroidViewModel(applic
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val userRepository = UserRepository(getDatabase(application))
+    private val userDao = ChoreDivvyDatabase.getDatabase(application).userDao
+    private val userRepository = UserRepository(userDao)
 
     val username = MutableLiveData<String>()
 

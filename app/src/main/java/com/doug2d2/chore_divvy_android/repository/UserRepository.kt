@@ -1,7 +1,6 @@
 package com.doug2d2.chore_divvy_android.repository
 
-import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
-import com.doug2d2.chore_divvy_android.database.User
+import com.doug2d2.chore_divvy_android.database.*
 import com.doug2d2.chore_divvy_android.network.ChoreDivvyNetwork
 import com.doug2d2.chore_divvy_android.network.ForgotPasswordRequest
 import com.doug2d2.chore_divvy_android.network.LoginRequest
@@ -9,7 +8,7 @@ import com.doug2d2.chore_divvy_android.network.SignUpRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepository(private val database: ChoreDivvyDatabase) {
+class UserRepository(private val dataSource: UserDao) {
     // login calls API to log user in
     suspend fun login(username: String, password: String): User {
         return withContext(Dispatchers.IO) {
@@ -31,6 +30,25 @@ class UserRepository(private val database: ChoreDivvyDatabase) {
         withContext(Dispatchers.IO) {
             val req = ForgotPasswordRequest(username)
             ChoreDivvyNetwork.choreDivvy.forgotPassword(req).await()
+        }
+    }
+
+    // getUsers calls API to get users, updates local db with new data,
+    // and gets users from local db
+    suspend fun getUsers(): List<User> {
+        return withContext(Dispatchers.IO) {
+            refreshUsers()
+            dataSource.getAll()
+        }
+    }
+
+    // refreshUsers calls API to get users, deletes all users in local db,
+    // and then inserts new data into local db
+    private suspend fun refreshUsers() {
+        withContext(Dispatchers.IO) {
+            val users = ChoreDivvyNetwork.choreDivvy.getUsers().await()
+            dataSource.deleteAll()
+            dataSource.insertAll(users)
         }
     }
 }

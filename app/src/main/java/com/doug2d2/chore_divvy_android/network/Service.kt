@@ -50,6 +50,9 @@ interface ChoreDivvyService {
 
     @DELETE("delete-category/{id}")
     fun deleteCategory(@Path("id") id: Int): Deferred<Int>
+
+    @GET("get-users")
+    fun getUsers(): Deferred<List<User>>
 }
 
 // Sets up retrofit API client

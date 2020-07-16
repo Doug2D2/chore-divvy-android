@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,7 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
     val dataSource = ChoreDivvyDatabase.getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(dataSource)
 
-    val choreDetailView = MutableLiveData<Chore>()
+    val choreDetailView = MutableLiveData<FullChore>()
 
     private val _deleteChoreStatus = MutableLiveData<ApiStatus>()
     val deleteChoreStatus: LiveData<ApiStatus>
@@ -43,7 +44,7 @@ class ChoreDetailViewModel(application: Application): AndroidViewModel(applicati
     }
 
     // deleteChore allows a user to delete a chore
-    fun deleteChore(chore: Chore) {
+    fun deleteChore(chore: FullChore) {
         uiScope.launch {
             try {
                 _deleteChoreStatus.value = ApiStatus.LOADING

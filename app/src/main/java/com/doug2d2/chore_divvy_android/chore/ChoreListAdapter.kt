@@ -4,24 +4,21 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.TimePicker
-import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.R
-import com.doug2d2.chore_divvy_android.Utils
-import com.doug2d2.chore_divvy_android.database.Chore
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
 import timber.log.Timber
 
-class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<Chore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
-    companion object DiffCallback: DiffUtil.ItemCallback<Chore>() {
-        override fun areItemsTheSame(oldItem: Chore, newItem: Chore): Boolean {
+class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<FullChore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
+    companion object DiffCallback: DiffUtil.ItemCallback<FullChore>() {
+        override fun areItemsTheSame(oldItem: FullChore, newItem: FullChore): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Chore, newItem: Chore): Boolean {
+        override fun areContentsTheSame(oldItem: FullChore, newItem: FullChore): Boolean {
             return oldItem == newItem
         }
     }
@@ -32,7 +29,7 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
             binding.choreItem.setOnClickListener(this)
         }
 
-        fun bind(listener: ChoreListClickListener, chore: Chore) {
+        fun bind(listener: ChoreListClickListener, chore: FullChore) {
             binding.chore = chore
             binding.clickListener = listener
             // This is important, because it forces the data binding to execute immediately,
@@ -109,6 +106,6 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
     }
 }
 
-class ChoreListClickListener(val clickListener: (chore: Chore) -> Unit) {
-    fun onClick(chore: Chore) = clickListener(chore)
+class ChoreListClickListener(val clickListener: (chore: FullChore) -> Unit) {
+    fun onClick(chore: FullChore) = clickListener(chore)
 }

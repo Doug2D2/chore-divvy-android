@@ -8,14 +8,21 @@ interface UserDao {
     @Insert
     fun insert(user: User)
 
+    @Insert
+    @JvmSuppressWildcards
+    fun insertAll(users: List<User>)
+
     @Update
     fun update(user: User)
 
     @Delete
     fun delete(user: User)
 
+    @Query("DELETE FROM users")
+    fun deleteAll()
+
     @Query("SELECT * FROM users")
-    fun getAll(): LiveData<List<User>>
+    fun getAll(): List<User>
 
     @Query("SELECT * FROM users WHERE id = :userId")
     fun getById(userId: Int): User?

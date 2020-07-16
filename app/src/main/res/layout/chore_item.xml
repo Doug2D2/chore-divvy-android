@@ -7,7 +7,7 @@ android:id="@+id/layout">
 
     <variable
         name="chore"
-        type="com.doug2d2.chore_divvy_android.database.Chore" />
+        type="com.doug2d2.chore_divvy_android.database.FullChore" />
 
     <variable
         name="clickListener"
@@ -64,7 +64,7 @@ android:id="@+id/layout">
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:layout_marginTop="8dp"
-        android:text="@{String.valueOf(chore.assigneeId)}"
+        android:text="@{chore.firstName}"
         tools:text="PERSON" />
     </LinearLayout>
 

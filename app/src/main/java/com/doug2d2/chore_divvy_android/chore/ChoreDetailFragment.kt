@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.database.Chore
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreDetailBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -41,17 +42,19 @@ class ChoreDetailFragment : Fragment() {
 
         // Get choreToEdit from arguments and convert to type Chore
         val moshi: Moshi = Moshi.Builder().build()
-        val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+        val adapter: JsonAdapter<FullChore> = moshi.adapter(FullChore::class.java)
         choreDetailViewModel.choreDetailView.value = adapter.fromJson(arguments?.getSerializable("choreDetailView").toString())
 
         // Set all display texts
         val nameText = HtmlCompat.fromHtml(getString(R.string.choreName_detail_text, choreDetailViewModel.choreDetailView.value?.choreName), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyId), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryId), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val assigneeText = HtmlCompat.fromHtml(getString(R.string.assignee_detail_text, choreDetailViewModel.choreDetailView.value?.firstName, choreDetailViewModel.choreDetailView.value?.lastName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryName), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val diffText = HtmlCompat.fromHtml(getString(R.string.difficulty_detail_text, choreDetailViewModel.choreDetailView.value?.difficulty), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val notesText = HtmlCompat.fromHtml(getString(R.string.notes_detail_text, choreDetailViewModel.choreDetailView.value?.notes?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         binding.choreName.text = nameText
+        binding.assignee.text = assigneeText
         binding.frequency.text = freqText
         binding.category.text = catText
         binding.difficulty.text = diffText
@@ -119,7 +122,7 @@ class ChoreDetailFragment : Fragment() {
         when(item.itemId) {
             R.id.action_edit -> {
                 val moshi: Moshi = Moshi.Builder().build()
-                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val adapter: JsonAdapter<FullChore> = moshi.adapter(FullChore::class.java)
                 val choreJson = adapter.toJson(binding?.viewModel?.choreDetailView?.value)
 
                 val navController = findNavController()

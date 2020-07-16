@@ -8,12 +8,11 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.*
-import com.doug2d2.chore_divvy_android.database.Chore
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -67,7 +66,7 @@ class ChoreListFragment : Fragment() {
         choreListViewModel.navigateToEditChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->
             if (navigate) {
                 val moshi: Moshi = Moshi.Builder().build()
-                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val adapter: JsonAdapter<FullChore> = moshi.adapter(FullChore::class.java)
                 val choreJson = adapter.toJson(choreListViewModel.choreToEdit)
 
                 val navController = findNavController()
@@ -81,7 +80,7 @@ class ChoreListFragment : Fragment() {
         choreListViewModel.navigateToDetailView.observe(viewLifecycleOwner, Observer { navigate ->
             if (navigate) {
                 val moshi: Moshi = Moshi.Builder().build()
-                val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+                val adapter: JsonAdapter<FullChore> = moshi.adapter(FullChore::class.java)
                 val choreJson = adapter.toJson(choreListViewModel.choreDetailView)
 
                 val navController = findNavController()

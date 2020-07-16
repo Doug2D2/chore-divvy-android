@@ -25,8 +25,9 @@
     <string name="delete_button_text">Delete</string>
     <string name="edit_button_text">Edit</string>
     <string name="choreName_detail_text">&lt;b>Chore:&lt;/b> %1$s</string>
-    <string name="frequency_detail_text">&lt;b>Frequency:&lt;/b> %1$d</string>
-    <string name="category_detail_text">&lt;b>Category:&lt;/b> %1$d</string>
+    <string name="assignee_detail_text">&lt;b>Assigned to:&lt;/b> %1$s %2$s</string>
+    <string name="frequency_detail_text">&lt;b>Frequency:&lt;/b> %1$s</string>
+    <string name="category_detail_text">&lt;b>Category:&lt;/b> %1$s</string>
     <string name="difficulty_detail_text">&lt;b>Difficulty:&lt;/b> %1$s</string>
     <string name="notes_detail_text">&lt;b>Notes:&lt;/b> %1$s</string>
     <string name="categoryName_edit_hint">Category Name</string>
