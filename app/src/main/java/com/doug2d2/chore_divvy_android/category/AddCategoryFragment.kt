@@ -1,8 +1,17 @@
 package com.doug2d2.chore_divvy_android.category
 
+import android.app.ActionBar
 import android.os.Bundle
+import android.text.InputType
+import android.util.AttributeSet
+import android.util.Size
 import android.view.*
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.view.children
+import androidx.core.view.marginBottom
+import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,6 +22,8 @@ import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentAddCategoryBinding
+import com.google.android.material.textfield.TextInputLayout
+import kotlinx.android.synthetic.main.fragment_user_edit_text.view.*
 import timber.log.Timber
 
 class AddCategoryFragment : Fragment() {
@@ -56,6 +67,24 @@ class AddCategoryFragment : Fragment() {
             }
             false
         }
+
+        // Observe addUserEditText
+        addCategoryViewModel.addUserEditText.observe(viewLifecycleOwner, Observer<Boolean> { addUserEditText ->
+            if (addUserEditText) {
+                // Add edit text for adding a user
+                val fmTrans = fragmentManager?.beginTransaction()
+                val newUserEditText = UserEditTextFragment()
+                fmTrans?.add(binding.userEditTextLayout.id, newUserEditText)
+                fmTrans?.commit()
+
+                // TODO: REMOVE
+                for (c in binding.userEditTextLayout.children) {
+                    Timber.i("Child " + c.userEditText.text)
+                }
+
+                addCategoryViewModel.doneAddUserEditText()
+            }
+        })
 
         // Observe addCategoryStatus
         addCategoryViewModel.apiCategoryStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { addCategoryStatus ->

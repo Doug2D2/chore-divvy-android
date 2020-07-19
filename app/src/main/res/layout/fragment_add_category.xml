@@ -55,6 +55,26 @@
                 android:layout_marginStart="@dimen/marginStartEnd"
                 android:layout_marginEnd="@dimen/marginStartEnd" />
 
+            <LinearLayout
+                android:id="@+id/userEditTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|top"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/addUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="@dimen/marginStartEnd"
+                android:layout_marginTop="@dimen/marginTopBottom"
+                android:clickable="true"
+                android:textColor="@color/colorAccent"
+                android:text="Add User"
+                android:onClick="@{() -> viewModel.onAddUserEditText() }" />
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -65,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/marginBetweenElements"
                     android:enabled="@{viewModel.addCategoryButtonEnabled}"
-                    android:text="@string/addCategory_button_text"
+                    android:text="@string/save_button_text"
                     android:layout_centerInParent="true"
                     android:onClick="@{() -> viewModel.onAddCategory()}"/>
 

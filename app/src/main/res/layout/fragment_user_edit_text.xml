@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.doug2d2.chore_divvy_android.category.UserEditTextViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".category.AddCategoryFragment" >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userTextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#00000000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".75"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd" >
+
+            <EditText
+                android:id="@+id/userEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                android:ems="10"
+                android:maxLength="25"
+                android:hint="User Email"
+                android:inputType="textEmailAddress"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/removeUserTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            android:background="@drawable/rounded_corners"
+            app:layout_constraintStart_toEndOf="@+id/userTextInput"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintWidth_percent="0.2"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginBottom="@dimen/marginStartEnd"
+            android:src="@drawable/baseline_remove_white_18dp"
+            android:onClick="@{() -> viewModel.onRemoveUserEditText() }"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

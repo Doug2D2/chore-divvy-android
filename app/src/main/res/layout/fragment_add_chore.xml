@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/marginBetweenElements"
                     android:enabled="@{viewModel.addChoreButtonEnabled}"
-                    android:text="@string/addChore_button_text"
+                    android:text="@string/save_button_text"
                     android:layout_centerInParent="true"
                     android:onClick="@{() -> viewModel.onAddChore()}"/>
 

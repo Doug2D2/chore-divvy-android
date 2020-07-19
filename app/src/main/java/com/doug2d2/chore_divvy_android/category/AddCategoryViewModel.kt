@@ -1,6 +1,7 @@
 package com.doug2d2.chore_divvy_android.category
 
 import android.app.Application
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,6 +27,10 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
     private val _addCategoryStatus = MutableLiveData<ApiStatus>()
     val apiCategoryStatus: LiveData<ApiStatus>
         get() = _addCategoryStatus
+
+    private val _addUserEditText = MutableLiveData<Boolean>()
+    val addUserEditText: LiveData<Boolean>
+        get() = _addUserEditText
 
     val categoryName = MutableLiveData<String>()
     val addCategoryButtonEnabled = MutableLiveData<Boolean>()
@@ -61,5 +66,15 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
                 _addCategoryStatus.value = ApiStatus.OTHER_ERROR
             }
         }
+    }
+
+    // onAddUserEditText is called when the Add User button is clicked
+    fun onAddUserEditText() {
+        _addUserEditText.value = true
+    }
+
+    // doneAddUserEditText is called when finished adding user edit text
+    fun doneAddUserEditText() {
+        _addUserEditText.value = false
     }
 }
