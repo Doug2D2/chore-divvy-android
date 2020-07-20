@@ -50,12 +50,24 @@ class AddChoreFragment : Fragment() {
 
         // Category drop down
         addChoreViewModel.cats.observe(viewLifecycleOwner, Observer<List<Category>> { cats ->
+            val selectedCatId = Utils.getSelectedCategory(requireContext())
+            var defaultIdx = -1
+
             // Set category names as values in category spinner
             val catSpinner: MaterialSpinner = binding.categoryDropDown
-            val catNames = cats.map { c -> c.categoryName }
+            val catNames = cats.mapIndexed { idx, c ->
+                // If id equals selected category id, store the index
+                if (c.id == selectedCatId) {
+                    defaultIdx = idx
+                }
+                c.categoryName
+            }
+
             val catAdapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, catNames)
             catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             catSpinner.adapter = catAdapter
+            // Set category spinner to current selected category (index + 1)
+            catSpinner.setSelection(++defaultIdx)
             catSpinner.onItemSelectedListener = addChoreViewModel
         })
 
