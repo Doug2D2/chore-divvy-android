@@ -1,17 +1,9 @@
 package com.doug2d2.chore_divvy_android.category
 
-import android.app.ActionBar
 import android.os.Bundle
-import android.text.InputType
-import android.util.AttributeSet
-import android.util.Size
 import android.view.*
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
-import androidx.core.view.marginBottom
-import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,7 +14,6 @@ import com.doug2d2.chore_divvy_android.MainActivity
 import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.databinding.FragmentAddCategoryBinding
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.fragment_user_edit_text.view.*
 import timber.log.Timber
 
@@ -77,12 +68,24 @@ class AddCategoryFragment : Fragment() {
                 fmTrans?.add(binding.userEditTextLayout.id, newUserEditText)
                 fmTrans?.commit()
 
-                // TODO: REMOVE
+                addCategoryViewModel.doneAddUserEditText()
+            }
+        })
+
+        // Observe addCategory
+        addCategoryViewModel.shouldAddCategory.observe(viewLifecycleOwner, Observer<Boolean> { shouldAddCategory ->
+            if (shouldAddCategory) {
+                // Get all user emails from user edit texts
+                var users = mutableListOf<String>()
                 for (c in binding.userEditTextLayout.children) {
-                    Timber.i("Child " + c.userEditText.text)
+                    val u = c.userEditText.text.toString().trim()
+                    if (u.isNotEmpty()) {
+                        users.add(c.userEditText.text.toString())
+                    }
                 }
 
-                addCategoryViewModel.doneAddUserEditText()
+                addCategoryViewModel.getUserIds(users)
+                addCategoryViewModel.doneAddCategory()
             }
         })
 

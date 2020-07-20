@@ -26,4 +26,7 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :userId")
     fun getById(userId: Int): User?
+
+    @Query("SELECT id FROM users WHERE username IN (:userEmails)")
+    fun getIdsFromEmails(userEmails: List<String>): List<Int>
 }
