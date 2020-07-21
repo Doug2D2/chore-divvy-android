@@ -12,10 +12,7 @@ import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.network.AddChoreRequest
-import com.doug2d2.chore_divvy_android.repository.CategoryRepository
-import com.doug2d2.chore_divvy_android.repository.ChoreRepository
-import com.doug2d2.chore_divvy_android.repository.DifficultyRepository
-import com.doug2d2.chore_divvy_android.repository.FrequencyRepository
+import com.doug2d2.chore_divvy_android.repository.*
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
@@ -31,6 +28,9 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     private val catDao = getDatabase(application).categoryDao
     private val catRepository = CategoryRepository(catDao)
 
+    private val userDao = getDatabase(application).userDao
+    private val userRepository = UserRepository(userDao)
+
     private val diffRepository = DifficultyRepository()
 
     private val choreDao = getDatabase(application).choreDao
@@ -44,6 +44,7 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
     val selectedFreq = MutableLiveData<Int>()
     val selectedCat = MutableLiveData<Int>()
     val selectedDiff = MutableLiveData<String>()
+    val assignTo = MutableLiveData<String>()
     val notes = MutableLiveData<String>()
     val addChoreButtonEnabled = MutableLiveData<Boolean>()
 
@@ -97,28 +98,38 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
         if (!choreName.value.isNullOrBlank() && selectedFreq.value != -1 &&
             selectedCat.value != -1 && !selectedDiff.value.isNullOrBlank()) {
 
-            val choreToAdd = AddChoreRequest(
-                choreName = choreName.value ?: "",
-                status = "To Do",
-                frequencyId = selectedFreq.value ?: -1,
-                categoryId = selectedCat.value ?: -1,
-                difficulty = selectedDiff.value ?: "",
-                notes = notes.value
-            )
-
-            // Add Chore
             uiScope.launch {
                 try {
                     _addChoreStatus.value = ApiStatus.LOADING
 
-                    choreRepository.addChore(ctx, choreToAdd)
+                    val assigneeId = userRepository.getUserIdFromEmail(assignTo.value?:"")
 
-                    _addChoreStatus.value = ApiStatus.SUCCESS
-                } catch (e: HttpException) {
-                    Timber.i("addChore HttpException: " + e.message)
-                    _addChoreStatus.value = ApiStatus.CONNECTION_ERROR
+                    val choreToAdd = AddChoreRequest(
+                        choreName = choreName.value ?: "",
+                        status = "To Do",
+                        frequencyId = selectedFreq.value ?: -1,
+                        categoryId = selectedCat.value ?: -1,
+                        difficulty = selectedDiff.value ?: "",
+                        assigneeId = assigneeId,
+                        notes = notes.value
+                    )
+
+                    // Add Chore
+                    uiScope.launch {
+                        try {
+                            choreRepository.addChore(ctx, choreToAdd)
+
+                            _addChoreStatus.value = ApiStatus.SUCCESS
+                        } catch (e: HttpException) {
+                            Timber.i("addChore HttpException: " + e.message)
+                            _addChoreStatus.value = ApiStatus.CONNECTION_ERROR
+                        } catch (e: Exception) {
+                            Timber.i("addChore Exception: " + e.message)
+                            _addChoreStatus.value = ApiStatus.OTHER_ERROR
+                        }
+                    }
                 } catch (e: Exception) {
-                    Timber.i("addChore Exception: " + e.message)
+                    Timber.i("addChore getUserIdFromEmail Exception: " + e.message)
                     _addChoreStatus.value = ApiStatus.OTHER_ERROR
                 }
             }

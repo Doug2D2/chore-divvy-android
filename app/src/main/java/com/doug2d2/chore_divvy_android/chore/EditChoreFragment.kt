@@ -15,6 +15,7 @@ import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
+import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.FragmentEditChoreBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -41,7 +42,7 @@ class EditChoreFragment : Fragment() {
 
         // Get choreToEdit from arguments and convert to type Chore
         val moshi: Moshi = Moshi.Builder().build()
-        val adapter: JsonAdapter<Chore> = moshi.adapter(Chore::class.java)
+        val adapter: JsonAdapter<FullChore> = moshi.adapter(FullChore::class.java)
         editChoreViewModel.choreToEdit.value = adapter.fromJson(arguments?.getSerializable("choreToEdit").toString())
         editChoreViewModel.choreName.value = editChoreViewModel.choreToEdit.value?.choreName
 

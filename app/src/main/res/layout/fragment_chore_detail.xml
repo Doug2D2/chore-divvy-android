@@ -28,22 +28,12 @@
             tools:text="Chore Name" />
 
         <TextView
-            android:id="@+id/assignee"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginTop="@dimen/marginBetweenElements"
-            app:layout_constraintTop_toBottomOf="@+id/chore_name"
-            android:text="@string/assignee_detail_text"
-            tools:text="Assigned to" />
-
-        <TextView
             android:id="@+id/frequency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="@dimen/marginBetweenElements"
-            app:layout_constraintTop_toBottomOf="@+id/assignee"
+            app:layout_constraintTop_toBottomOf="@+id/chore_name"
             android:text="@string/frequency_detail_text"
             tools:text="Frequency" />
 
@@ -68,12 +58,22 @@
             tools:text="Difficulty" />
 
         <TextView
-            android:id="@+id/notes"
+            android:id="@+id/assignee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="@dimen/marginBetweenElements"
             app:layout_constraintTop_toBottomOf="@+id/difficulty"
+            android:text="@string/assignee_detail_text"
+            tools:text="Assigned to" />
+
+        <TextView
+            android:id="@+id/notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/assignee"
             android:text="@string/notes_detail_text"
             tools:text="Notes" />
 

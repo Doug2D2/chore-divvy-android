@@ -42,6 +42,14 @@ class UserRepository(private val dataSource: UserDao) {
         }
     }
 
+    // getUserIdFromEmail calls local db to get the user id for the email
+    // address provided
+    suspend fun getUserIdFromEmail(user: String): Int? {
+        return withContext(Dispatchers.IO) {
+            dataSource.getIdFromEmail(user)
+        }
+    }
+
     // getUserIdsFromEmails calls local db to get the user ids for the email
     // addresses provided
     suspend fun getUserIdsFromEmails(users: List<String>): List<Int> {

@@ -77,7 +77,8 @@ data class ForgotPasswordRequest(var username: String)
 data class ForgotPasswordResponse(var msg: String)
 
 data class AddChoreRequest (var choreName: String, var status: String, var frequencyId: Int,
-                            var categoryId: Int, var difficulty: String, var notes: String?)
+                            var categoryId: Int, var difficulty: String, var assigneeId: Int?,
+                            var notes: String?)
 
 data class UpdateChoreRequest (var id: Int, var choreName: String, var status: String,
                                var dateComplete: String?, var frequencyId: Int, var categoryId: Int,
