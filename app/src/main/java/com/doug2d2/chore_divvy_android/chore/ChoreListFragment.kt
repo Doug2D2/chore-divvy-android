@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,6 +17,8 @@ import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreListBinding
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.android.synthetic.main.chore_item.view.*
+import kotlinx.android.synthetic.main.fragment_chore_detail.view.*
 import timber.log.Timber
 
 class ChoreListFragment : Fragment() {
@@ -124,8 +127,6 @@ class ChoreListFragment : Fragment() {
         choreListViewModel.updateChoreStatus.observe(viewLifecycleOwner, Observer { updateChoreStatus ->
             when (updateChoreStatus) {
                 ApiStatus.SUCCESS -> {
-                    Timber.i("Chore updated")
-
                     // Get index of chore and update the checkbox
                     val idx = choreListViewModel.getChoreListItemIndex(choreListViewModel.choreToUpdate)
                     if (idx > -1) {
@@ -163,6 +164,23 @@ class ChoreListFragment : Fragment() {
                 }
                 ApiStatus.OTHER_ERROR -> {
                     Toast.makeText(this.activity, "An unknown error has occurred, please try again", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+        // Observe change to assigning a chore to current user
+        choreListViewModel.assignChoreStatus.observe(viewLifecycleOwner, Observer { assignChoreStatus ->
+            when (assignChoreStatus) {
+                ApiStatus.SUCCESS -> {
+                    // Get index of chore and update the assignee
+                    val idx = choreListViewModel.getChoreListItemIndex(choreListViewModel.choreToUpdate)
+                    if (idx > -1) {
+                        binding.choreList.adapter?.notifyItemChanged(idx)
+                        binding.choreList.adapter?.notifyDataSetChanged()
+                    }
+                }
+                ApiStatus.OTHER_ERROR -> {
+                    Toast.makeText(this.activity, "Unable to assign chore to you", Toast.LENGTH_LONG).show()
                 }
             }
         })

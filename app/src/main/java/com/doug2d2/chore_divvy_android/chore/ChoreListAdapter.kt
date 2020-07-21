@@ -50,6 +50,22 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
             // Create popup menu to show Edit and Delete chore options
             var popupMenu: PopupMenu = PopupMenu(v?.context, v)
             popupMenu.inflate(R.menu.chore_pop_up)
+
+            val currentUserId = Utils.getUserId(v?.context!!)
+
+            // If chore is unassigned, add Assign to me menu item
+            // If chore is assigned to current user, add Unassign menu item
+            // If chore assigned to someone else hide menu item
+            if (binding.chore?.assigneeId == null) {
+                popupMenu.menu.findItem(R.id.chore_assign).isVisible = true
+                popupMenu.menu.findItem(R.id.chore_assign).title = "Assign to Me"
+            } else if(binding.chore?.assigneeId == currentUserId) {
+                popupMenu.menu.findItem(R.id.chore_assign).isVisible = true
+                popupMenu.menu.findItem(R.id.chore_assign).title = "Unassign"
+            } else {
+                popupMenu.menu.findItem(R.id.chore_assign).isVisible = false
+            }
+
             popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
                 when(item?.itemId) {
                     R.id.chore_edit -> {
@@ -75,6 +91,16 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
                         // Display Alert Dialog
                         alert = alertBuilder.setTitle("Delete chore?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show()
+                    }
+                    R.id.chore_assign -> {
+                        when (item?.title) {
+                            "Assign to Me" -> {
+                                choreListViewModel.onAssignToMe(binding.chore!!, currentUserId)
+                            }
+                            "Unassign" -> {
+                                choreListViewModel.onUnassign(binding.chore!!)
+                            }
+                        }
                     }
                 }
                 true

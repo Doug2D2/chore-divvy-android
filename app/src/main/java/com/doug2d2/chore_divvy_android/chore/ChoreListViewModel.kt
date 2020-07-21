@@ -1,6 +1,7 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.app.Application
+import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -41,6 +42,10 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     private val _deleteChoreStatus = MutableLiveData<ApiStatus>()
     val deleteChoreStatus: LiveData<ApiStatus>
         get() = _deleteChoreStatus
+
+    private val _assignChoreStatus = MutableLiveData<ApiStatus>()
+    val assignChoreStatus: LiveData<ApiStatus>
+        get() = _assignChoreStatus
 
     private var _choreList = MutableLiveData<List<FullChore>>()
     val choreList: LiveData<List<FullChore>>
@@ -243,5 +248,57 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     // onNavigatedToDetailView is called after navigating to the chore detail fragment
     fun onNavigatedToDetailView() {
         _navigateToDetailView.value = false
+    }
+
+    // onAssignToMe assigns a chore to a user
+    fun onAssignToMe(chore: FullChore, userId: Int) {
+        uiScope.launch {
+            try {
+                choreToUpdate = chore
+
+                // Create Chore object to update database with
+                val c = Chore(id = chore.id, choreName = chore.choreName,
+                    status = chore.status, dateComplete = chore.dateComplete,
+                    frequencyId = chore.frequencyId, categoryId = chore.categoryId,
+                    assigneeId = userId, difficulty = chore.difficulty,
+                    notes = chore.notes, createdAt = chore.createdAt,
+                    updatedAt = chore.updatedAt)
+
+                choreRepository.updateChore(ctx, c)
+
+                // Update _choreList with new assigneeId
+                _choreList.value = _choreList.value?.map { item ->
+                    if (item.id == chore.id) {
+                        item.assigneeId = userId
+                    }
+                    item
+                }
+
+                _assignChoreStatus.value = ApiStatus.SUCCESS
+            } catch (e: java.lang.Exception) {
+                Timber.i("onAssignToMe Exception: " + e.message)
+                _assignChoreStatus.value = ApiStatus.OTHER_ERROR
+            }
+        }
+    }
+
+    // onUnassign unassigns a user from a chore
+    fun onUnassign(chore: FullChore) {
+        /*uiScope.launch {
+            try {
+                // Create Chore object to update database with
+                val c = Chore(id = chore.id, choreName = chore.choreName,
+                    status = chore.status, dateComplete = chore.dateComplete,
+                    frequencyId = chore.frequencyId, categoryId = chore.categoryId,
+                    assigneeId = null , difficulty = chore.difficulty,
+                    notes = chore.notes, createdAt = chore.createdAt,
+                    updatedAt = chore.updatedAt)
+
+                choreRepository.updateChore(ctx, c)
+            } catch (e: java.lang.Exception) {
+                Timber.i("onUnassign Exception: " + e.message)
+                Toast.makeText(ctx, "Unable to unassign chore", Toast.LENGTH_LONG).show()
+            }
+        }*/
     }
 }

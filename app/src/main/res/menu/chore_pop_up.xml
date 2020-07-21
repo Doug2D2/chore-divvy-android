@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- This menu item changes depending on the chore assignee status,
+     that code is in ChoreListAdapter -->
+    <item
+        android:id="@+id/chore_assign"
+        android:title="Assign to Me"
+        android:visible="false" />
     <item
         android:id="@+id/chore_edit"
         android:title="@string/edit_menu_item_text" />
