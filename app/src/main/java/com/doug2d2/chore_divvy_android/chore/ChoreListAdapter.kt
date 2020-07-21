@@ -1,6 +1,7 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.view.*
 import android.widget.PopupMenu
@@ -8,8 +9,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.ChoreItemBinding
+import okhttp3.internal.Util
 import timber.log.Timber
 
 class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListViewModel: ChoreListViewModel): ListAdapter<FullChore, ChoreListAdapter.ChoreListViewHolder>(DiffCallback) {
@@ -106,6 +109,10 @@ class ChoreListAdapter(val clickListener: ChoreListClickListener, val choreListV
     }
 }
 
-class ChoreListClickListener(val clickListener: (chore: FullChore) -> Unit) {
+class ChoreListClickListener(val ctx: Context, val clickListener: (chore: FullChore) -> Unit) {
     fun onClick(chore: FullChore) = clickListener(chore)
+
+    fun currentUserId(): Int {
+        return Utils.getUserId(ctx)
+    }
 }

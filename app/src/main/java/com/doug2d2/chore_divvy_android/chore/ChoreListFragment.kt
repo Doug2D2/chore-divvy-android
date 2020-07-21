@@ -49,9 +49,9 @@ class ChoreListFragment : Fragment() {
         binding.viewModel = choreListViewModel
 
         // Chore checkbox is clicked
-        val adapter = ChoreListAdapter(ChoreListClickListener { chore ->
+        val adapter = ChoreListAdapter(ChoreListClickListener(requireContext(), { chore ->
             choreListViewModel.updateChore(chore)
-        }, choreListViewModel)
+        }), choreListViewModel)
 
         // Observe changes to navigating to add chore fragment
         choreListViewModel.navigateToAddChore.observe(viewLifecycleOwner, Observer<Boolean> { navigate ->

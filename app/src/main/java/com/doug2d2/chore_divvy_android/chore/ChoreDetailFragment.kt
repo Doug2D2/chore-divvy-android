@@ -3,6 +3,7 @@ package com.doug2d2.chore_divvy_android.chore
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Spanned
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.databinding.FragmentChoreDetailBinding
@@ -50,11 +52,16 @@ class ChoreDetailFragment : Fragment() {
         val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyName), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryName), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val diffText = HtmlCompat.fromHtml(getString(R.string.difficulty_detail_text, choreDetailViewModel.choreDetailView.value?.difficulty), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val assigneeText = HtmlCompat.fromHtml(getString(R.string.assignee_detail_text, choreDetailViewModel.choreDetailView.value?.firstName?:"", choreDetailViewModel.choreDetailView.value?.lastName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val notesText = HtmlCompat.fromHtml(getString(R.string.notes_detail_text, choreDetailViewModel.choreDetailView.value?.notes?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
+        // If current user is the assignee, show "me" otherwise show the assignee's first and last name
+        if (choreDetailViewModel.choreDetailView.value?.assigneeId == Utils.getUserId(requireContext()) ) {
+            binding.assignee.text = HtmlCompat.fromHtml(getString(R.string.assignee_detail_text, "me", ""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } else {
+            binding.assignee.text = HtmlCompat.fromHtml(getString(R.string.assignee_detail_text, choreDetailViewModel.choreDetailView.value?.firstName?:"", choreDetailViewModel.choreDetailView.value?.lastName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        }
+
         binding.choreName.text = nameText
-        binding.assignee.text = assigneeText
         binding.frequency.text = freqText
         binding.category.text = catText
         binding.difficulty.text = diffText

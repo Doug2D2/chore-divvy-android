@@ -64,7 +64,7 @@ android:id="@+id/layout">
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:layout_marginTop="8dp"
-        android:text="@{chore.firstName}"
+        android:text="@{chore.assigneeId == clickListener.currentUserId() ? `me` : chore.firstName }"
         tools:text="PERSON" />
     </LinearLayout>
 
