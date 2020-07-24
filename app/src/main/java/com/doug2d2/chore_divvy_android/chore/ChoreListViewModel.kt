@@ -47,6 +47,10 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val assignChoreStatus: LiveData<ApiStatus>
         get() = _assignChoreStatus
 
+    private val _unassignChoreStatus = MutableLiveData<ApiStatus>()
+    val unassignChoreStatus: LiveData<ApiStatus>
+        get() = _unassignChoreStatus
+
     private var _choreList = MutableLiveData<List<FullChore>>()
     val choreList: LiveData<List<FullChore>>
         get() = _choreList
@@ -284,21 +288,37 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
     // onUnassign unassigns a user from a chore
     fun onUnassign(chore: FullChore) {
-        /*uiScope.launch {
+        uiScope.launch {
             try {
+                choreToUpdate = chore
+
                 // Create Chore object to update database with
+                // -1 should be used as assigneeId to represent unassigned
                 val c = Chore(id = chore.id, choreName = chore.choreName,
                     status = chore.status, dateComplete = chore.dateComplete,
                     frequencyId = chore.frequencyId, categoryId = chore.categoryId,
-                    assigneeId = null , difficulty = chore.difficulty,
+                    assigneeId = -1, difficulty = chore.difficulty,
                     notes = chore.notes, createdAt = chore.createdAt,
                     updatedAt = chore.updatedAt)
 
                 choreRepository.updateChore(ctx, c)
+
+                // Update _choreList with new null assigneeId
+                _choreList.value = _choreList.value?.map { item ->
+                    if (item.id == chore.id) {
+                        item.assigneeId = null
+                        item.firstName = ""
+                        item.lastName = ""
+                        item.username = ""
+                    }
+                    item
+                }
+
+                _unassignChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: java.lang.Exception) {
                 Timber.i("onUnassign Exception: " + e.message)
-                Toast.makeText(ctx, "Unable to unassign chore", Toast.LENGTH_LONG).show()
+                _unassignChoreStatus.value = ApiStatus.OTHER_ERROR
             }
-        }*/
+        }
     }
 }

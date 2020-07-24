@@ -1,13 +1,10 @@
 package com.doug2d2.chore_divvy_android.network
 
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.Frequency
 import com.doug2d2.chore_divvy_android.database.User
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.squareup.moshi.Json
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

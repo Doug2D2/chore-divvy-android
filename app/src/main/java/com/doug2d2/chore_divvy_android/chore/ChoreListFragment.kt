@@ -185,6 +185,23 @@ class ChoreListFragment : Fragment() {
             }
         })
 
+        // Observe change to unassigning a chore to current user
+        choreListViewModel.unassignChoreStatus.observe(viewLifecycleOwner, Observer { unassignChoreStatus ->
+            when (unassignChoreStatus) {
+                ApiStatus.SUCCESS -> {
+                    // Get index of chore and update the assignee
+                    val idx = choreListViewModel.getChoreListItemIndex(choreListViewModel.choreToUpdate)
+                    if (idx > -1) {
+                        binding.choreList.adapter?.notifyItemChanged(idx)
+                        binding.choreList.adapter?.notifyDataSetChanged()
+                    }
+                }
+                ApiStatus.OTHER_ERROR -> {
+                    Toast.makeText(this.activity, "Unable to unassign chore", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
         // Sets the adapter of the RecyclerView
         binding.choreList.adapter = adapter
         adapter.notifyDataSetChanged()
