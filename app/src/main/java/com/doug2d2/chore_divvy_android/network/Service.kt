@@ -84,5 +84,4 @@ data class UpdateChoreRequest (var id: Int, var choreName: String, var status: S
 
 data class AddCategoryRequest (var categoryName: String, var userIds: List<Int>)
 
-data class UpdateCategoryRequest (var id: Int, var categoryName: String, var userId: List<Int>,
-                               var createdAt: String, var updatedAt: String)
+data class UpdateCategoryRequest (var id: Int, var categoryName: String, var userIds: List<Int>)

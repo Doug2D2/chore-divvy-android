@@ -43,6 +43,26 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:id="@+id/userEditTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|top"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/addUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="@dimen/marginStartEnd"
+                android:layout_marginTop="@dimen/marginTopBottom"
+                android:clickable="true"
+                android:textColor="@color/colorAccent"
+                android:text="Add User"
+                android:onClick="@{() -> viewModel.onAddUserEditText() }" />
+
             <TextView
                 android:id="@+id/errorText"
                 android:layout_width="match_parent"

@@ -58,6 +58,14 @@ class UserRepository(private val dataSource: UserDao) {
         }
     }
 
+    // getEmailsFromUserIds calls local db to get the user emails for the id
+    // addresses provided
+    suspend fun getEmailsFromUserIds(userIds: List<Int>): List<String> {
+        return withContext(Dispatchers.IO) {
+            dataSource.getEmailsFromIds(userIds)
+        }
+    }
+
     // refreshUsers calls API to get users, deletes all users in local db,
     // and then inserts new data into local db
     private suspend fun refreshUsers() {

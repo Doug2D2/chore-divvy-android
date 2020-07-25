@@ -42,8 +42,7 @@ class CategoryRepository(private val dataSource: CategoryDao) {
     // updates local db with new data
     suspend fun updateCategory(ctx: Context, category: Category) {
         val categoryToUpdate = UpdateCategoryRequest(id = category.id,
-            categoryName = category.categoryName, userId = category.userId,
-            createdAt = category.createdAt, updatedAt = category.updatedAt)
+            categoryName = category.categoryName, userIds = category.userId)
 
         withContext(Dispatchers.IO) {
             ChoreDivvyNetwork.choreDivvy.updateCategory(category.id, categoryToUpdate).await()

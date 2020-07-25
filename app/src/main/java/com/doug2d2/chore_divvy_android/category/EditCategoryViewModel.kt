@@ -9,6 +9,7 @@ import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
+import com.doug2d2.chore_divvy_android.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,12 +25,24 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
     private val catDao = ChoreDivvyDatabase.getDatabase(application).categoryDao
     private val catRepository = CategoryRepository(catDao)
 
+    private val userDao = ChoreDivvyDatabase.getDatabase(application).userDao
+    private val userRepository = UserRepository(userDao)
+
     private val _editCategoryStatus = MutableLiveData<ApiStatus>()
     val editCategoryStatus: LiveData<ApiStatus>
         get() = _editCategoryStatus
 
+    private val _shouldSave = MutableLiveData<Boolean>()
+    val shouldSave: LiveData<Boolean>
+        get() = _shouldSave
+
+    private val _addUserEditText = MutableLiveData<Boolean>()
+    val addUserEditText: LiveData<Boolean>
+        get() = _addUserEditText
+
     val categoryToEdit = MutableLiveData<Category>()
     val categoryName = MutableLiveData<String>()
+    val userEmails = MutableLiveData<List<String>>()
 
     val saveButtonEnabled = MutableLiveData<Boolean>()
 
@@ -49,6 +62,8 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
             try {
                 categoryToEdit.value = catRepository.getCategoryById(catId)
                 categoryName.value = categoryToEdit.value?.categoryName
+
+                getUserEmails(categoryToEdit.value?.userId!!)
             } catch (e: HttpException) {
                 Timber.i("getCategoryById HttpException: " + e.message)
             } catch (e: Exception) {
@@ -57,17 +72,61 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    // getUserEmails gets the user's emails by their id
+    private fun getUserEmails(userIds: List<Int>) {
+        uiScope.launch {
+            try {
+                userEmails.value = userRepository.getEmailsFromUserIds(userIds)
+            } catch (e: HttpException) {
+                Timber.i("getUserEmails HttpException: " + e.message)
+            } catch (e: Exception) {
+                Timber.i("getUserEmails Exception: " + e.message)
+            }
+        }
+    }
+
     // onSave is called when the Save button is clicked
     fun onSave() {
-        // category name edit text value is stored in categoryName
+        _editCategoryStatus.value = ApiStatus.LOADING
+        _shouldSave.value = true
+    }
+
+    // doneSave is called when finished editing category
+    fun doneSave() {
+        _shouldSave.value = false
+    }
+
+    // getUserIds gets the user ids based on email addresses
+    fun getUserIds(users: List<String>) {
+        var userIds = mutableListOf<Int>(Utils.getUserId(ctx))
+
+        // Get user ids from emails if length of users > 0
+        if (users.isNotEmpty()) {
+            try {
+                uiScope.launch {
+                    userIds.addAll(userRepository.getUserIdsFromEmails(users))
+                    save(userIds.toSet().toList())
+                }
+            } catch (e: Exception) {
+                Timber.i("getUserIds Exception: " + e.message)
+                _editCategoryStatus.value = ApiStatus.OTHER_ERROR
+            }
+        } else {
+            save(userIds)
+        }
+    }
+
+    // save updates a category
+    private fun save(userIds: List<Int>) {
+        // category name edit text value is stored in categoryName and
+        // userIds are stored in userIds
         categoryToEdit.value?.categoryName = categoryName.value!!
+        categoryToEdit.value?.userId = userIds
 
         if (!categoryToEdit.value?.categoryName.isNullOrBlank()) {
             // Update Chore
             uiScope.launch {
                 try {
-                    _editCategoryStatus.value = ApiStatus.LOADING
-
                     catRepository.updateCategory(ctx, categoryToEdit.value!!)
 
                     _editCategoryStatus.value = ApiStatus.SUCCESS
@@ -80,5 +139,15 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
                 }
             }
         }
+    }
+
+    // onAddUserEditText is called when the Add User button is clicked
+    fun onAddUserEditText() {
+        _addUserEditText.value = true
+    }
+
+    // doneAddUserEditText is called when finished adding user edit text
+    fun doneAddUserEditText() {
+        _addUserEditText.value = false
     }
 }

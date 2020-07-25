@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -15,8 +16,10 @@ import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.chore.EditChoreFragmentDirections
 import com.doug2d2.chore_divvy_android.chore.EditChoreViewModel
 import com.doug2d2.chore_divvy_android.chore.EditChoreViewModelFactory
+import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.databinding.FragmentEditCategoryBinding
 import com.doug2d2.chore_divvy_android.databinding.FragmentEditChoreBinding
+import kotlinx.android.synthetic.main.fragment_user_edit_text.view.*
 import timber.log.Timber
 
 class EditCategoryFragment : Fragment() {
@@ -36,6 +39,47 @@ class EditCategoryFragment : Fragment() {
         val editCategoryViewModel = ViewModelProviders.of(
             this, viewModelFactory).get(EditCategoryViewModel::class.java)
         binding.viewModel = editCategoryViewModel
+
+        // Observe userEmails to set the current users in edit texts
+        editCategoryViewModel.userEmails.observe(viewLifecycleOwner, Observer<List<String>>  { userEmails ->
+            for (u in userEmails) {
+                // Add edit text for adding a user
+                val fmTrans = fragmentManager?.beginTransaction()
+                val newUserEditText = UserEditTextFragment(u)
+                fmTrans?.add(binding.userEditTextLayout.id, newUserEditText)
+                fmTrans?.commit()
+            }
+        })
+
+        // Observe addUserEditText to add a new edit text for adding a new user
+        editCategoryViewModel.addUserEditText.observe(viewLifecycleOwner, Observer<Boolean> { addUserEditText ->
+            if (addUserEditText) {
+                // Add edit text for adding a user
+                val fmTrans = fragmentManager?.beginTransaction()
+                val newUserEditText = UserEditTextFragment()
+                fmTrans?.add(binding.userEditTextLayout.id, newUserEditText)
+                fmTrans?.commit()
+
+                editCategoryViewModel.doneAddUserEditText()
+            }
+        })
+
+        // Observe shouldSave
+        editCategoryViewModel.shouldSave.observe(viewLifecycleOwner, Observer<Boolean> { shouldSave ->
+            if (shouldSave) {
+                // Get all user emails from user edit texts
+                var users = mutableListOf<String>()
+                for (c in binding.userEditTextLayout.children) {
+                    val u = c.userEditText.text.toString().trim()
+                    if (u.isNotEmpty()) {
+                        users.add(c.userEditText.text.toString())
+                    }
+                }
+
+                editCategoryViewModel.getUserIds(users)
+                editCategoryViewModel.doneSave()
+            }
+        })
 
         // Observe editCategoryStatus
         editCategoryViewModel.editCategoryStatus.observe(viewLifecycleOwner, Observer<ApiStatus> { editCategoryStatus ->

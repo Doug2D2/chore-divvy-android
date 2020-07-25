@@ -11,6 +11,8 @@ class UserEditTextViewModel(application: Application): AndroidViewModel(applicat
     val removeUserEditText: LiveData<Boolean>
         get() = _removeUserEditText
 
+    val user = MutableLiveData<String>()
+
     // onRemoveUserEdit is called when the minus button is clicked
     fun onRemoveUserEditText() {
         _removeUserEditText.value = true

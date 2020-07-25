@@ -35,7 +35,8 @@
                 android:hint="User Email"
                 android:inputType="textEmailAddress"
                 android:paddingStart="0dp"
-                android:paddingEnd="0dp" />
+                android:paddingEnd="0dp"
+                android:text="@={viewModel.user}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

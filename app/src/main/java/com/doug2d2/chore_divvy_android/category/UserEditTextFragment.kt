@@ -12,7 +12,9 @@ import com.doug2d2.chore_divvy_android.R
 import com.doug2d2.chore_divvy_android.databinding.FragmentUserEditTextBinding
 import timber.log.Timber
 
-class UserEditTextFragment : Fragment() {
+class UserEditTextFragment(startingText: String = "") : Fragment() {
+    private val user = startingText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -29,6 +31,7 @@ class UserEditTextFragment : Fragment() {
         val userEditTextViewModel = ViewModelProviders.of(
             this, viewModelFactory).get(UserEditTextViewModel::class.java)
         binding.viewModel = userEditTextViewModel
+        userEditTextViewModel.user.value = user
 
         // Observe removeUserEditText
         userEditTextViewModel.removeUserEditText.observe(viewLifecycleOwner, Observer<Boolean> { removeUserEditText ->

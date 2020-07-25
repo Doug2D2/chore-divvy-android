@@ -32,4 +32,7 @@ interface UserDao {
 
     @Query("SELECT id FROM users WHERE username IN (:userEmails)")
     fun getIdsFromEmails(userEmails: List<String>): List<Int>
+
+    @Query("SELECT username FROM users WHERE id IN (:userIds)")
+    fun getEmailsFromIds(userIds: List<Int>): List<String>
 }
