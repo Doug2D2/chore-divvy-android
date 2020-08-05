@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -92,42 +93,84 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.category_menu, menu)
+        // menuInflater.inflate(R.menu.category_menu, menu)
+        menuInflater.inflate(R.menu.chore_list_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         when(item.itemId) {
-            R.id.category_edit -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.action_choreListFragment_to_editCategoryFragment)
+
+            R.id.action_category_menu -> {
+                var popupMenu: android.widget.PopupMenu = android.widget.PopupMenu(this.applicationContext, findViewById<View>(R.id.action_category_menu))
+                popupMenu.inflate(R.menu.category_menu)
+
+                popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+                    when(item?.itemId) {
+                        R.id.category_edit -> {
+                            findNavController(R.id.nav_host_fragment).navigate(R.id.action_choreListFragment_to_editCategoryFragment)
+                        }
+                        R.id.category_delete -> {
+                            // Create Alert Dialog to ask user if they are sure that they want to delete category
+                            val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialog))
+                            lateinit var alert: AlertDialog
+                            val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> {
+                                        val application = requireNotNull(this).application
+                                        val viewModelFactory = MainViewModelFactory(application)
+                                        val mainViewModel = ViewModelProviders.of(
+                                            this, viewModelFactory).get(MainViewModel::class.java)
+
+                                        // Yes, delete category
+                                        mainViewModel.deleteCategory()
+                                    }
+                                    DialogInterface.BUTTON_NEGATIVE -> {
+                                        // No, don't delete category
+                                        alert.cancel()
+                                    }
+                                }
+                            }
+
+                            // Display Alert Dialog
+                            alert = alertBuilder.setTitle("Delete category?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show()
+                        }
+                    }
+                    true
+                }
+
+                popupMenu.show()
 
                 return true
             }
-            R.id.category_delete -> {
-                // Create Alert Dialog to ask user if they are sure that they want to delete category
-                val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialog))
-                lateinit var alert: AlertDialog
-                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
-                    when (which) {
-                        DialogInterface.BUTTON_POSITIVE -> {
-                            val application = requireNotNull(this).application
-                            val viewModelFactory = MainViewModelFactory(application)
-                            val mainViewModel = ViewModelProviders.of(
-                                this, viewModelFactory).get(MainViewModel::class.java)
+            R.id.action_filter -> {
+                var popupMenu: android.widget.PopupMenu = android.widget.PopupMenu(this.applicationContext, findViewById<View>(R.id.action_filter))
+                popupMenu.inflate(R.menu.filter_menu)
 
-                            // Yes, delete category
-                            mainViewModel.deleteCategory()
+                popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+                    when(item?.itemId) {
+                        R.id.filter_all -> {
+                            Timber.i("FILTER ALL")
                         }
-                        DialogInterface.BUTTON_NEGATIVE -> {
-                            // No, don't delete category
-                            alert.cancel()
+                        R.id.filter_mine -> {
+                            Timber.i("FILTER MINE")
+                        }
+                        R.id.filter_unassigned -> {
+                            Timber.i("FILTER UNASSIGNED")
+                        }
+                        R.id.filter_in_progress -> {
+                            Timber.i("FILTER IN PROGRESS")
+                        }
+                        R.id.filter_completed -> {
+                            Timber.i("FILTER COMPLETED")
                         }
                     }
+                    true
                 }
 
-                // Display Alert Dialog
-                alert = alertBuilder.setTitle("Delete category?").setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show()
+                popupMenu.show()
 
                 return true
             }

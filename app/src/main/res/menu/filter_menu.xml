@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/filter_all"
+        android:title="All" />
+    <item
+        android:id="@+id/filter_mine"
+        android:title="Assigned to Me" />
+    <item
+        android:id="@+id/filter_unassigned"
+        android:title="Unassigned" />
+    <item
+        android:id="@+id/filter_in_progress"
+        android:title="In Progress" />
+    <item
+        android:id="@+id/filter_completed"
+        android:title="Completed" />
+</menu>
