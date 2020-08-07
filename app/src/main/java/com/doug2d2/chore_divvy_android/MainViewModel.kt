@@ -90,32 +90,6 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
         }
     }
 
-    // deleteCategory allows a user to delete the current category
-    fun deleteCategory() {
-        val catId = Utils.getSelectedCategory(ctx)
-
-        uiScope.launch {
-            try {
-                _deleteCategoryStatus.value = ApiStatus.LOADING
-
-                catRepository.deleteCategory(ctx, catId)
-
-                _deleteCategoryStatus.value = ApiStatus.SUCCESS
-            } catch (e: HttpException) {
-                Timber.i("deleteCategory HttpException: " + e.message)
-
-                when(e.code()) {
-                    401 -> _deleteCategoryStatus.value = ApiStatus.UNAUTHORIZED
-                    else -> _deleteCategoryStatus.value = ApiStatus.OTHER_ERROR
-                }
-            } catch (e: Exception) {
-                Timber.i("deleteCategory Exception: " + e.message)
-
-                _deleteCategoryStatus.value = ApiStatus.CONNECTION_ERROR
-            }
-        }
-    }
-
     // getCategoryNameById gets the name of a category by its id
     fun getCategoryNameById(categoryId: Int): String {
         val cats = _categories.value?.filter { cat ->

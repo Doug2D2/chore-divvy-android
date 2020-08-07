@@ -162,9 +162,4 @@ class SignUpFragment : Fragment() {
 
         return binding.root
     }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        super.onCreateOptionsMenu(menu, inflater)
-    }
 }

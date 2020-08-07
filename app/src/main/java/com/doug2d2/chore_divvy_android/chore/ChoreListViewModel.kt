@@ -1,13 +1,9 @@
 package com.doug2d2.chore_divvy_android.chore
 
 import android.app.Application
-import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Chore
@@ -16,10 +12,11 @@ import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.get
 import com.doug2d2.chore_divvy_android.database.FullChore
 import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import com.doug2d2.chore_divvy_android.repository.ChoreRepository
-import com.squareup.moshi.Json
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
+
+enum class ChoreFilter { ALL, MINE, UNASSIGNED, TO_DO, IN_PROGRESS, COMPLETED }
 
 class ChoreListViewModel(application: Application): AndroidViewModel(application) {
     private var viewModelJob = Job()
@@ -51,9 +48,17 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val unassignChoreStatus: LiveData<ApiStatus>
         get() = _unassignChoreStatus
 
+    private val _deleteCategoryStatus = MutableLiveData<ApiStatus>()
+    val deleteCategoryStatus: LiveData<ApiStatus>
+        get() = _deleteCategoryStatus
+
+    private var _allChores = MutableLiveData<List<FullChore>>()
+
     private var _choreList = MutableLiveData<List<FullChore>>()
     val choreList: LiveData<List<FullChore>>
         get() = _choreList
+
+    val choreFilter = MutableLiveData<ChoreFilter>()
 
     private val _navigateToAddChore = MutableLiveData<Boolean>()
     val navigateToAddChore: LiveData<Boolean>
@@ -91,7 +96,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                     Timber.i("Getting chores")
                     _getChoresStatus.value = ApiStatus.LOADING
 
-                    _choreList.value = choreRepository.getChores(ctx)
+                    _allChores.value = choreRepository.getChores(ctx)
+                    filterChores()
 
                     _getChoresStatus.value = ApiStatus.SUCCESS
                 } catch (e: HttpException) {
@@ -106,6 +112,30 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
                     _getChoresStatus.value = ApiStatus.CONNECTION_ERROR
                 }
+            }
+        }
+    }
+
+    fun filterChores() {
+        _choreList.value = when (choreFilter.value) {
+            ChoreFilter.MINE -> {
+                val currentUserId = Utils.getUserId(ctx)
+                _allChores.value?.filter { chore -> chore.assigneeId == currentUserId }
+            }
+            ChoreFilter.UNASSIGNED -> {
+                _allChores.value?.filter { chore -> chore.assigneeId == null }
+            }
+            ChoreFilter.TO_DO -> {
+                _allChores.value?.filter { chore -> chore.status == "To Do" }
+            }
+            ChoreFilter.IN_PROGRESS -> {
+                _allChores.value?.filter { chore -> chore.status == "In Progress" }
+            }
+            ChoreFilter.COMPLETED -> {
+                _allChores.value?.filter { chore -> chore.status == "Completed" }
+            }
+            else -> {
+                _allChores.value
             }
         }
     }
@@ -180,10 +210,11 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                 choreToDelete = chore
                 choreRepository.deleteChore(ctx, choreToDelete.id)
 
-                // Remove deleted chore from _choreList
-                _choreList.value = _choreList.value?.filter { item ->
+                // Remove deleted chore from _allChores
+                _allChores.value = _allChores.value?.filter { item ->
                     item.id != choreToDelete.id
                 }
+                filterChores()
 
                 _deleteChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: HttpException) {
@@ -270,13 +301,14 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
                 choreRepository.updateChore(ctx, c)
 
-                // Update _choreList with new assigneeId
-                _choreList.value = _choreList.value?.map { item ->
+                // Update _allChores with new assigneeId
+                _allChores.value = _allChores.value?.map { item ->
                     if (item.id == chore.id) {
                         item.assigneeId = userId
                     }
                     item
                 }
+                filterChores()
 
                 _assignChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: java.lang.Exception) {
@@ -303,8 +335,8 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
 
                 choreRepository.updateChore(ctx, c)
 
-                // Update _choreList with new null assigneeId
-                _choreList.value = _choreList.value?.map { item ->
+                // Update _allChores with new null assigneeId
+                _allChores.value = _allChores.value?.map { item ->
                     if (item.id == chore.id) {
                         item.assigneeId = null
                         item.firstName = ""
@@ -313,11 +345,51 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
                     }
                     item
                 }
+                filterChores()
 
                 _unassignChoreStatus.value = ApiStatus.SUCCESS
             } catch (e: java.lang.Exception) {
                 Timber.i("onUnassign Exception: " + e.message)
                 _unassignChoreStatus.value = ApiStatus.OTHER_ERROR
+            }
+        }
+    }
+
+    // deleteCategory allows a user to delete the current category
+    fun deleteCategory() {
+        val catId = Utils.getSelectedCategory(ctx)
+
+        uiScope.launch {
+            try {
+                _deleteCategoryStatus.value = ApiStatus.LOADING
+
+                catRepository.deleteCategory(ctx, catId)
+
+                _deleteCategoryStatus.value = ApiStatus.SUCCESS
+            } catch (e: HttpException) {
+                Timber.i("deleteCategory HttpException: " + e.message)
+
+                when(e.code()) {
+                    401 -> _deleteCategoryStatus.value = ApiStatus.UNAUTHORIZED
+                    else -> _deleteCategoryStatus.value = ApiStatus.OTHER_ERROR
+                }
+            } catch (e: Exception) {
+                Timber.i("deleteCategory Exception: " + e.message)
+
+                _deleteCategoryStatus.value = ApiStatus.CONNECTION_ERROR
+            }
+        }
+    }
+
+    // getCategories gets all categories from the API and updates the local DB with them
+    fun getCategories() {
+        uiScope.launch {
+            try {
+                /*_categories.value =*/ catRepository.getCategories(ctx)
+            } catch (e: HttpException) {
+                Timber.i("getCategories Http Exception: " + e.message)
+            } catch (e: Exception) {
+                Timber.i("getCategories Exception: " + e.message)
             }
         }
     }

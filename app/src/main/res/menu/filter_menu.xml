@@ -10,6 +10,9 @@
         android:id="@+id/filter_unassigned"
         android:title="Unassigned" />
     <item
+        android:id="@+id/filter_to_do"
+        android:title="To Do" />
+    <item
         android:id="@+id/filter_in_progress"
         android:title="In Progress" />
     <item
