@@ -81,7 +81,7 @@ class ChoreDetailFragment : Fragment() {
                         }
                         DialogInterface.BUTTON_NEGATIVE -> {
                             // No, don't delete chore
-                            alert.cancel()
+                            alert.dismiss()
                         }
                     }
                 }
