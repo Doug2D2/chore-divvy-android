@@ -48,10 +48,10 @@ class ChoreDetailFragment : Fragment() {
         choreDetailViewModel.choreDetailView.value = adapter.fromJson(arguments?.getSerializable("choreDetailView").toString())
 
         // Set all display texts
-        val nameText = HtmlCompat.fromHtml(getString(R.string.choreName_detail_text, choreDetailViewModel.choreDetailView.value?.choreName), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyName), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryName), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val diffText = HtmlCompat.fromHtml(getString(R.string.difficulty_detail_text, choreDetailViewModel.choreDetailView.value?.difficulty), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val nameText = HtmlCompat.fromHtml(getString(R.string.choreName_detail_text, choreDetailViewModel.choreDetailView.value?.choreName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val diffText = HtmlCompat.fromHtml(getString(R.string.difficulty_detail_text, choreDetailViewModel.choreDetailView.value?.difficulty?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val notesText = HtmlCompat.fromHtml(getString(R.string.notes_detail_text, choreDetailViewModel.choreDetailView.value?.notes?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         // If current user is the assignee, show "me" otherwise show the assignee's first and last name
