@@ -76,7 +76,11 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
     private fun getUserEmails(userIds: List<Int>) {
         uiScope.launch {
             try {
-                userEmails.value = userRepository.getEmailsFromUserIds(userIds)
+                // Don't include current user in list of userEmails to be edited or removed
+                val currUserId = Utils.getUserId(ctx)
+                val uIds = userIds.filter { id -> id != currUserId }
+
+                userEmails.value = userRepository.getEmailsFromUserIds(uIds)
             } catch (e: HttpException) {
                 Timber.i("getUserEmails HttpException: " + e.message)
             } catch (e: Exception) {
