@@ -59,6 +59,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
         get() = _choreList
 
     val choreFilter = MutableLiveData<ChoreFilter>()
+    val choreFilterText = MutableLiveData<String>()
 
     private val _navigateToAddChore = MutableLiveData<Boolean>()
     val navigateToAddChore: LiveData<Boolean>
@@ -82,6 +83,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     val ctx = getApplication<Application>().applicationContext
 
     init {
+        choreFilterText.value = "All"
         getChores()
     }
 

@@ -310,21 +310,27 @@ class ChoreListFragment : Fragment() {
                     when(item?.itemId) {
                         R.id.filter_all -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.ALL
+                            choreListViewModel.choreFilterText.value = "All Chores"
                         }
                         R.id.filter_mine -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.MINE
+                            choreListViewModel.choreFilterText.value = "My Chores"
                         }
                         R.id.filter_unassigned -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.UNASSIGNED
+                            choreListViewModel.choreFilterText.value = "Unassigned Chores"
                         }
                         R.id.filter_to_do -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.TO_DO
+                            choreListViewModel.choreFilterText.value = "To Do"
                         }
                         R.id.filter_in_progress -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.IN_PROGRESS
+                            choreListViewModel.choreFilterText.value = "Chores In Progress"
                         }
                         R.id.filter_completed -> {
                             choreListViewModel.choreFilter.value = ChoreFilter.COMPLETED
+                            choreListViewModel.choreFilterText.value = "Completed Chores"
                         }
                     }
                     true

@@ -15,6 +15,24 @@
         tools:context=".chore.ChoreListFragment">
 
         <TextView
+            android:id="@+id/filterText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:text="@{viewModel.choreFilterText}"
+            tools:text="All Chores"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/marginStartEnd"
+            android:layout_marginEnd="@dimen/marginStartEnd"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            android:layout_marginBottom="@dimen/marginTopBottom"/>
+
+        <TextView
             android:id="@+id/errorText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +55,7 @@
             app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.253"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filterText"
             app:layout_constraintVertical_bias="1.0" >
 
             <androidx.recyclerview.widget.RecyclerView
@@ -45,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="35dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
