@@ -88,7 +88,7 @@ class ChoreListViewModel(application: Application): AndroidViewModel(application
     }
 
     // getChores gets all chores from the API and updates the local DB with them
-    private fun getChores() {
+    fun getChores() {
         if (!Utils.isSelectedCategorySet(ctx) && shouldGetCategory) {
             setDefaultSelectedCategory()
             shouldGetCategory = false

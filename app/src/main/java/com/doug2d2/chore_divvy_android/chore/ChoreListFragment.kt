@@ -105,6 +105,7 @@ class ChoreListFragment : Fragment() {
                 ApiStatus.SUCCESS -> {
                     binding.progressBar.visibility = View.GONE
                     binding.errorText.visibility = View.GONE
+                    binding.refreshLayout.isRefreshing = false
                 }
                 ApiStatus.UNAUTHORIZED -> {
                     binding.progressBar.visibility = View.GONE
@@ -238,6 +239,12 @@ class ChoreListFragment : Fragment() {
         choreListViewModel.choreFilter.observe(viewLifecycleOwner, Observer { choreFilter ->
             choreListViewModel.filterChores()
         })
+
+        // When screen is pulled down, refresh chore list by calling getChores
+        binding.refreshLayout.setOnRefreshListener {
+            Timber.i("Refresh")
+            choreListViewModel.getChores()
+        }
 
         // Sets the adapter of the RecyclerView
         binding.choreList.adapter = adapter
