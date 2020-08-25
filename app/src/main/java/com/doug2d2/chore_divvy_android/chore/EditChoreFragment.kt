@@ -96,8 +96,24 @@ class EditChoreFragment : Fragment() {
             // Set current value
             for ((idx, d) in diffs.withIndex()) {
                 if (d == editChoreViewModel.choreToEdit.value?.difficulty) {
-                    Timber.i("SELECTION " + idx + " D " + d)
                     diffSpinner.setSelection(idx + 1)
+                    break
+                }
+            }
+        })
+
+        // Status drop down
+        editChoreViewModel.statuses.observe(viewLifecycleOwner, Observer<List<String>> { statuses ->
+            val statusSpinner: MaterialSpinner = binding.statusDropDown
+            val statusAdapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), android.R.layout.simple_spinner_item, statuses)
+            statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            statusSpinner.adapter = statusAdapter
+            statusSpinner.onItemSelectedListener = editChoreViewModel
+
+            // Set current value
+            for ((idx, s) in statuses.withIndex()) {
+                if (s == editChoreViewModel.choreToEdit.value?.status) {
+                    statusSpinner.setSelection(idx + 1)
                     break
                 }
             }

@@ -44,6 +44,16 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <fr.ganfra.materialspinner.MaterialSpinner
+                android:id="@+id/statusDropDown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginStartEnd"
+                android:layout_marginEnd="@dimen/marginStartEnd"
+                android:layout_marginBottom="@dimen/marginBetweenElements"
+                app:ms_hint="@string/status_spinner_hint"
+                app:ms_highlightColor="@color/colorPrimary" />
+
+            <fr.ganfra.materialspinner.MaterialSpinner
                 android:id="@+id/frequencyDropDown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

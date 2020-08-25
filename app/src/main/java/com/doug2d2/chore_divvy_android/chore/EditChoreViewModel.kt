@@ -38,6 +38,8 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
 
     private val diffRepository = DifficultyRepository()
 
+    private val statusRepository = StatusRepository()
+
     private val choreDao = getDatabase(application).choreDao
     private val choreRepository = ChoreRepository(choreDao)
 
@@ -56,6 +58,7 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
     var freqs = MutableLiveData<List<Frequency>>()
     var cats = MutableLiveData<List<Category>>()
     var diffs = MutableLiveData<List<String>>()
+    var statuses = MutableLiveData<List<String>>()
 
     val ctx = getApplication<Application>().applicationContext
 
@@ -65,6 +68,7 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
         getFrequencies()
         getCategories()
         getDifficulties()
+        getStatuses()
     }
 
     // getFrequencies gets frequencies to populate frequency spinner
@@ -98,6 +102,11 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
         diffs.value = diffRepository.getDifficulties()
     }
 
+    // getStatuses gets statuses to populate status spinner
+    private fun getStatuses() {
+        statuses.value = statusRepository.getStatuses()
+    }
+
     // onItemSelected is called when an item is selected from any spinner
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         when (parent?.id) {
@@ -116,6 +125,11 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
                     choreToEdit.value?.difficulty = diffs.value?.get(position)!!
                 }
             }
+            R.id.statusDropDown -> {
+                if (position > -1 && position < statuses.value?.size?:-1) {
+                    choreToEdit.value?.status = statuses.value?.get(position)!!
+                }
+            }
         }
     }
 
@@ -131,6 +145,9 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
             R.id.difficultyDropDown -> {
                 choreToEdit.value?.difficulty = ""
             }
+            R.id.statusDropDown -> {
+                choreToEdit.value?.status = ""
+            }
         }
     }
 
@@ -140,7 +157,8 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
         choreToEdit.value?.choreName = choreName.value!!
 
         if (!choreToEdit.value?.choreName.isNullOrBlank() && choreToEdit.value?.frequencyId != -1 &&
-            choreToEdit.value?.categoryId != -1 && !choreToEdit.value?.difficulty.isNullOrBlank()) {
+            choreToEdit.value?.categoryId != -1 && !choreToEdit.value?.difficulty.isNullOrBlank() &&
+            !choreToEdit.value?.status.isNullOrBlank()) {
 
             uiScope.launch {
                 try {

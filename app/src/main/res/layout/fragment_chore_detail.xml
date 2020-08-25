@@ -28,12 +28,22 @@
             tools:text="Chore Name" />
 
         <TextView
-            android:id="@+id/frequency"
+            android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="@dimen/marginBetweenElements"
             app:layout_constraintTop_toBottomOf="@+id/chore_name"
+            android:text="@string/status_detail_text"
+            tools:text="Status" />
+
+        <TextView
+            android:id="@+id/frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginBetweenElements"
+            app:layout_constraintTop_toBottomOf="@+id/status"
             android:text="@string/frequency_detail_text"
             tools:text="Frequency" />
 

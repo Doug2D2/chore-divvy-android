@@ -13,6 +13,7 @@
     <string name="chore_item_check_box_image">Check box for chore status</string>
     <string name="choreName_edit_hint">Chore Name</string>
     <string name="notes_edit_text_hint">Notes</string>
+    <string name="status_spinner_hint">Status</string>
     <string name="frequency_spinner_hint">Frequency</string>
     <string name="category_spinner_hint">Category</string>
     <string name="difficulty_spinner_hint">Difficulty</string>
@@ -25,6 +26,7 @@
     <string name="delete_button_text">Delete</string>
     <string name="edit_button_text">Edit</string>
     <string name="choreName_detail_text">&lt;b>Chore:&lt;/b> %1$s</string>
+    <string name="status_detail_text">&lt;b>Status:&lt;/b> %1$s</string>
     <string name="assignee_detail_text">&lt;b>Assigned to:&lt;/b> %1$s %2$s</string>
     <string name="frequency_detail_text">&lt;b>Frequency:&lt;/b> %1$s</string>
     <string name="category_detail_text">&lt;b>Category:&lt;/b> %1$s</string>

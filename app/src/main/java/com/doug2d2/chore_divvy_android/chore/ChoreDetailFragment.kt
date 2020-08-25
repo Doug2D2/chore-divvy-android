@@ -49,6 +49,7 @@ class ChoreDetailFragment : Fragment() {
 
         // Set all display texts
         val nameText = HtmlCompat.fromHtml(getString(R.string.choreName_detail_text, choreDetailViewModel.choreDetailView.value?.choreName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val statusText = HtmlCompat.fromHtml(getString(R.string.status_detail_text, choreDetailViewModel.choreDetailView.value?.status?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val freqText = HtmlCompat.fromHtml(getString(R.string.frequency_detail_text, choreDetailViewModel.choreDetailView.value?.frequencyName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val catText = HtmlCompat.fromHtml(getString(R.string.category_detail_text, choreDetailViewModel.choreDetailView.value?.categoryName?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val diffText = HtmlCompat.fromHtml(getString(R.string.difficulty_detail_text, choreDetailViewModel.choreDetailView.value?.difficulty?:""), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -62,6 +63,7 @@ class ChoreDetailFragment : Fragment() {
         }
 
         binding.choreName.text = nameText
+        binding.status.text = statusText
         binding.frequency.text = freqText
         binding.category.text = catText
         binding.difficulty.text = diffText
