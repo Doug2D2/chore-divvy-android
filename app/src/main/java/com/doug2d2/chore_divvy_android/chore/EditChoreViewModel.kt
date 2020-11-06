@@ -11,6 +11,8 @@ import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.UserValidity
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.Chore
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
@@ -164,37 +166,57 @@ class EditChoreViewModel(application: Application): AndroidViewModel(application
                 try {
                     _editChoreStatus.value = ApiStatus.LOADING
 
-                    val assigneeId = userRepository.getUserIdFromEmail(choreToEdit.value?.username?:"")
-
-                    val updatedChore = Chore(
-                        id = choreToEdit.value?.id!!,
-                        choreName = choreToEdit.value?.choreName!!,
-                        status = choreToEdit.value?.status!!,
-                        dateComplete = choreToEdit.value?.dateComplete,
-                        frequencyId = choreToEdit.value?.frequencyId!!,
-                        categoryId = choreToEdit.value?.categoryId!!,
-                        assigneeId = assigneeId,
-                        difficulty = choreToEdit.value?.difficulty!!,
-                        notes = choreToEdit.value?.notes,
-                        createdAt = choreToEdit.value?.createdAt!!,
-                        updatedAt = choreToEdit.value?.updatedAt!!
-                    )
-
-                    // Update Chore
-                    uiScope.launch {
-                        try {
-                            choreRepository.updateChore(ctx, updatedChore)
-
-                            _editChoreStatus.value = ApiStatus.SUCCESS
-                        } catch (e: HttpException) {
-                            Timber.i("editChore HttpException: " + e.message)
-                            _editChoreStatus.value = ApiStatus.CONNECTION_ERROR
-                        } catch (e: Exception) {
-                            Timber.i("editChore Exception: " + e.message)
-                            _editChoreStatus.value = ApiStatus.OTHER_ERROR
+                    var invalidAssignee = false
+                    var assigneeId: Int? = null
+                    if (!choreToEdit.value?.username.isNullOrBlank()) {
+                        // Validate user emails
+                        val allUsers = userRepository.getUsers()
+                        when (Utils.validateUsers(listOf(choreToEdit.value?.username ?: ""), allUsers)) {
+                            UserValidity.VALID -> {
+                                // Get user id from email
+                                assigneeId = userRepository.getUserIdFromEmail(choreToEdit.value?.username?:"")
+                            }
+                            UserValidity.BAD_FORMAT -> {
+                                invalidAssignee = true
+                                _editChoreStatus.value = ApiStatus.USER_BAD_FORMAT_ERROR
+                            }
+                            UserValidity.DOESNT_EXIST -> {
+                                invalidAssignee = true
+                                _editChoreStatus.value = ApiStatus.USER_DOESNT_EXIST_ERROR
+                            }
                         }
                     }
 
+                    if (!invalidAssignee) {
+                        val updatedChore = Chore(
+                            id = choreToEdit.value?.id!!,
+                            choreName = choreToEdit.value?.choreName!!,
+                            status = choreToEdit.value?.status!!,
+                            dateComplete = choreToEdit.value?.dateComplete,
+                            frequencyId = choreToEdit.value?.frequencyId!!,
+                            categoryId = choreToEdit.value?.categoryId!!,
+                            assigneeId = assigneeId,
+                            difficulty = choreToEdit.value?.difficulty!!,
+                            notes = choreToEdit.value?.notes,
+                            createdAt = choreToEdit.value?.createdAt!!,
+                            updatedAt = choreToEdit.value?.updatedAt!!
+                        )
+
+                        // Update Chore
+                        uiScope.launch {
+                            try {
+                                choreRepository.updateChore(ctx, updatedChore)
+
+                                _editChoreStatus.value = ApiStatus.SUCCESS
+                            } catch (e: HttpException) {
+                                Timber.i("editChore HttpException: " + e.message)
+                                _editChoreStatus.value = ApiStatus.CONNECTION_ERROR
+                            } catch (e: Exception) {
+                                Timber.i("editChore Exception: " + e.message)
+                                _editChoreStatus.value = ApiStatus.OTHER_ERROR
+                            }
+                        }
+                    }
                 } catch (e: Exception) {
                     Timber.i("addChore getUserIdFromEmail Exception: " + e.message)
                     _editChoreStatus.value = ApiStatus.OTHER_ERROR

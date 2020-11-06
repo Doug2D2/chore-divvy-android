@@ -43,18 +43,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/errorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="@color/colorErrorText"
-                android:textSize="@dimen/errorTextSize"
-                android:visibility="gone"
-                tools:text="Testing Error Message"
-                android:layout_marginStart="@dimen/marginStartEnd"
-                android:layout_marginEnd="@dimen/marginStartEnd" />
-
             <LinearLayout
                 android:id="@+id/userEditTextLayout"
                 android:layout_width="match_parent"
@@ -74,6 +62,18 @@
                 android:textColor="@color/colorAccent"
                 android:text="Add User"
                 android:onClick="@{() -> viewModel.onAddUserEditText() }" />
+
+            <TextView
+                android:id="@+id/errorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/colorErrorText"
+                android:textSize="@dimen/errorTextSize"
+                android:visibility="gone"
+                tools:text="Testing Error Message"
+                android:layout_marginStart="@dimen/marginStartEnd"
+                android:layout_marginEnd="@dimen/marginStartEnd" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"

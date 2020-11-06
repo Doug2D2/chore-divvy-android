@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.ApiStatus
+import com.doug2d2.chore_divvy_android.UserValidity
 import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase
@@ -108,8 +109,22 @@ class EditCategoryViewModel(application: Application): AndroidViewModel(applicat
         if (users.isNotEmpty()) {
             try {
                 uiScope.launch {
-                    userIds.addAll(userRepository.getUserIdsFromEmails(users))
-                    save(userIds.toSet().toList())
+                    // Validate users
+                    val allUsers = userRepository.getUsers()
+                    when (Utils.validateUsers(users, allUsers)) {
+                        UserValidity.VALID -> {
+                            userIds.addAll(userRepository.getUserIdsFromEmails(users))
+                            save(userIds.toSet().toList())
+                        }
+                        UserValidity.BAD_FORMAT -> {
+                            Timber.i("One or more usernames are invalid format")
+                            _editCategoryStatus.value = ApiStatus.USER_BAD_FORMAT_ERROR
+                        }
+                        UserValidity.DOESNT_EXIST -> {
+                            Timber.i("One or more usernames do not exist")
+                            _editCategoryStatus.value = ApiStatus.USER_DOESNT_EXIST_ERROR
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 Timber.i("getUserIds Exception: " + e.message)

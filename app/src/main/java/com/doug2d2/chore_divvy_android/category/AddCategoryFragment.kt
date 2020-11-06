@@ -125,6 +125,26 @@ class AddCategoryFragment : Fragment() {
 
                     binding.progressBar.visibility = View.GONE
                 }
+                ApiStatus.USER_BAD_FORMAT_ERROR -> {
+                    Timber.i("User Bad Format Error")
+
+                    binding.errorText.text = "Invalid format for one or more email addresses"
+                    binding.errorText.visibility = View.VISIBLE
+
+                    addCategoryViewModel.addCategoryButtonEnabled.value = true
+
+                    binding.progressBar.visibility = View.GONE
+                }
+                ApiStatus.USER_DOESNT_EXIST_ERROR -> {
+                    Timber.i("User Doesn't Exist Error")
+
+                    binding.errorText.text = "One or more users do not exist"
+                    binding.errorText.visibility = View.VISIBLE
+
+                    addCategoryViewModel.addCategoryButtonEnabled.value = true
+
+                    binding.progressBar.visibility = View.GONE
+                }
                 ApiStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
 

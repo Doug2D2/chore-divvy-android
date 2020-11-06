@@ -12,6 +12,7 @@ import com.doug2d2.chore_divvy_android.repository.CategoryRepository
 import retrofit2.HttpException
 import timber.log.Timber
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.UserValidity
 import com.doug2d2.chore_divvy_android.repository.UserRepository
 import kotlinx.coroutines.*
 import java.lang.Exception
@@ -67,8 +68,22 @@ class AddCategoryViewModel(application: Application): AndroidViewModel(applicati
         if (users.isNotEmpty()) {
             try {
                 uiScope.launch {
-                    userIds.addAll(userRepository.getUserIdsFromEmails(users))
-                    addCategory(userIds.toSet().toList())
+                    // Validate users
+                    val allUsers = userRepository.getUsers()
+                    when (Utils.validateUsers(users, allUsers)) {
+                        UserValidity.VALID -> {
+                            userIds.addAll(userRepository.getUserIdsFromEmails(users))
+                            addCategory(userIds.toSet().toList())
+                        }
+                        UserValidity.BAD_FORMAT -> {
+                            Timber.i("One or more usernames are invalid")
+                            _addCategoryStatus.value = ApiStatus.USER_BAD_FORMAT_ERROR
+                        }
+                        UserValidity.DOESNT_EXIST -> {
+                            Timber.i("One or more usernames are invalid")
+                            _addCategoryStatus.value = ApiStatus.USER_DOESNT_EXIST_ERROR
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 Timber.i("getUserIds Exception: " + e.message)

@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.doug2d2.chore_divvy_android.ApiStatus
 import com.doug2d2.chore_divvy_android.R
+import com.doug2d2.chore_divvy_android.UserValidity
+import com.doug2d2.chore_divvy_android.Utils
 import com.doug2d2.chore_divvy_android.database.Category
 import com.doug2d2.chore_divvy_android.database.ChoreDivvyDatabase.Companion.getDatabase
 import com.doug2d2.chore_divvy_android.database.Frequency
@@ -102,30 +104,51 @@ class AddChoreViewModel(application: Application): AndroidViewModel(application)
                 try {
                     _addChoreStatus.value = ApiStatus.LOADING
 
-                    val assigneeId = userRepository.getUserIdFromEmail(assignTo.value?:"")
+                    var invalidAssignee = false
+                    var assigneeId: Int? = null
+                    if (!assignTo.value.isNullOrBlank()) {
+                        // Validate user emails
+                        val allUsers = userRepository.getUsers()
+                        when (Utils.validateUsers(listOf(assignTo.value ?: ""), allUsers)) {
+                            UserValidity.VALID -> {
+                                // Get user id from email
+                                assigneeId = userRepository.getUserIdFromEmail(assignTo.value ?: "")
+                            }
+                            UserValidity.BAD_FORMAT -> {
+                                invalidAssignee = true
+                                _addChoreStatus.value = ApiStatus.USER_BAD_FORMAT_ERROR
+                            }
+                            UserValidity.DOESNT_EXIST -> {
+                                invalidAssignee = true
+                                _addChoreStatus.value = ApiStatus.USER_DOESNT_EXIST_ERROR
+                            }
+                        }
+                    }
 
-                    val choreToAdd = AddChoreRequest(
-                        choreName = choreName.value ?: "",
-                        status = "To Do",
-                        frequencyId = selectedFreq.value ?: -1,
-                        categoryId = selectedCat.value ?: -1,
-                        difficulty = selectedDiff.value ?: "",
-                        assigneeId = assigneeId,
-                        notes = notes.value
-                    )
+                    if (!invalidAssignee) {
+                        val choreToAdd = AddChoreRequest(
+                            choreName = choreName.value ?: "",
+                            status = "To Do",
+                            frequencyId = selectedFreq.value ?: -1,
+                            categoryId = selectedCat.value ?: -1,
+                            difficulty = selectedDiff.value ?: "",
+                            assigneeId = assigneeId,
+                            notes = notes.value
+                        )
 
-                    // Add Chore
-                    uiScope.launch {
-                        try {
-                            choreRepository.addChore(ctx, choreToAdd)
+                        // Add Chore
+                        uiScope.launch {
+                            try {
+                                choreRepository.addChore(ctx, choreToAdd)
 
-                            _addChoreStatus.value = ApiStatus.SUCCESS
-                        } catch (e: HttpException) {
-                            Timber.i("addChore HttpException: " + e.message)
-                            _addChoreStatus.value = ApiStatus.CONNECTION_ERROR
-                        } catch (e: Exception) {
-                            Timber.i("addChore Exception: " + e.message)
-                            _addChoreStatus.value = ApiStatus.OTHER_ERROR
+                                _addChoreStatus.value = ApiStatus.SUCCESS
+                            } catch (e: HttpException) {
+                                Timber.i("addChore HttpException: " + e.message)
+                                _addChoreStatus.value = ApiStatus.CONNECTION_ERROR
+                            } catch (e: Exception) {
+                                Timber.i("addChore Exception: " + e.message)
+                                _addChoreStatus.value = ApiStatus.OTHER_ERROR
+                            }
                         }
                     }
                 } catch (e: Exception) {

@@ -146,6 +146,26 @@ class EditChoreFragment : Fragment() {
                     editChoreViewModel.saveButtonEnabled.value = true
                     binding.progressBar.visibility = View.GONE
                 }
+                ApiStatus.USER_BAD_FORMAT_ERROR -> {
+                    Timber.i("User Bad Format Error")
+
+                    binding.errorText.text = "Invalid assignee email address format"
+                    binding.errorText.visibility = View.VISIBLE
+
+                    editChoreViewModel.saveButtonEnabled.value = true
+
+                    binding.progressBar.visibility = View.GONE
+                }
+                ApiStatus.USER_DOESNT_EXIST_ERROR -> {
+                    Timber.i("User Doesn't Exist Error")
+
+                    binding.errorText.text = "Assignee does not exist"
+                    binding.errorText.visibility = View.VISIBLE
+
+                    editChoreViewModel.saveButtonEnabled.value = true
+
+                    binding.progressBar.visibility = View.GONE
+                }
                 ApiStatus.OTHER_ERROR -> {
                     Timber.i("Other Error")
                     binding.errorText.text = "An unknown error has occurred, please try again."
